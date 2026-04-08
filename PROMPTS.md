@@ -2,27 +2,21 @@
 
 This document captures the most significant prompts used during development with Claude Code. Each entry includes the context, the prompt, and the outcome.
 
----
-
-### Prompt 1: Project Scaffolding
-**Ticket:** IF-7, IF-9
-**Context:** Initial project setup — Next.js with TypeScript, Tailwind, App Router. Copy config files.
-**Prompt:**
-```
-[TO BE FILLED during development]
-```
-**Result:** [TO BE FILLED]
-
----
-
 ### Prompt 2: Supabase Schema + Migration
 **Ticket:** IF-16
 **Context:** Creating database tables, RLS policies, and Supabase client helpers.
 **Prompt:**
 ```
-[TO BE FILLED]
+Install @supabase/supabase-js and @supabase/ssr. Create migration SQL (001_init.sql) with all tables
+(profiles, ideas, subscriptions, email_logs), indexes, RLS policies, and auto-profile trigger from
+DATABASE_SCHEMA.md. Create Supabase client helpers: browser client (client.ts), server client with
+cookie handling (server.ts), and middleware session refresh (middleware.ts). Create TypeScript types:
+Database type with full public schema, Idea/ScoreBreakdown interfaces, Subscription interface. Create
+categories config as single source of truth. Verify with pnpm build.
 ```
-**Result:** [TO BE FILLED]
+**Result:** All files created and build passes. Migration covers 4 tables with RLS. Three Supabase client
+helpers follow @supabase/ssr patterns (browser, server with cookies(), middleware with NextRequest).
+Database type matches schema exactly. Categories exported as const tuple with derived Category type.
 
 ---
 
