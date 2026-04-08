@@ -22,12 +22,25 @@ Database type matches schema exactly. Categories exported as const tuple with de
 
 ### Prompt 3: Base UI Components
 **Ticket:** IF-44
-**Context:** Creating shared component library — Button, Card, Input, Badge, ScoreBadge, Header.
+**Context:** Phase 2 Foundation — creating the base UI component library that all feature components will build on. Need consistent styling with Tailwind, proper TypeScript types, and accessibility.
 **Prompt:**
 ```
-[TO BE FILLED]
+Read docs/CONVENTIONS.md and docs/PROJECT_STRUCTURE.md first.
+Create the base UI component library in src/components/ui/:
+1. button.tsx — variant (primary/secondary/ghost/danger), size, loading state with spinner
+2. input.tsx — label, error message, accessible htmlFor/id linking
+3. card.tsx — white rounded shadow container with padding sizes
+4. badge.tsx — pill-shaped label with color variants
+5. score-badge.tsx — color-coded score circle (red <40, yellow 40-69, green 70+)
+6. spinner.tsx — animated SVG loading spinner
+7. index.ts — barrel export
+All TypeScript with proper prop types, Tailwind only, 'use client' where needed.
+Run pnpm build to verify.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 7 files in src/components/ui/. Button supports 4 variants and loading state
+with integrated Spinner. Input uses useId() for accessible label linking with aria-invalid/describedby
+for errors. ScoreBadge uses green/amber/red color coding matching CLAUDE.md score thresholds.
+All components follow FC<Props> pattern from CONVENTIONS.md. Build passes cleanly.
 
 ---
 
