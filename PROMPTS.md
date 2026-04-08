@@ -46,12 +46,24 @@ All components follow FC<Props> pattern from CONVENTIONS.md. Build passes cleanl
 
 ### Prompt 4: Auth Implementation
 **Ticket:** IF-18
-**Context:** Register, login, logout with Supabase Auth + protected routes middleware.
+**Context:** Phase 2 Foundation — implementing Supabase Auth with protected routes. Need middleware to guard /dashboard/*, auth pages with login/register forms, OAuth callback handler, and logout functionality.
 **Prompt:**
 ```
-[TO BE FILLED]
+Implement Supabase Auth with protected routes:
+1. src/middleware.ts — protect /dashboard/*, redirect authenticated users from /login and /register
+2. src/app/(auth)/layout.tsx — centered card layout for auth pages
+3. src/app/(auth)/login/page.tsx and register/page.tsx
+4. LoginForm, RegisterForm (email+password, Supabase Auth SDK), LogoutButton
+5. src/app/auth/callback/route.ts — OAuth callback, exchange code for session
+Verify pnpm build passes and /dashboard redirects to /login when unauthenticated.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 8 files. Updated lib/supabase/middleware.ts to return user alongside response
+for proper auth checks (not cookie-sniffing). Root middleware.ts uses updateSession() result to
+guard /dashboard/* and redirect authenticated users from auth pages. Auth layout uses Card component
+for centered form. LoginForm calls signInWithPassword, RegisterForm calls signUp with optional
+full_name metadata and shows "check your email" success state. OAuth callback exchanges code for
+session via createClient(). Build passes, dev server verified: /login 200, /register 200,
+/dashboard 307→/login.
 
 ---
 
