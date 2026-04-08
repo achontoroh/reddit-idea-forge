@@ -67,7 +67,26 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 5: LLM Pipeline — Signal Extraction + Idea Generation
+### Prompt 5: Mock Reddit Data for LLM Pipeline
+**Ticket:** IF-22
+**Context:** Phase 3 — creating realistic mock Reddit posts that feed the real LLM pipeline. The app uses REDDIT_DATA_SOURCE=mock to bypass Reddit API during development while still testing the full idea generation flow.
+**Prompt:**
+```
+Create src/data/reddit-mock.ts with mock Reddit posts that feed the REAL LLM pipeline.
+Export interface RedditPost with fields: id, subreddit, title, body, score, num_comments,
+url, created_utc, category. Category type from config/categories.ts. Create 15-20 posts,
+minimum 3 per category, with specific believable pain points (not generic). Export typed
+array as mockRedditPosts and helper getPostsByCategory(category).
+```
+**Result:** Created src/data/reddit-mock.ts with 18 posts (4 devtools, 3 health, 4 education,
+3 finance, 4 productivity). Each post has a specific, realistic pain point — e.g. debugging
+silent middleware, CGM-meal correlation gaps, tutorial hell in learning. Used Category type
+from config/categories.ts for type safety. Exported RedditPost interface, mockRedditPosts
+array, and getPostsByCategory helper. TypeScript compiles clean.
+
+---
+
+### Prompt 6: LLM Pipeline — Signal Extraction + Idea Generation
 **Ticket:** IF-22
 **Context:** Building the core LLM pipeline with Anthropic Claude API. Two-step process: extract signals from Reddit posts, then generate scored product ideas.
 **Prompt:**
@@ -78,7 +97,7 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 6: Dashboard — Ideas Feed
+### Prompt 7: Dashboard — Ideas Feed
 **Ticket:** IF-25
 **Context:** Building the main dashboard with idea cards, category filter, score visualization.
 **Prompt:**
@@ -89,7 +108,7 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 7: Email Integration (Resend)
+### Prompt 8: Email Integration (Resend)
 **Ticket:** IF-27, IF-28
 **Context:** Email subscription form, Resend SDK integration, HTML email template.
 **Prompt:**
@@ -100,7 +119,7 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 8: Landing Page
+### Prompt 9: Landing Page
 **Ticket:** IF-32
 **Context:** Building the public landing page with hero, value prop, and CTA.
 **Prompt:**
@@ -111,7 +130,7 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 9: Bug Fix / Iteration
+### Prompt 10: Bug Fix / Iteration
 **Ticket:** [TO BE FILLED]
 **Context:** [TO BE FILLED — document an interesting debugging or iteration session]
 **Prompt:**
@@ -122,7 +141,7 @@ session via createClient(). Build passes, dev server verified: /login 200, /regi
 
 ---
 
-### Prompt 10: Final Review
+### Prompt 11: Final Review
 **Ticket:** IF-40
 **Context:** [TO BE FILLED — final polish, cleanup, review prompt]
 **Prompt:**
