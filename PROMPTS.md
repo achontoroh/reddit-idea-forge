@@ -153,14 +153,25 @@ Reused existing Button, Card, Badge, ScoreBadge components. Build passes cleanly
 
 ---
 
-### Prompt 8: Email Integration (Resend)
-**Ticket:** IF-27, IF-28
-**Context:** Email subscription form, Resend SDK integration, HTML email template.
+### Prompt 8: Email Subscription Form + API
+**Ticket:** IF-27
+**Context:** Phase 4 — building the email subscription settings page so users can choose which categories they want in their weekly digest. Requires API route for upsert/update, a client form component with category toggles, a settings page, and nav link.
 **Prompt:**
 ```
-[TO BE FILLED]
+Build email subscription settings page and API route.
+POST /api/subscribe — upsert subscription (Zod validation, auth required).
+PUT /api/subscribe — partial update categories/is_active.
+SubscriptionForm client component with category toggle grid, email display,
+weekly digest checkbox, success/error states.
+Settings page at /dashboard/settings (server component, auth guard, fetch existing sub).
+Add Settings link to Header nav.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 3 new files: `src/app/api/subscribe/route.ts` (POST upsert + PUT partial update
+with Zod validation, typed update fields), `src/components/features/subscription/subscription-form.tsx`
+(category toggle grid using CATEGORIES from config, email read-only from session, checkbox toggle,
+success auto-dismiss after 3s), `src/app/dashboard/settings/page.tsx` (server component with auth
+guard + subscription fetch). Updated `src/components/layout/header.tsx` to add Settings nav link.
+Build passes cleanly.
 
 ---
 

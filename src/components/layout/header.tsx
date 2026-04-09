@@ -1,6 +1,7 @@
 'use client'
 
 import { type FC } from 'react'
+import Link from 'next/link'
 import { LogoutButton } from '@/components/auth/logout-button'
 
 interface HeaderProps {
@@ -15,6 +16,12 @@ export const Header: FC<HeaderProps> = ({ email }) => {
         {email && (
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-gray-500 sm:inline">{email}</span>
+            <Link
+              href="/dashboard/settings"
+              className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
+            >
+              Settings
+            </Link>
             <LogoutButton />
           </div>
         )}
