@@ -19,7 +19,7 @@ export const RegisterForm: FC = () => {
     setLoading(true)
 
     const supabase = createClient()
-    const { error: authError } = await supabase.auth.signUp({
+    const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {

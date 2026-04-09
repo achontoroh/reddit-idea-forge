@@ -7,18 +7,22 @@ export interface Database {
         Row: {
           id: string
           email: string
+          full_name: string | null
           created_at: string
         }
         Insert: {
           id: string
           email: string
+          full_name?: string | null
           created_at?: string
         }
         Update: {
           id?: string
           email?: string
+          full_name?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       ideas: {
         Row: {
@@ -63,6 +67,7 @@ export interface Database {
           is_new?: boolean
           created_at?: string
         }
+        Relationships: []
       }
       subscriptions: {
         Row: {
@@ -92,6 +97,7 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+        Relationships: []
       }
       email_logs: {
         Row: {
@@ -112,10 +118,10 @@ export interface Database {
           sent_at?: string
           idea_ids?: string[]
         }
+        Relationships: []
       }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
-    Enums: Record<string, never>
   }
 }
