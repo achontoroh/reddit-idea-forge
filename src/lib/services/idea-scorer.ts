@@ -1,6 +1,7 @@
 import { type RedditPost } from '@/data/reddit-mock'
 import { getLLMProvider } from '@/lib/llm'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
+import { selectPostsForLLM } from '@/lib/reddit/select-posts'
 import { ScoreBreakdownSchema, type GeneratedIdea } from '@/lib/llm/schemas'
 import { type ScoreBreakdown } from '@/lib/types/idea'
 import { z } from 'zod'
@@ -42,6 +43,7 @@ export async function scoreIdea(
   idea: GeneratedIdea,
   sourcePosts: RedditPost[]
 ): Promise<IdeaScore> {
+  const selectedPosts = selectPostsForLLM(sourcePosts)
   const userPrompt = `Score this product idea:
 
 Title: ${idea.title}
@@ -51,7 +53,7 @@ Target Audience: ${idea.target_audience}
 Category: ${idea.category}
 
 Source Reddit posts for context:
-${sourcePosts
+${selectedPosts
   .map(
     (p) =>
       `- [${p.subreddit}] "${p.title}" (score: ${p.score}, comments: ${p.num_comments})`

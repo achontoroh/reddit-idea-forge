@@ -4,6 +4,7 @@ interface CardProps {
   children: React.ReactNode
   className?: string
   padding?: 'sm' | 'md' | 'lg'
+  onClick?: () => void
 }
 
 const paddingClasses: Record<NonNullable<CardProps['padding']>, string> = {
@@ -16,10 +17,12 @@ export const Card: FC<CardProps> = ({
   children,
   className = '',
   padding = 'md',
+  onClick,
 }) => {
   return (
     <div
       className={`rounded-lg border border-gray-200 bg-white ${paddingClasses[padding]} ${className}`}
+      onClick={onClick}
     >
       {children}
     </div>
