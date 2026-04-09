@@ -309,3 +309,30 @@ as requirements met) and checklist with green dots. Exported `isPasswordValid()`
 register form to block submit. Replaced `toast.error` with inline `formError` state in both
 `login-form.tsx` and `register-form.tsx` — shown as red banner above form. Added `onFocus` prop
 to `Input` component. Removed password hint from login. Build passes cleanly.
+
+---
+
+### Prompt 17: Resend Integration + Email Template
+**Ticket:** IF-28
+**Context:** Phase 4 — integrating Resend for email delivery, building the digest HTML template, and creating the internal send endpoint. Also includes a UX fix to replace the disabled email input with a static display block in SubscriptionForm.
+**Prompt:**
+```
+IF-28 — Resend integration + email template. Part 0: Replace email input in
+SubscriptionForm with info block showing "Digests will be sent to" + email,
+pass email as prop from settings page. Part 1: pnpm add resend. Part 2: Create
+src/lib/email/client.ts — sendIdeaDigest() using Resend SDK, returns {success, error?}.
+Part 3: src/lib/email/template.ts — buildDigestHtml() with inline styles, max 3 ideas,
+score color coding, unsubscribe link. Part 4: POST /api/email/send — auth via
+CRON_SECRET or session, fetch active subscriptions, send digests, log to email_logs.
+Part 5: Add CRON_SECRET + NEXT_PUBLIC_APP_URL to env files.
+```
+**Result:** Created 3 new files: `src/lib/email/client.ts` (Resend SDK wrapper with typed params,
+error-safe return), `src/lib/email/template.ts` (inline-styled HTML template with escapeHtml,
+score color coding green/amber/gray, max 3 idea cards, unsubscribe footer),
+`src/app/api/email/send/route.ts` (dual auth: Bearer CRON_SECRET or Supabase session, iterates
+active subscriptions, fetches top 3 ideas from last 7 days, sends via Resend, logs to email_logs
+with Zod-validated insert, returns {sent, skipped, failed}). Updated SubscriptionForm to accept
+`email` prop and display static info block instead of disabled input. Updated settings page to
+pass `email={user.email}`. Updated database.ts email_logs type to match new schema (user_id,
+email, status, ideas_count, error_message). Added CRON_SECRET and NEXT_PUBLIC_APP_URL to
+.env.local and .env.example. Build passes cleanly.
