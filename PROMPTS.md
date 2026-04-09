@@ -245,7 +245,25 @@ after successful signUp — writes `profile_name: fullName.trim()` to profiles t
 
 ---
 
-### Prompt 14: Final Review
+### Prompt 14: Centralized Toast/Snackbar System
+**Ticket:** IF-59
+**Context:** Inline error text near buttons was inconsistent across the app. Need a global toast system for unified user feedback (errors, success messages).
+**Prompt:**
+```
+Install sonner library. Create src/components/ui/toaster.tsx re-exporting Toaster
+from sonner. Add <Toaster /> to root layout. Replace all inline error states in
+login-form, register-form, and generate-button with toast.error() / toast.success().
+```
+**Result:** Installed sonner 2.0.7. Created `src/components/ui/toaster.tsx` with position top-right,
+richColors, closeButton. Added `<Toaster />` to `src/app/layout.tsx`. Updated three components:
+`login-form.tsx` (error → toast.error), `register-form.tsx` (error → toast.error, success → toast.success),
+`generate-button.tsx` (error → toast.error, success → toast.success). Removed inline error state
+(`useState<string | null>`) and error JSX from all three. Exported Toaster from `components/ui/index.ts`.
+Build passes cleanly.
+
+---
+
+### Prompt 15: Final Review
 **Ticket:** IF-40
 **Context:** [TO BE FILLED — final polish, cleanup, review prompt]
 **Prompt:**
