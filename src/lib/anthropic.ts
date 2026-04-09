@@ -15,7 +15,7 @@ export async function callLLM(
   temperature: number = LLM_CONFIG.temperature
 ): Promise<string> {
   const response = await anthropic.messages.create({
-    model: LLM_CONFIG.model,
+    model: LLM_CONFIG.anthropicModel,
     max_tokens: LLM_CONFIG.maxTokens,
     temperature,
     system: systemPrompt,

@@ -16,7 +16,7 @@ export class AnthropicProvider implements LLMProvider {
   async complete(userPrompt: string, systemPrompt: string): Promise<string> {
     try {
       const response = await this.client.messages.create({
-        model: LLM_CONFIG.model,
+        model: LLM_CONFIG.anthropicModel,
         max_tokens: LLM_CONFIG.maxTokens,
         temperature: LLM_CONFIG.temperature,
         system: systemPrompt,

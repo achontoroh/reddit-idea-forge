@@ -93,9 +93,12 @@ Rules:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Browser Supabase client |
 | `SUPABASE_SERVICE_ROLE_KEY` | **No** | Server Supabase client (API routes) |
 | `ANTHROPIC_API_KEY` | **No** | LLM pipeline (Anthropic provider) |
+| `ANTHROPIC_MODEL` | **No** | Anthropic model override. Default: `claude-sonnet-4-20250514` |
 | `LLM_PROVIDER` | **No** | LLM provider selection (`anthropic` \| `groq` \| `gemini`) |
 | `GROQ_API_KEY` | **No** | LLM pipeline (Groq provider) |
+| `GROQ_MODEL` | **No** | Groq model override. Default: `meta-llama/llama-4-scout-17b-16e-instruct` |
 | `GEMINI_API_KEY` | **No** | LLM pipeline (Gemini provider) |
+| `GEMINI_MODEL` | **No** | Gemini model override. Default: `gemini-2.0-flash` |
 | `RESEND_API_KEY` | **No** | Email sending |
 | `REDDIT_CLIENT_ID` | **No** | Reddit API (optional) |
 | `REDDIT_CLIENT_SECRET` | **No** | Reddit API (optional) |

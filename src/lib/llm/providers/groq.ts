@@ -16,7 +16,7 @@ export class GroqProvider implements LLMProvider {
   async complete(userPrompt: string, systemPrompt: string): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
-        model: 'llama-3.3-70b-versatile',
+        model: LLM_CONFIG.groqModel,
         max_tokens: LLM_CONFIG.maxTokens,
         temperature: LLM_CONFIG.temperature,
         messages: [
