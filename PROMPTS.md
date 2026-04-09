@@ -359,3 +359,21 @@ supabaseServiceRole to bypass RLS, token validation, redirect to success page),
 SVG checkmark, heading, subtext, link home). Updated `subscription-form.tsx` with
 handleUnsubscribe function, unsubscribed/unsubscribing state, conditional ghost button
 in red below the form. Build passes cleanly.
+
+---
+
+### Prompt 19: Settings Page Bugs + Header Navigation
+**Ticket:** IF-70
+**Context:** Polish pass — four UX bugs in the subscription settings page and header. Unsubscribe was plain red text instead of a proper button, re-subscribing didn't reset the "Unsubscribed" state, checkbox stayed checked after unsubscribe, and the IdeaForge logo wasn't clickable.
+**Prompt:**
+```
+FIX 1: Replace plain red text unsubscribe with outlined red button
+(border border-red-300 rounded-md hover:bg-red-50).
+FIX 2: After re-subscribe (form submit success), reset isUnsubscribed to false.
+FIX 3: After unsubscribe, set isActive to false so checkbox unchecks.
+FIX 4: Wrap "IdeaForge" text in header with Next.js Link to /dashboard.
+Verify pnpm build passes.
+```
+**Result:** Updated 2 files: `subscription-form.tsx` (replaced plain text with outlined red button,
+added `setUnsubscribed(false)` in submit success handler — FIX 3 was already implemented in prior
+PR). Updated `header.tsx` (wrapped IdeaForge span with `<Link href="/dashboard">`). Build passes cleanly.
