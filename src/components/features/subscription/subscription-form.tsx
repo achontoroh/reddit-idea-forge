@@ -21,12 +21,39 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [unsubscribing, setUnsubscribing] = useState(false)
+  const [unsubscribed, setUnsubscribed] = useState(false)
 
   const toggleCategory = useCallback((category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     )
   }, [])
+
+  const handleUnsubscribe = async () => {
+    setError(null)
+    setUnsubscribing(true)
+
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: false }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error ?? 'Failed to unsubscribe')
+      }
+
+      setUnsubscribed(true)
+      setIsActive(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setUnsubscribing(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -122,6 +149,23 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
           <p className="text-sm text-red-600 text-center">{error}</p>
         )}
       </form>
+
+      {initialData && (
+        <div className="mt-4 border-t border-gray-200 pt-4 text-center">
+          {unsubscribed ? (
+            <p className="text-sm text-red-600">Unsubscribed</p>
+          ) : (
+            <button
+              type="button"
+              disabled={unsubscribing}
+              onClick={handleUnsubscribe}
+              className="text-sm text-red-500 hover:text-red-700 disabled:opacity-50 cursor-pointer"
+            >
+              {unsubscribing ? 'Unsubscribing...' : 'Unsubscribe from digest emails'}
+            </button>
+          )}
+        </div>
+      )}
     </Card>
   )
 }

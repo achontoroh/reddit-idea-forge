@@ -336,3 +336,26 @@ with Zod-validated insert, returns {sent, skipped, failed}). Updated Subscriptio
 pass `email={user.email}`. Updated database.ts email_logs type to match new schema (user_id,
 email, status, ideas_count, error_message). Added CRON_SECRET and NEXT_PUBLIC_APP_URL to
 .env.local and .env.example. Build passes cleanly.
+
+---
+
+### Prompt 18: Unsubscribe Mechanism
+**Ticket:** IF-30
+**Context:** Phase 4 — implementing two unsubscribe paths: token-based link from emails (no auth) and settings page toggle (auth required). Needed for CAN-SPAM compliance and UX.
+**Prompt:**
+```
+IF-30 — Unsubscribe mechanism (token-based email link + settings toggle).
+Part 1: GET /api/unsubscribe?token=<uuid> — validate token, find subscription by
+unsubscribe_token using service_role (bypasses RLS), set is_active=false, redirect
+to /unsubscribe/success. Return 400 if missing, 404 if not found.
+Part 2: /unsubscribe/success — static page with checkmark, heading, subtext, link home.
+Part 3: Add "Unsubscribe from digest emails" ghost button to SubscriptionForm, only
+when initialData exists. Calls PUT /api/subscribe with { is_active: false }. Shows
+"Unsubscribed" static text on success.
+```
+**Result:** Created 2 new files: `src/app/api/unsubscribe/route.ts` (GET handler using
+supabaseServiceRole to bypass RLS, token validation, redirect to success page),
+`src/app/unsubscribe/success/page.tsx` (static server component with centered layout,
+SVG checkmark, heading, subtext, link home). Updated `subscription-form.tsx` with
+handleUnsubscribe function, unsubscribed/unsubscribing state, conditional ghost button
+in red below the form. Build passes cleanly.
