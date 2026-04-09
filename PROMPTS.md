@@ -175,14 +175,18 @@ Reused existing Button, Card, Badge, ScoreBadge components. Build passes cleanly
 
 ---
 
-### Prompt 10: Bug Fix / Iteration
-**Ticket:** [TO BE FILLED]
-**Context:** [TO BE FILLED — document an interesting debugging or iteration session]
+### Prompt 10: Fix Ideas Not Scoped to User
+**Ticket:** IF-55
+**Context:** Ideas were visible to ALL users — no data isolation. The `ideas` table lacked a `user_id` column entirely, RLS policies allowed any authenticated user to read all ideas, and the generate route didn't associate ideas with the session user.
 **Prompt:**
 ```
-[TO BE FILLED]
+Fix data isolation so each user only sees their own ideas. Add user_id to ideas table,
+set user_id from session in POST /api/ideas/generate, create GET /api/ideas with user_id
+filtering + auth check, update dashboard query to filter by user_id, fix RLS policies
+(SELECT/INSERT/DELETE scoped to auth.uid() = user_id). Update migration, Database type,
+Idea interface. Output SQL for manual Supabase Dashboard execution.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Added `user_id UUID NOT NULL REFERENCES profiles(id)` to ideas table in migration + Database type + Idea interface. Generate route now sets `user_id: user.id` on every insert. Created new GET /api/ideas/route.ts with auth check + `.eq('user_id', user.id)`. Dashboard page also filters by user_id for defense-in-depth. RLS policies changed from "any authenticated user can read" to three scoped policies (SELECT/INSERT/DELETE all check `auth.uid() = user_id`). Build passes cleanly.
 
 ---
 
