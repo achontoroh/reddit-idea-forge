@@ -14,7 +14,7 @@ SaaS MVP that scans Reddit for user pain points and uses AI to generate scored p
 
 - **Frontend:** Next.js 14+ (App Router), TypeScript, Tailwind CSS
 - **Auth & DB:** Supabase (Auth + Postgres + Row Level Security)
-- **AI:** Anthropic Claude API (Sonnet) — signal extraction + idea generation + scoring
+- **AI:** Anthropic, Groq, or Gemini via `LLM_PROVIDER` — signal extraction + idea generation + scoring
 - **Email:** Resend — subscription notifications with unsubscribe support
 - **Validation:** Zod — runtime validation of LLM responses
 
@@ -60,8 +60,20 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
+# LLM provider selection
+LLM_PROVIDER=anthropic
+
 # Anthropic (from console.anthropic.com)
 ANTHROPIC_API_KEY=sk-ant-...
+ANTHROPIC_MODEL=claude-sonnet-4-20250514
+
+# Groq (from console.groq.com)
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
+
+# Gemini (from aistudio.google.com)
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-2.0-flash
 
 # Resend (from resend.com/api-keys)
 RESEND_API_KEY=re_...
@@ -69,6 +81,12 @@ RESEND_API_KEY=re_...
 # Reddit data source (mock = use mock data, api = real Reddit API)
 REDDIT_DATA_SOURCE=mock
 ```
+
+Default models if env vars are omitted:
+
+- `ANTHROPIC_MODEL=claude-sonnet-4-20250514`
+- `GROQ_MODEL=meta-llama/llama-4-scout-17b-16e-instruct`
+- `GEMINI_MODEL=gemini-2.0-flash`
 
 ## Features
 

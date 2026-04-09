@@ -21,6 +21,7 @@ export class GeminiProvider implements LLMProvider {
         generationConfig: {
           maxOutputTokens: LLM_CONFIG.maxTokens,
           temperature: LLM_CONFIG.temperature,
+          responseMimeType: 'application/json',
         },
       })
 
