@@ -177,12 +177,23 @@ Build passes cleanly.
 
 ### Prompt 9: Landing Page
 **Ticket:** IF-32
-**Context:** Building the public landing page with hero, value prop, and CTA.
+**Context:** Building the public landing page with hero, value props, how-it-works, and CTA sections. Includes marketing layout with auth-aware header and footer component.
 **Prompt:**
 ```
-[TO BE FILLED]
+Create the IdeaForge landing page with 3 files: footer.tsx (copyright, centered, border-t),
+(marketing)/layout.tsx (header with IdeaForge logo, auth-aware nav — Login/Get started for
+anonymous, Dashboard for logged-in users, footer), (marketing)/page.tsx (5 sections: hero
+with gradient bg + h1 + CTA, 3 value prop cards in responsive grid using Card component,
+3-step "how it works" with numbered circles, bottom CTA with indigo bg + white button).
+All Tailwind, responsive, using existing Button and Card components.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 3 new files: `src/components/layout/footer.tsx` (centered copyright with border-t),
+`src/app/(marketing)/layout.tsx` (client component with useEffect auth check via Supabase getUser,
+conditional nav — ghost Login + primary Get started for anon, primary Dashboard for logged-in),
+`src/app/(marketing)/page.tsx` (server component with 4 sections: gradient hero with h1 + CTA button,
+3 value prop Cards with icons in responsive grid, how-it-works with numbered indigo circles in 3-col
+grid, bottom CTA with indigo-600 bg + white button). Removed default Next.js root page.tsx.
+Reused existing Button and Card components. Build passes cleanly — `/` renders as static page.
 
 ---
 
