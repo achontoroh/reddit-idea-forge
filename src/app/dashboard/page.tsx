@@ -6,9 +6,14 @@ import { GenerateButton } from '@/components/ideas/generate-button'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { data: ideas } = await supabase
     .from('ideas')
     .select('*')
+    .eq('user_id', user?.id ?? '')
     .order('score', { ascending: false })
     .order('created_at', { ascending: false })
 

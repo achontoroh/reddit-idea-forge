@@ -34,6 +34,7 @@ export async function POST() {
 
     // Step 4: Save to Supabase via service role (bypasses RLS for insert)
     const ideasToInsert = scoredIdeas.map(({ idea, score }) => ({
+      user_id: user.id,
       title: idea.title,
       pitch: idea.pitch,
       pain_point: idea.pain_point,
