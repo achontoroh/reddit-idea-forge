@@ -3,54 +3,35 @@
 ## Tables
 
 ### profiles
-Extends Supabase `auth.users`. Created automatically on registration via trigger.
+Extends Supabase `auth.users`. Created on registration.
 
 ```sql
-CREATE TABLE profiles (
+CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
   full_name TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
--- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO profiles (id, email)
-  VALUES (NEW.id, NEW.email);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 ```
 
 ### ideas
-Generated product ideas with scoring.
+Generated product ideas with AI scoring.
 
 ```sql
-CREATE TABLE ideas (
+CREATE TABLE public.ideas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   pitch TEXT NOT NULL,
   pain_point TEXT NOT NULL,
   category TEXT NOT NULL,
   source_subreddit TEXT NOT NULL,
   source_url TEXT,
-  score INTEGER NOT NULL CHECK (score >= 0 AND score <= 100),
+  score INTEGER NOT NULL,
   score_breakdown JSONB NOT NULL DEFAULT '{}',
   is_new BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
-CREATE INDEX idx_ideas_user_id ON ideas(user_id);
-CREATE INDEX idx_ideas_category ON ideas(category);
-CREATE INDEX idx_ideas_score ON ideas(score DESC);
-CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
 ```
 
 **score_breakdown JSONB structure:**
@@ -62,21 +43,20 @@ CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
   "tam": 15
 }
 ```
-Each component: 0-25. Sum = total score (0-100).
+Each component: 0–25. Sum = total score (0–100).
 
 ### subscriptions
-Email notification preferences per user.
+Email notification preferences per user (one per user).
 
 ```sql
-CREATE TABLE subscriptions (
+CREATE TABLE public.subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
   categories TEXT[] NOT NULL DEFAULT '{}',
   is_active BOOLEAN DEFAULT TRUE,
   unsubscribe_token UUID DEFAULT gen_random_uuid() UNIQUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id)
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
@@ -84,53 +64,137 @@ CREATE TABLE subscriptions (
 Tracks sent email notifications.
 
 ```sql
-CREATE TABLE email_logs (
+CREATE TABLE public.email_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  subscription_id UUID REFERENCES subscriptions(id) ON DELETE SET NULL,
-  sent_at TIMESTAMPTZ DEFAULT NOW(),
-  idea_ids UUID[] NOT NULL DEFAULT '{}'
+  subscription_id UUID REFERENCES public.subscriptions(id) ON DELETE SET NULL,
+  idea_ids UUID[] NOT NULL DEFAULT '{}',
+  sent_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
-## RLS Policies
+---
+
+## Full Setup Script
+
+Run this entire script in **Supabase Dashboard → SQL Editor**.
 
 ```sql
--- Enable RLS on all tables
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE ideas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE email_logs ENABLE ROW LEVEL SECURITY;
+-- ============================================================
+-- IdeaForge — Database Setup
+-- ============================================================
 
--- Profiles: users read/update own
+-- Extensions
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ============================================================
+-- TABLES
+-- ============================================================
+
+CREATE TABLE public.profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  full_name TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE public.ideas (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  pitch TEXT NOT NULL,
+  pain_point TEXT NOT NULL,
+  category TEXT NOT NULL,
+  source_subreddit TEXT NOT NULL,
+  source_url TEXT,
+  score INTEGER NOT NULL,
+  score_breakdown JSONB NOT NULL DEFAULT '{}',
+  is_new BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE public.subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  categories TEXT[] NOT NULL DEFAULT '{}',
+  is_active BOOLEAN DEFAULT TRUE,
+  unsubscribe_token UUID DEFAULT gen_random_uuid() UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE public.email_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  subscription_id UUID REFERENCES public.subscriptions(id) ON DELETE SET NULL,
+  idea_ids UUID[] NOT NULL DEFAULT '{}',
+  sent_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
+-- INDEXES
+-- ============================================================
+
+CREATE INDEX idx_ideas_user_id ON public.ideas(user_id);
+CREATE INDEX idx_ideas_category ON public.ideas(category);
+CREATE INDEX idx_ideas_score ON public.ideas(score DESC);
+CREATE INDEX idx_ideas_created_at ON public.ideas(created_at DESC);
+
+-- ============================================================
+-- ROW LEVEL SECURITY
+-- ============================================================
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ideas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.email_logs ENABLE ROW LEVEL SECURITY;
+
+-- profiles
 CREATE POLICY "Users can read own profile"
-  ON profiles FOR SELECT USING (auth.uid() = id);
+  ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile"
+  ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE USING (auth.uid() = id);
+  ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
--- Ideas: users can only view their own ideas
+-- ideas
 CREATE POLICY "Users can view own ideas"
-  ON ideas FOR SELECT USING (auth.uid() = user_id);
--- Ideas: users can only insert their own ideas
+  ON public.ideas FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own ideas"
-  ON ideas FOR INSERT WITH CHECK (auth.uid() = user_id);
--- Ideas: users can only delete their own ideas
+  ON public.ideas FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own ideas"
-  ON ideas FOR DELETE USING (auth.uid() = user_id);
+  ON public.ideas FOR DELETE USING (auth.uid() = user_id);
 
--- Subscriptions: users CRUD own
+-- subscriptions
 CREATE POLICY "Users can read own subscriptions"
-  ON subscriptions FOR SELECT USING (auth.uid() = user_id);
+  ON public.subscriptions FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own subscriptions"
-  ON subscriptions FOR INSERT WITH CHECK (auth.uid() = user_id);
+  ON public.subscriptions FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own subscriptions"
-  ON subscriptions FOR UPDATE USING (auth.uid() = user_id);
--- Unsubscribe by token (no auth required — uses service_role on server)
+  ON public.subscriptions FOR UPDATE USING (auth.uid() = user_id);
 
--- Email logs: users read own
+-- email_logs
 CREATE POLICY "Users can read own email logs"
-  ON email_logs FOR SELECT USING (
-    subscription_id IN (SELECT id FROM subscriptions WHERE user_id = auth.uid())
+  ON public.email_logs FOR SELECT USING (
+    subscription_id IN (
+      SELECT id FROM public.subscriptions WHERE user_id = auth.uid()
+    )
   );
+
+-- ============================================================
+-- AUTO-CREATE PROFILE ON SIGNUP
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email)
+  VALUES (NEW.id, NEW.email);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 ```
 
 ## TypeScript Types
@@ -170,6 +234,3 @@ export interface Subscription {
   updated_at: string
 }
 ```
-
-## Migration file
-Save as `supabase/migrations/001_init.sql` and execute via Supabase Dashboard → SQL Editor.

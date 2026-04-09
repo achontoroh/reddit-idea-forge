@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseServiceRole } from '@/lib/supabase/service'
-import { mockRedditPosts, getPostsByCategory } from '@/data/reddit-mock'
+import { getRedditSource } from '@/lib/reddit'
 import { generateIdeasFromPosts } from '@/lib/services/idea-generator'
 import { scoreIdea } from '@/lib/services/idea-scorer'
 import { type Idea, type ScoreBreakdown } from '@/lib/types/idea'
@@ -17,7 +17,10 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Step 1: Load mock Reddit posts and filter out already-processed ones
+    // Step 1: Load Reddit posts and filter out already-processed ones
+    const source = getRedditSource()
+    const allPosts = await source.fetchPosts()
+
     const { data: existingIdeas } = await (supabaseServiceRole
       .from('ideas') as ReturnType<typeof supabaseServiceRole.from>)
       .select('source_url')
@@ -30,7 +33,7 @@ export async function POST() {
       )
     )
 
-    const posts = mockRedditPosts.filter(
+    const posts = allPosts.filter(
       (post) => !processedUrls.has(post.url)
     )
 
@@ -47,7 +50,7 @@ export async function POST() {
     // Step 3: Re-score each idea independently for more accurate scoring
     const scoredIdeas = await Promise.all(
       generatedIdeas.map(async (idea) => {
-        const categoryPosts = getPostsByCategory(idea.category)
+        const categoryPosts = allPosts.filter((p) => p.category === idea.category)
         const score = await scoreIdea(idea, categoryPosts)
         return { idea, score }
       })

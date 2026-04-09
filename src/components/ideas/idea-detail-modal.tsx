@@ -2,6 +2,7 @@
 
 import { type FC, useEffect, useCallback } from 'react'
 import { type Idea } from '@/lib/types/idea'
+import { isWithin24Hours } from '@/lib/utils/date'
 import { Badge } from '@/components/ui/badge'
 import { ScoreBadge } from '@/components/ui/score-badge'
 
@@ -40,12 +41,6 @@ function formatDate(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit',
   })
-}
-
-function isWithin24Hours(dateString: string): boolean {
-  const created = new Date(dateString)
-  const now = new Date()
-  return now.getTime() - created.getTime() < 24 * 60 * 60 * 1000
 }
 
 export const IdeaDetailModal: FC<IdeaDetailModalProps> = ({ idea, onClose }) => {

@@ -25,7 +25,7 @@ export async function sendIdeaDigest(
 
   try {
     const { error } = await resend.emails.send({
-      from: 'IdeaForge <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM_EMAIL ?? 'IdeaForge <onboarding@resend.dev>',
       to,
       subject,
       html,
