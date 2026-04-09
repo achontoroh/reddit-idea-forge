@@ -1,6 +1,5 @@
 import { type RedditPost } from '@/data/reddit-mock'
-import { callLLMWithRetry } from '@/lib/anthropic'
-import { LLM_CONFIG } from '@/config/llm'
+import { getLLMProvider } from '@/lib/llm'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
 import { ScoreBreakdownSchema, type GeneratedIdea } from '@/lib/llm/schemas'
 import { type ScoreBreakdown } from '@/lib/types/idea'
@@ -59,11 +58,8 @@ ${sourcePosts
   )
   .join('\n')}`
 
-  const raw = await callLLMWithRetry(
-    SCORING_SYSTEM_PROMPT,
-    userPrompt,
-    LLM_CONFIG.scoringTemperature
-  )
+  const llm = getLLMProvider()
+  const raw = await llm.complete(userPrompt, SCORING_SYSTEM_PROMPT)
 
   const parsed = parseLLMResponse(raw, IdeaScoreResponseSchema)
   const total =

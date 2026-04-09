@@ -92,7 +92,10 @@ Rules:
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Browser Supabase client |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Browser Supabase client |
 | `SUPABASE_SERVICE_ROLE_KEY` | **No** | Server Supabase client (API routes) |
-| `ANTHROPIC_API_KEY` | **No** | LLM pipeline |
+| `ANTHROPIC_API_KEY` | **No** | LLM pipeline (Anthropic provider) |
+| `LLM_PROVIDER` | **No** | LLM provider selection (`anthropic` \| `groq` \| `gemini`) |
+| `GROQ_API_KEY` | **No** | LLM pipeline (Groq provider) |
+| `GEMINI_API_KEY` | **No** | LLM pipeline (Gemini provider) |
 | `RESEND_API_KEY` | **No** | Email sending |
 | `REDDIT_CLIENT_ID` | **No** | Reddit API (optional) |
 | `REDDIT_CLIENT_SECRET` | **No** | Reddit API (optional) |

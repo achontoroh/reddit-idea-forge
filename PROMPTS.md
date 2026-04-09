@@ -109,7 +109,26 @@ for DB insert). Also created lib/supabase/service.ts for service-role operations
 
 ---
 
-### Prompt 7: Dashboard — Ideas Feed
+### Prompt 7: Provider-Agnostic LLM Wrapper
+**Ticket:** IF-53
+**Context:** Phase 3 — decoupling the LLM pipeline from Anthropic so we can switch between Anthropic, Groq, and Gemini via a single `LLM_PROVIDER` env variable. This enables cost optimization and fallback strategies.
+**Prompt:**
+```
+Implement a provider-agnostic LLM wrapper (IF-53). Create LLMProvider interface,
+three provider implementations (Anthropic, Groq, Gemini), a factory with caching,
+and a consistent LLMError class. Refactor idea-generator.ts and idea-scorer.ts to
+use getLLMProvider() instead of direct Anthropic client. Add LLM_PROVIDER, GROQ_API_KEY,
+GEMINI_API_KEY to .env.local. Create .env.example.
+```
+**Result:** Created 6 new files: `lib/llm/provider.ts` (interface + LLMError), `lib/llm/providers/anthropic.ts`,
+`lib/llm/providers/groq.ts`, `lib/llm/providers/gemini.ts`, `lib/llm/factory.ts` (cached singleton with
+startup log), `lib/llm/index.ts` (barrel export). Refactored `idea-generator.ts` and `idea-scorer.ts` to
+use `getLLMProvider()`. Created `.env.example`. Installed `groq-sdk` and `@google/generative-ai`.
+Build passes. Setting `LLM_PROVIDER=groq` or `gemini` switches the entire pipeline with no code changes.
+
+---
+
+### Prompt 8: Dashboard — Ideas Feed
 **Ticket:** IF-25
 **Context:** Building the main dashboard with idea cards, category filter, score visualization.
 **Prompt:**

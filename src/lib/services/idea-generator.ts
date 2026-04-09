@@ -1,6 +1,5 @@
 import { type RedditPost } from '@/data/reddit-mock'
-import { callLLMWithRetry } from '@/lib/anthropic'
-import { LLM_CONFIG } from '@/config/llm'
+import { getLLMProvider } from '@/lib/llm'
 import { PROMPTS } from '@/lib/llm/prompts'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
 import {
@@ -20,11 +19,12 @@ function validateScore(idea: GeneratedIdea): boolean {
 export async function generateIdeasFromPosts(
   posts: RedditPost[]
 ): Promise<GeneratedIdea[]> {
+  const llm = getLLMProvider()
+
   // Step 1: Extract signals from posts
-  const signalsRaw = await callLLMWithRetry(
-    PROMPTS.signalExtraction.system,
+  const signalsRaw = await llm.complete(
     PROMPTS.signalExtraction.user(posts),
-    LLM_CONFIG.temperature
+    PROMPTS.signalExtraction.system
   )
   const { signals } = parseLLMResponse(signalsRaw, SignalsResponseSchema)
 
@@ -33,10 +33,9 @@ export async function generateIdeasFromPosts(
   }
 
   // Step 2: Generate ideas with scoring
-  const ideasRaw = await callLLMWithRetry(
-    PROMPTS.ideaGeneration.system,
+  const ideasRaw = await llm.complete(
     PROMPTS.ideaGeneration.user(signals),
-    LLM_CONFIG.temperature
+    PROMPTS.ideaGeneration.system
   )
   const { ideas } = parseLLMResponse(ideasRaw, IdeasResponseSchema)
 
