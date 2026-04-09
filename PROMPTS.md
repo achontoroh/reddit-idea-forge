@@ -2,6 +2,13 @@
 
 This document captures the most significant prompts used during development with Claude Code. Each entry includes the context, the prompt, and the outcome.
 
+### Prompt 1: Project Scaffolding
+**Context:** Phase 0 — initial Next.js project setup
+**Prompt:** npx create-next-app@latest reddit-idea-generator --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
+**Result:** Next.js 14 project scaffolded with TypeScript, Tailwind CSS, App Router, src/ directory structure
+
+---
+
 ### Prompt 2: Supabase Schema + Migration
 **Ticket:** IF-16
 **Context:** Creating database tables, RLS policies, and Supabase client helpers.
@@ -153,7 +160,7 @@ Reused existing Button, Card, Badge, ScoreBadge components. Build passes cleanly
 
 ---
 
-### Prompt 8: Email Subscription Form + API
+### Prompt 9: Email Subscription Form + API
 **Ticket:** IF-27
 **Context:** Phase 4 — building the email subscription settings page so users can choose which categories they want in their weekly digest. Requires API route for upsert/update, a client form component with category toggles, a settings page, and nav link.
 **Prompt:**
@@ -175,7 +182,7 @@ Build passes cleanly.
 
 ---
 
-### Prompt 9: Landing Page
+### Prompt 10: Landing Page
 **Ticket:** IF-32
 **Context:** Building the public landing page with hero, value props, how-it-works, and CTA sections. Includes marketing layout with auth-aware header and footer component.
 **Prompt:**
@@ -197,7 +204,7 @@ Reused existing Button and Card components. Build passes cleanly — `/` renders
 
 ---
 
-### Prompt 10: Fix Ideas Not Scoped to User
+### Prompt 11: Fix Ideas Not Scoped to User
 **Ticket:** IF-55
 **Context:** Ideas were visible to ALL users — no data isolation. The `ideas` table lacked a `user_id` column entirely, RLS policies allowed any authenticated user to read all ideas, and the generate route didn't associate ideas with the session user.
 **Prompt:**
@@ -212,7 +219,7 @@ Idea interface. Output SQL for manual Supabase Dashboard execution.
 
 ---
 
-### Prompt 11: Prevent Duplicate Ideas for Same Reddit Post
+### Prompt 12: Prevent Duplicate Ideas for Same Reddit Post
 **Ticket:** IF-56
 **Context:** Clicking "Generate Ideas" multiple times creates duplicate ideas from the same Reddit posts. Need deduplication before running LLM pipeline.
 **Prompt:**
@@ -232,7 +239,7 @@ covered. Fixed insert to populate `source_url` with actual Reddit post URL by ma
 
 ---
 
-### Prompt 12: Fix Email Confirmation Flow
+### Prompt 13: Fix Email Confirmation Flow
 **Ticket:** IF-57
 **Context:** When a user clicks the email confirmation link, Supabase redirects to localhost:3000/ but there's no handler for the PKCE token_hash. The user lands without an active session because the OTP is never exchanged.
 **Prompt:**
@@ -250,7 +257,7 @@ include `emailRedirectTo` option in signUp call pointing to /auth/confirm. Build
 
 ---
 
-### Prompt 13: Fix profile_name Not Saved During Registration
+### Prompt 14: Fix profile_name Not Saved During Registration
 **Ticket:** IF-58
 **Context:** After sign up, the profiles table has no profile_name — the username from the registration form is only stored in auth.users metadata but never written to the profiles table. Need to add the column and upsert it after signUp.
 **Prompt:**
@@ -267,7 +274,7 @@ after successful signUp — writes `profile_name: fullName.trim()` to profiles t
 
 ---
 
-### Prompt 14: Centralized Toast/Snackbar System
+### Prompt 15: Centralized Toast/Snackbar System
 **Ticket:** IF-59
 **Context:** Inline error text near buttons was inconsistent across the app. Need a global toast system for unified user feedback (errors, success messages).
 **Prompt:**
@@ -285,7 +292,7 @@ Build passes cleanly.
 
 ---
 
-### Prompt 15: Quick UI Fixes — Validation, Cursor, Modal Overlap
+### Prompt 16: Quick UI Fixes — Validation, Cursor, Modal Overlap
 **Ticket:** IF-60
 **Context:** Polish pass — three small UX issues: no client-side validation hints on auth forms, missing cursor-pointer on interactive elements, and close button overlapping content in the idea detail modal.
 **Prompt:**
@@ -303,7 +310,7 @@ to modal header to prevent close button overlapping ScoreBadge. Build passes cle
 
 ---
 
-### Prompt 16: Password Strength Indicator & Inline Validation
+### Prompt 17: Password Strength Indicator & Inline Validation
 **Ticket:** IF-60 (followup)
 **Context:** Improving auth form UX — removing misplaced password hint from login, replacing toast errors with inline form errors, and adding a real-time password strength indicator on register that matches Supabase password policy.
 **Prompt:**
@@ -323,7 +330,7 @@ to `Input` component. Removed password hint from login. Build passes cleanly.
 
 ---
 
-### Prompt 17: Resend Integration + Email Template
+### Prompt 18: Resend Integration + Email Template
 **Ticket:** IF-28
 **Context:** Phase 4 — integrating Resend for email delivery, building the digest HTML template, and creating the internal send endpoint. Also includes a UX fix to replace the disabled email input with a static display block in SubscriptionForm.
 **Prompt:**
@@ -350,7 +357,7 @@ email, status, ideas_count, error_message). Added CRON_SECRET and NEXT_PUBLIC_AP
 
 ---
 
-### Prompt 18: Unsubscribe Mechanism
+### Prompt 19: Unsubscribe Mechanism
 **Ticket:** IF-30
 **Context:** Phase 4 — implementing two unsubscribe paths: token-based link from emails (no auth) and settings page toggle (auth required). Needed for CAN-SPAM compliance and UX.
 **Prompt:**
@@ -373,7 +380,7 @@ in red below the form. Build passes cleanly.
 
 ---
 
-### Prompt 19: Settings Page Bugs + Header Navigation
+### Prompt 20: Settings Page Bugs + Header Navigation
 **Ticket:** IF-70
 **Context:** Polish pass — four UX bugs in the subscription settings page and header. Unsubscribe was plain red text instead of a proper button, re-subscribing didn't reset the "Unsubscribed" state, checkbox stayed checked after unsubscribe, and the IdeaForge logo wasn't clickable.
 **Prompt:**
@@ -391,7 +398,7 @@ PR). Updated `header.tsx` (wrapped IdeaForge span with `<Link href="/dashboard">
 
 ---
 
-### Prompt 20: Full Codebase Audit — Env Vars + Hardcoded Values
+### Prompt 21: Full Codebase Audit — Env Vars + Hardcoded Values
 **Ticket:** —
 **Context:** Pre-ship audit — reading every file in src/ to find env var gaps and hardcoded values that would break between environments. Three tasks: env var inventory, hardcoded values report, README accuracy.
 **Prompt:**
@@ -411,9 +418,9 @@ for user decision on what to fix.
 
 ---
 
-### Prompt 21: Fix All Hardcoded Values from Audit
+### Prompt 22: Fix All Hardcoded Values from Audit
 **Ticket:** —
-**Context:** Applying all 6 fixes identified in the codebase audit (Prompt 20), plus syncing .env.example and README.md with reality.
+**Context:** Applying all 6 fixes identified in the codebase audit (Prompt 21), plus syncing .env.example and README.md with reality.
 **Prompt:**
 ```
 Fix all hardcoded values: (1) RESEND_FROM_EMAIL env var in email client, (2) root layout metadata,
