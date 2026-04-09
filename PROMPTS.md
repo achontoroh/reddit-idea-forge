@@ -130,12 +130,26 @@ Build passes. Setting `LLM_PROVIDER=groq` or `gemini` switches the entire pipeli
 
 ### Prompt 8: Dashboard — Ideas Feed
 **Ticket:** IF-25
-**Context:** Building the main dashboard with idea cards, category filter, score visualization.
+**Context:** Phase 4 — building the main dashboard UI. Need Header, dashboard layout with auth guard, ideas feed with category filtering, score breakdown visualization, and generate button.
 **Prompt:**
 ```
-[TO BE FILLED]
+Build the main dashboard UI for IdeaForge (IF-25). Create: dashboard layout
+with Header (logo + user email + logout), dashboard page (server component
+fetching ideas from Supabase ordered by score/date), IdeaCard (title, category
+badge, pitch, score breakdown bars, ScoreBadge, NEW badge, footer with pain
+point + subreddit link), IdeaFeed (client component with category filter state),
+CategoryFilter (color-coded chips for all/devtools/health/education/finance/
+productivity), GenerateButton (POST /api/ideas/generate with loading + error).
+Grid: 1 col mobile, 2 tablet, 3 desktop.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 7 files: `components/layout/header.tsx` (brand + email + LogoutButton),
+`app/dashboard/layout.tsx` (auth guard via Supabase getUser + redirect, Header + max-w-6xl container),
+`app/dashboard/page.tsx` (server component fetching ideas ordered by score DESC, empty state),
+`components/ideas/idea-card.tsx` (score breakdown with labeled bars 0-25, category badge colors,
+NEW badge for <24h, pain_point + subreddit footer), `components/ideas/idea-feed.tsx` (client filter
+state + grid layout), `components/ideas/category-filter.tsx` (color-coded active/outline chips),
+`components/ideas/generate-button.tsx` (fetch with loading/error states + router.refresh).
+Reused existing Button, Card, Badge, ScoreBadge components. Build passes cleanly.
 
 ---
 

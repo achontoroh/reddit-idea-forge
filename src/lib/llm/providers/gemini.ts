@@ -16,7 +16,7 @@ export class GeminiProvider implements LLMProvider {
   async complete(userPrompt: string, systemPrompt: string): Promise<string> {
     try {
       const model = this.client.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: LLM_CONFIG.geminiModel,
         systemInstruction: systemPrompt,
         generationConfig: {
           maxOutputTokens: LLM_CONFIG.maxTokens,
