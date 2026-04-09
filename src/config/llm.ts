@@ -1,0 +1,6 @@
+export const LLM_CONFIG = {
+  model: 'claude-sonnet-4-20250514',
+  maxTokens: 4096,
+  temperature: 0.7,
+  scoringTemperature: 0.3,
+} as const
