@@ -25,7 +25,7 @@ export async function sendIdeaDigest(
 
   try {
     const { error } = await resend.emails.send({
-      from: 'IdeaForge <digest@ideaforge.dev>',
+      from: 'IdeaForge <onboarding@resend.dev>',
       to,
       subject,
       html,
