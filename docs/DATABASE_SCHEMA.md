@@ -9,6 +9,7 @@ Extends Supabase `auth.users`. Created automatically on registration via trigger
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
+  full_name TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

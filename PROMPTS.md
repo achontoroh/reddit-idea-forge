@@ -228,7 +228,24 @@ include `emailRedirectTo` option in signUp call pointing to /auth/confirm. Build
 
 ---
 
-### Prompt 13: Final Review
+### Prompt 13: Fix profile_name Not Saved During Registration
+**Ticket:** IF-58
+**Context:** After sign up, the profiles table has no profile_name — the username from the registration form is only stored in auth.users metadata but never written to the profiles table. Need to add the column and upsert it after signUp.
+**Prompt:**
+```
+Fix profile_name not saved during registration (IF-58). Read DATABASE_SCHEMA.md to confirm
+column names. Add profile_name column to profiles table type. After successful signUp in
+register-form.tsx, upsert profile_name to profiles table. Update schema docs.
+```
+**Result:** Added `profile_name TEXT` column to Database type (Row/Insert/Update) in `src/lib/types/database.ts`.
+Also added required `Relationships: []` to all table types to fix supabase-js v2.102+ compatibility (was
+causing `never` type errors on `.from().upsert()`). Added upsert call in `src/components/auth/register-form.tsx`
+after successful signUp — writes `profile_name: fullName.trim()` to profiles table. Updated
+`docs/DATABASE_SCHEMA.md` with the new column. Removed unused `Enums` from Database type. Build passes cleanly.
+
+---
+
+### Prompt 14: Final Review
 **Ticket:** IF-40
 **Context:** [TO BE FILLED — final polish, cleanup, review prompt]
 **Prompt:**
