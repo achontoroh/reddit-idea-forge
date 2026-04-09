@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const SignalSchema = z.object({
   post_id: z.string(),
+  source_url: z.string(),
   pain_point: z.string(),
   frequency_indicator: z.string(),
   target_audience: z.string(),

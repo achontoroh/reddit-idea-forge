@@ -17,8 +17,29 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Step 1: Load mock Reddit posts
-    const posts = mockRedditPosts
+    // Step 1: Load mock Reddit posts and filter out already-processed ones
+    const { data: existingIdeas } = await (supabaseServiceRole
+      .from('ideas') as ReturnType<typeof supabaseServiceRole.from>)
+      .select('source_url')
+      .eq('user_id', user.id)
+      .not('source_url', 'is', null)
+
+    const processedUrls = new Set(
+      ((existingIdeas ?? []) as Array<{ source_url: string }>).map(
+        (idea) => idea.source_url
+      )
+    )
+
+    const posts = mockRedditPosts.filter(
+      (post) => !processedUrls.has(post.url)
+    )
+
+    if (posts.length === 0) {
+      return NextResponse.json({
+        message: 'All posts already analyzed',
+        generated: 0,
+      })
+    }
 
     // Step 2: Generate ideas from posts (includes signal extraction + idea generation)
     const generatedIdeas = await generateIdeasFromPosts(posts)

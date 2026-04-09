@@ -10,6 +10,7 @@ For each post, identify:
 - A frequency indicator (how common this problem seems: "very common", "common", "niche")
 - The target audience (who experiences this pain)
 - The category (one of: devtools, health, education, finance, productivity)
+- The source_url (copy the url field from the input post exactly as-is)
 
 Respond ONLY with valid JSON. No markdown, no preamble, no explanation.
 
@@ -18,6 +19,7 @@ Example output format:
   "signals": [
     {
       "post_id": "abc123",
+      "source_url": "https://reddit.com/r/webdev/comments/abc001",
       "pain_point": "Developers waste hours debugging middleware issues due to lack of built-in request tracing",
       "frequency_indicator": "very common",
       "target_audience": "Full-stack web developers using Next.js",
@@ -29,6 +31,7 @@ Example output format:
     user: (posts: RedditPost[]): string => {
       const postData = posts.map((p) => ({
         id: p.id,
+        url: p.url,
         subreddit: p.subreddit,
         title: p.title,
         body: p.body,
@@ -49,7 +52,7 @@ For each idea, provide:
 - target_audience: Who would pay for this
 - category: One of: devtools, health, education, finance, productivity
 - source_subreddit: The subreddit where the pain was identified
-- source_url: null (we don't have direct URLs for generated ideas)
+- source_url: the source_url from the primary signal this idea is based on (copy exactly)
 - score: Total viability score 0-100 (sum of breakdown)
 - score_breakdown: Object with four components, each 0-25:
   - pain_intensity: How severe is the pain? (0 = mild annoyance, 25 = hair-on-fire)
@@ -73,7 +76,7 @@ Example output format:
       "target_audience": "Full-stack developers using Next.js in production",
       "category": "devtools",
       "source_subreddit": "r/webdev",
-      "source_url": null,
+      "source_url": "https://reddit.com/r/webdev/comments/abc001",
       "score": 72,
       "score_breakdown": {
         "pain_intensity": 20,

@@ -190,7 +190,27 @@ Idea interface. Output SQL for manual Supabase Dashboard execution.
 
 ---
 
-### Prompt 11: Final Review
+### Prompt 11: Prevent Duplicate Ideas for Same Reddit Post
+**Ticket:** IF-56
+**Context:** Clicking "Generate Ideas" multiple times creates duplicate ideas from the same Reddit posts. Need deduplication before running LLM pipeline.
+**Prompt:**
+```
+Prevent duplicate ideas for the same Reddit post (IF-56). Before running LLM generation,
+query existing source_url values from the ideas table for the current user. Filter mock
+Reddit posts — skip any post whose URL already has a matching idea in DB. If ALL posts
+already processed, return { message: "All posts already analyzed", generated: 0 }. Also
+fix insert to store the Reddit post URL in source_url (was null before) by mapping ideas
+back to source posts via category:subreddit key. No new DB columns.
+```
+**Result:** Modified `src/app/api/ideas/generate/route.ts`: added dedup query before LLM call
+(fetches existing source_url values for user via service role client, builds Set of processed
+URLs, filters mockRedditPosts). Returns early with `{ message, generated: 0 }` when all posts
+covered. Fixed insert to populate `source_url` with actual Reddit post URL by mapping
+`category:subreddit` → post URL (each mock post has a unique subreddit). Build passes cleanly.
+
+---
+
+### Prompt 12: Final Review
 **Ticket:** IF-40
 **Context:** [TO BE FILLED — final polish, cleanup, review prompt]
 **Prompt:**
