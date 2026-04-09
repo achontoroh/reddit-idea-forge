@@ -2,6 +2,7 @@
 
 import { type FC, type FormEvent, useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { Button, Input } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
 
@@ -9,13 +10,11 @@ export const RegisterForm: FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     const supabase = createClient()
@@ -31,11 +30,12 @@ export const RegisterForm: FC = () => {
     })
 
     if (authError) {
-      setError(authError.message)
+      toast.error(authError.message)
       setLoading(false)
       return
     }
 
+    toast.success('Account created! Check your email to confirm.')
     setSuccess(true)
     setLoading(false)
   }
@@ -91,12 +91,6 @@ export const RegisterForm: FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
         />
-
-        {error && (
-          <p className="text-sm text-red-600" role="alert">
-            {error}
-          </p>
-        )}
 
         <Button type="submit" loading={loading} className="w-full">
           Create account
