@@ -210,7 +210,25 @@ covered. Fixed insert to populate `source_url` with actual Reddit post URL by ma
 
 ---
 
-### Prompt 12: Final Review
+### Prompt 12: Fix Email Confirmation Flow
+**Ticket:** IF-57
+**Context:** When a user clicks the email confirmation link, Supabase redirects to localhost:3000/ but there's no handler for the PKCE token_hash. The user lands without an active session because the OTP is never exchanged.
+**Prompt:**
+```
+Fix email confirmation flow (IF-57). Create src/app/auth/confirm/route.ts — GET handler that
+reads token_hash and type from URL search params, calls supabase.auth.verifyOtp({ token_hash, type })
+to exchange token for session. On success → redirect /dashboard, on error → redirect
+/login?error=confirmation_failed. Also update signUp call in register-form.tsx to pass
+emailRedirectTo: `${window.location.origin}/auth/confirm`.
+```
+**Result:** Created `src/app/auth/confirm/route.ts` with GET handler: reads token_hash + type from
+searchParams, calls verifyOtp to exchange for session, redirects to /dashboard on success or
+/login?error=confirmation_failed on failure. Updated `src/components/auth/register-form.tsx` to
+include `emailRedirectTo` option in signUp call pointing to /auth/confirm. Build passes cleanly.
+
+---
+
+### Prompt 13: Final Review
 **Ticket:** IF-40
 **Context:** [TO BE FILLED — final polish, cleanup, review prompt]
 **Prompt:**
