@@ -1,125 +1,111 @@
-# IdeaForge — Reddit-Powered Product Idea Generator
+# IdeaForge
 
-SaaS MVP that scans Reddit for user pain points and uses AI to generate scored product ideas for aspiring founders.
+AI-powered Reddit pain point scanner that generates scored startup ideas.
 
-## How it works
+## What is this?
 
-1. **Collect signals** — scans popular subreddits where users share problems and frustrations
-2. **Extract insights** — AI analyzes posts to identify pain points, frequency, and target audiences
-3. **Generate ideas** — produces product concepts with elevator pitches and category tags
-4. **Score viability** — rates each idea 0-100 across four dimensions: pain intensity, willingness to pay, competition, and market size
-5. **Deliver results** — browse a scored feed with category filters, or subscribe to email notifications
+IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to generate scored product ideas. It's built for indie hackers and product teams who want data-driven startup inspiration without manually trawling through subreddits. Each idea is scored 0-100 across four dimensions: pain intensity, willingness to pay, competition gap, and total addressable market.
 
 ## Tech Stack
 
-- **Frontend:** Next.js 14+ (App Router), TypeScript, Tailwind CSS
-- **Auth & DB:** Supabase (Auth + Postgres + Row Level Security)
-- **AI:** Anthropic, Groq, or Gemini via `LLM_PROVIDER` — signal extraction + idea generation + scoring
-- **Email:** Resend — subscription notifications with unsubscribe support
-- **Validation:** Zod — runtime validation of LLM responses
+- **Next.js 14+** (App Router) + **TypeScript**
+- **Tailwind CSS**
+- **Supabase** (Auth + Postgres + RLS)
+- **Anthropic Claude API** (claude-sonnet) — idea generation + scoring
+- **Resend** — email notifications
+- **Zod** — validation
+
+## Prerequisites
+
+- Node.js 22+
+- pnpm (`npm install -g pnpm`)
+- Supabase account (free tier works)
+- Anthropic API key
+- Resend API key (free tier for dev)
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 22+ and pnpm
-- Supabase account (free plan)
-- Anthropic API key
-- Resend API key (free plan)
-
-### Setup
+### 1. Clone & install
 
 ```bash
-# Clone
-git clone https://github.com/YOUR_USERNAME/reddit-idea-generator.git
-cd reddit-idea-generator
-
-# Install dependencies
+git clone <repo-url>
+cd reddit-idea-forge
 pnpm install
+```
 
-# Environment variables
+### 2. Environment variables
+
+```bash
 cp .env.example .env.local
-# Fill in your keys — see Environment Variables below
+```
 
-# Setup database
-# Copy contents of supabase/migrations/001_init.sql
-# Paste into Supabase Dashboard → SQL Editor → Run
+Fill in `.env.local`:
 
-# Start dev server
+| Variable | Required | Description |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL (Settings > API) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon/public key (Settings > API) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key — server only, never expose to client |
+| `LLM_PROVIDER` | No | `anthropic` (default), `groq`, or `gemini` |
+| `ANTHROPIC_API_KEY` | If using Anthropic | From console.anthropic.com |
+| `ANTHROPIC_MODEL` | No | Defaults to `claude-sonnet-4-20250514` |
+| `GROQ_API_KEY` | If using Groq | From console.groq.com |
+| `GROQ_MODEL` | No | Defaults to `meta-llama/llama-4-scout-17b-16e-instruct` |
+| `GEMINI_API_KEY` | If using Gemini | From ai.google.dev |
+| `GEMINI_MODEL` | No | Defaults to `gemini-2.0-flash` |
+| `RESEND_API_KEY` | Yes | From resend.com |
+| `RESEND_FROM_EMAIL` | No | Sender email shown to recipients. Falls back to `onboarding@resend.dev` in dev |
+| `CRON_SECRET` | No | Shared secret for authenticating cron-triggered email sends |
+| `NEXT_PUBLIC_APP_URL` | No | App base URL, defaults to `http://localhost:3000` |
+| `REDDIT_DATA_SOURCE` | No | Set to `api` to use real Reddit. Defaults to mock data |
+| `LLM_INPUT_POST_LIMIT` | No | Max Reddit posts per LLM call, defaults to `5` |
+
+### 3. Supabase setup
+
+Run the SQL from `docs/DATABASE_SCHEMA.md` in the Supabase SQL Editor. This creates:
+
+- `profiles` — user profiles (auto-created on signup via trigger)
+- `ideas` — generated product ideas with scoring
+- `subscriptions` — email notification preferences
+- `email_logs` — sent email tracking
+- Row Level Security policies for all tables
+
+### 4. Run locally
+
+```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000)
 
-### Environment Variables
-
-Create `.env.local` with:
-
-```env
-# Supabase (from Settings → API in Supabase Dashboard)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
-
-# LLM provider selection
-LLM_PROVIDER=anthropic
-
-# Anthropic (from console.anthropic.com)
-ANTHROPIC_API_KEY=sk-ant-...
-ANTHROPIC_MODEL=claude-sonnet-4-20250514
-
-# Groq (from console.groq.com)
-GROQ_API_KEY=gsk_...
-GROQ_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
-
-# Gemini (from aistudio.google.com)
-GEMINI_API_KEY=...
-GEMINI_MODEL=gemini-2.0-flash
-
-# Resend (from resend.com/api-keys)
-RESEND_API_KEY=re_...
-
-# Reddit data source (mock = use mock data, api = real Reddit API)
-REDDIT_DATA_SOURCE=mock
-```
-
-Default models if env vars are omitted:
-
-- `ANTHROPIC_MODEL=claude-sonnet-4-20250514`
-- `GROQ_MODEL=meta-llama/llama-4-scout-17b-16e-instruct`
-- `GEMINI_MODEL=gemini-2.0-flash`
-
-## Features
-
-- [ ] Landing page with product description and CTA
-- [ ] Auth: registration, login, logout (Supabase Auth)
-- [ ] Ideas feed with category filtering and score visualization
-- [ ] AI-powered idea generation from Reddit posts (Claude API)
-- [ ] Viability scoring with 4-component breakdown (0-100)
-- [ ] Email subscriptions with category preferences
-- [ ] Unsubscribe via email link or settings page
-
-## Project Structure
+## Architecture Overview
 
 ```
 src/
-├── app/            # Pages, layouts, API routes (Next.js App Router)
-├── components/     # UI primitives and feature components
-├── lib/            # Business logic (Supabase, LLM, email, Reddit)
-├── config/         # Constants, categories, LLM config
-├── hooks/          # React hooks for data fetching
-└── data/           # Mock Reddit data
+├── app/           # Next.js App Router — pages, layouts, API routes
+├── components/    # UI primitives (ui/) and feature composites (features/)
+├── lib/           # Business logic — supabase, llm, email, reddit integrations
+├── config/        # Constants, prompt templates, categories
+├── hooks/         # Client-side React hooks
+└── data/          # Static mock data
 ```
 
-See `docs/PROJECT_STRUCTURE.md` for full file tree.
+Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
 
-## AI Development
+See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
-This project was built using **Claude Code** (Anthropic's CLI development tool). Key AI artifacts:
+## Key Features
 
-- 
-- `PROMPTS.md` — documented key prompts with context and results
-- `CLAUDE.md` — project context file for Claude Code
-- `.claude/skills/` — reusable skill definitions (API, UI, LLM patterns)
+- **Mock Reddit data source** — works out of the box, switchable to real API via env var
+- **LLM-powered idea generation** with 0-100 scoring across four dimensions (pain intensity, willingness to pay, competition gap, TAM)
+- **Multi-provider LLM support** — Anthropic Claude, Groq, or Google Gemini
+- **Manual "Generate" trigger** from dashboard (cron-ready for future automation)
+- **Email subscription** with category preferences
+- **Unsubscribe** via token link (no auth required) or settings page
+
+## Data Source
+
+By default, IdeaForge uses mock Reddit data so you can run the full pipeline without Reddit API credentials. To switch to real Reddit data, set `REDDIT_DATA_SOURCE=api` in `.env.local`.
 
 ## License
 
