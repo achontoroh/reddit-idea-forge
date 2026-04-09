@@ -84,6 +84,7 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
       }
 
       setSuccess(true)
+      setUnsubscribed(false)
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -159,7 +160,7 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
               type="button"
               disabled={unsubscribing}
               onClick={handleUnsubscribe}
-              className="text-sm text-red-500 hover:text-red-700 disabled:opacity-50 cursor-pointer"
+              className="w-full mt-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {unsubscribing ? 'Unsubscribing...' : 'Unsubscribe from digest emails'}
             </button>
