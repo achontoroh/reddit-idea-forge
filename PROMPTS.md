@@ -388,3 +388,46 @@ Verify pnpm build passes.
 **Result:** Updated 2 files: `subscription-form.tsx` (replaced plain text with outlined red button,
 added `setUnsubscribed(false)` in submit success handler — FIX 3 was already implemented in prior
 PR). Updated `header.tsx` (wrapped IdeaForge span with `<Link href="/dashboard">`). Build passes cleanly.
+
+---
+
+### Prompt 20: Full Codebase Audit — Env Vars + Hardcoded Values
+**Ticket:** —
+**Context:** Pre-ship audit — reading every file in src/ to find env var gaps and hardcoded values that would break between environments. Three tasks: env var inventory, hardcoded values report, README accuracy.
+**Prompt:**
+```
+Full codebase audit. Read every file in src/. Task 1: Find ALL process.env.* usage, compare with
+.env.example, add missing vars. Task 2: Find ALL hardcoded values (URLs, emails, model names,
+magic numbers) that should be env vars or config constants — report but don't fix. Task 3: Rewrite
+README.md env vars section to reflect reality.
+```
+**Result:** Read all 63 source files. Found 15 unique env vars in code, all present in .env.example.
+Discovered 2 vars in .env.example NOT used in code (RESEND_FROM_EMAIL, REDDIT_DATA_SOURCE — intended
+but not wired up). Found 6 actionable hardcoded values: email sender 'IdeaForge <onboarding@resend.dev>'
+should use RESEND_FROM_EMAIL, root layout metadata still says "Create Next App", footer year hardcoded
+to 2025, email digest magic numbers (3 ideas, 7 days), duplicated isWithin24Hours logic. Updated
+README.md env vars table to 16 rows with Required column and accurate descriptions. Logged findings
+for user decision on what to fix.
+
+---
+
+### Prompt 21: Fix All Hardcoded Values from Audit
+**Ticket:** —
+**Context:** Applying all 6 fixes identified in the codebase audit (Prompt 20), plus syncing .env.example and README.md with reality.
+**Prompt:**
+```
+Fix all hardcoded values: (1) RESEND_FROM_EMAIL env var in email client, (2) root layout metadata,
+(3) wire up REDDIT_DATA_SOURCE via data source abstraction, (4) dynamic footer year, (5) extract
+email magic numbers to constants, (6) deduplicate isWithin24Hours to shared util. Then sync
+.env.example and README.md with all process.env.* usage in code.
+```
+**Result:** Modified 8 existing files, created 4 new files. (1) `lib/email/client.ts` — reads
+`RESEND_FROM_EMAIL` with fallback. (2) `app/layout.tsx` — metadata now says "IdeaForge". (3) Created
+`lib/reddit/source.ts` (interface), `lib/reddit/mock-source.ts` (MockRedditSource class),
+`lib/reddit/index.ts` (factory with `REDDIT_DATA_SOURCE` switch). Updated `api/ideas/generate/route.ts`
+to use `getRedditSource()` instead of importing mock data directly. (4) `footer.tsx` — dynamic year
+via `new Date().getFullYear()`. (5) `api/email/send/route.ts` — extracted `MAX_IDEAS_PER_EMAIL = 3`
+and `IDEAS_WINDOW_DAYS = 7`. `lib/email/template.ts` — same constant. (6) Created
+`lib/utils/date.ts` with shared `isWithin24Hours`, imported in both `idea-card.tsx` and
+`idea-detail-modal.tsx`. All 16 env vars in code now match `.env.example` exactly. README.md env
+table updated with accurate descriptions. Build passes cleanly.

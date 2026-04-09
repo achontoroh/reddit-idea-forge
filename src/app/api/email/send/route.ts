@@ -5,6 +5,9 @@ import { supabaseServiceRole } from '@/lib/supabase/service'
 import { sendIdeaDigest } from '@/lib/email/client'
 import type { Idea } from '@/lib/types/idea'
 
+const MAX_IDEAS_PER_EMAIL = 3
+const IDEAS_WINDOW_DAYS = 7
+
 const EmailLogInsertSchema = z.object({
   user_id: z.string().uuid(),
   email: z.string().email(),
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    const windowStart = new Date(Date.now() - IDEAS_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString()
 
     let sent = 0
     let skipped = 0
@@ -74,9 +77,9 @@ export async function POST(request: NextRequest) {
         .from('ideas')
         .select('*')
         .eq('user_id', subscription.user_id)
-        .gte('created_at', sevenDaysAgo)
+        .gte('created_at', windowStart)
         .order('score', { ascending: false })
-        .limit(3)
+        .limit(MAX_IDEAS_PER_EMAIL)
 
       const typedIdeas = (ideas ?? []) as Idea[]
 
