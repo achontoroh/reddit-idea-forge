@@ -79,7 +79,7 @@ export const IdeaDetailModal: FC<IdeaDetailModalProps> = ({ idea, onClose }) => 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 cursor-pointer"
           aria-label="Close"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -88,7 +88,7 @@ export const IdeaDetailModal: FC<IdeaDetailModalProps> = ({ idea, onClose }) => 
         </button>
 
         {/* Header */}
-        <div className="mb-4 flex items-start gap-3">
+        <div className="mb-4 flex items-start gap-3 pr-8">
           <div className="flex-1">
             <div className="mb-2 flex flex-wrap items-center gap-2">
               {isNew && <Badge variant="success">NEW</Badge>}

@@ -263,11 +263,38 @@ Build passes cleanly.
 
 ---
 
-### Prompt 15: Final Review
-**Ticket:** IF-40
-**Context:** [TO BE FILLED — final polish, cleanup, review prompt]
+### Prompt 15: Quick UI Fixes — Validation, Cursor, Modal Overlap
+**Ticket:** IF-60
+**Context:** Polish pass — three small UX issues: no client-side validation hints on auth forms, missing cursor-pointer on interactive elements, and close button overlapping content in the idea detail modal.
 **Prompt:**
 ```
-[TO BE FILLED]
+Three small fixes:
+1. Frontend validation hints on login/register forms — email "Enter a valid email"
+   on blur, password "Min 8 characters" hint below field.
+2. Add cursor-pointer to all clickable elements missing it.
+3. Fix close button overlap in modal — add padding so it doesn't overlap ScoreBadge.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Updated 6 files. Added `onBlur` and `hint` props to `Input` component. Added email
+validation on blur + password hint to both `login-form.tsx` and `register-form.tsx`. Added
+`cursor-pointer` to `Button`, `CategoryFilter` buttons, and modal close button. Added `pr-8`
+to modal header to prevent close button overlapping ScoreBadge. Build passes cleanly.
+
+---
+
+### Prompt 16: Password Strength Indicator & Inline Validation
+**Ticket:** IF-60 (followup)
+**Context:** Improving auth form UX — removing misplaced password hint from login, replacing toast errors with inline form errors, and adding a real-time password strength indicator on register that matches Supabase password policy.
+**Prompt:**
+```
+Fix password validation UX:
+1. Remove "Min 8 characters" hint from login (only belongs on register)
+2. Replace toast errors with inline errors shown under the fields
+3. Build password strength indicator on register — progress bar + checklist
+   for 5 requirements (8 chars, uppercase, lowercase, number, special char).
+   Show only when focused or has value. Tailwind only.
+```
+**Result:** Created `components/auth/password-strength.tsx` with progress bar (color shifts red→green
+as requirements met) and checklist with green dots. Exported `isPasswordValid()` helper used by
+register form to block submit. Replaced `toast.error` with inline `formError` state in both
+`login-form.tsx` and `register-form.tsx` — shown as red banner above form. Added `onFocus` prop
+to `Input` component. Removed password hint from login. Build passes cleanly.

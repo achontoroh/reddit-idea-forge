@@ -35,7 +35,7 @@ export const CategoryFilter: FC<CategoryFilterProps> = ({ selected, onChange }) 
         <button
           key={cat}
           onClick={() => onChange(cat)}
-          className={`rounded-full px-3 py-1 text-sm font-medium capitalize transition-colors ${
+          className={`rounded-full px-3 py-1 text-sm font-medium capitalize transition-colors cursor-pointer ${
             selected === cat
               ? CATEGORY_COLORS[cat] ?? 'bg-gray-900 text-white'
               : `border ${CATEGORY_OUTLINE[cat] ?? 'border-gray-200 text-gray-600 hover:border-gray-400'}`
