@@ -33,6 +33,7 @@ Generated product ideas with scoring.
 ```sql
 CREATE TABLE ideas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   pitch TEXT NOT NULL,
   pain_point TEXT NOT NULL,
@@ -45,6 +46,7 @@ CREATE TABLE ideas (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE INDEX idx_ideas_user_id ON ideas(user_id);
 CREATE INDEX idx_ideas_category ON ideas(category);
 CREATE INDEX idx_ideas_score ON ideas(score DESC);
 CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
@@ -104,12 +106,15 @@ CREATE POLICY "Users can read own profile"
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE USING (auth.uid() = id);
 
--- Ideas: any authenticated user can read
-CREATE POLICY "Authenticated users can read ideas"
-  ON ideas FOR SELECT TO authenticated USING (true);
--- Ideas: only service_role can insert (server-side LLM pipeline)
-CREATE POLICY "Service role can insert ideas"
-  ON ideas FOR INSERT WITH CHECK (true);
+-- Ideas: users can only view their own ideas
+CREATE POLICY "Users can view own ideas"
+  ON ideas FOR SELECT USING (auth.uid() = user_id);
+-- Ideas: users can only insert their own ideas
+CREATE POLICY "Users can insert own ideas"
+  ON ideas FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- Ideas: users can only delete their own ideas
+CREATE POLICY "Users can delete own ideas"
+  ON ideas FOR DELETE USING (auth.uid() = user_id);
 
 -- Subscriptions: users CRUD own
 CREATE POLICY "Users can read own subscriptions"
@@ -140,6 +145,7 @@ export interface ScoreBreakdown {
 
 export interface Idea {
   id: string
+  user_id: string
   title: string
   pitch: string
   pain_point: string

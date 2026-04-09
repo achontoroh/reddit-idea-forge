@@ -7,6 +7,7 @@ export interface ScoreBreakdown {
 
 export interface Idea {
   id: string
+  user_id: string
   title: string
   pitch: string
   pain_point: string

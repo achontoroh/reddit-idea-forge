@@ -23,6 +23,7 @@ export interface Database {
       ideas: {
         Row: {
           id: string
+          user_id: string
           title: string
           pitch: string
           pain_point: string
@@ -36,6 +37,7 @@ export interface Database {
         }
         Insert: {
           id?: string
+          user_id: string
           title: string
           pitch: string
           pain_point: string
@@ -49,6 +51,7 @@ export interface Database {
         }
         Update: {
           id?: string
+          user_id?: string
           title?: string
           pitch?: string
           pain_point?: string
