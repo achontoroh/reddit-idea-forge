@@ -88,12 +88,24 @@ array, and getPostsByCategory helper. TypeScript compiles clean.
 
 ### Prompt 6: LLM Pipeline — Signal Extraction + Idea Generation
 **Ticket:** IF-22
-**Context:** Building the core LLM pipeline with Anthropic Claude API. Two-step process: extract signals from Reddit posts, then generate scored product ideas.
+**Context:** Phase 3 — building the complete LLM pipeline with real Anthropic API calls. Two-step architecture: extract signals from Reddit posts, then generate scored product ideas. All responses validated with Zod schemas.
 **Prompt:**
 ```
-[TO BE FILLED]
+Build the complete LLM pipeline for IdeaForge. All Anthropic API calls must be REAL (no mocks).
+Create: src/lib/anthropic.ts (client singleton), src/lib/llm/prompts.ts (externalized prompts),
+src/lib/llm/schemas.ts (Zod validation), src/lib/services/idea-generator.ts (signal extraction
++ idea generation), src/lib/services/idea-scorer.ts (independent scoring with 4 dimensions),
+src/app/api/ideas/generate/route.ts (POST endpoint, auth required, saves to Supabase).
+Use claude-sonnet-4-20250514, validate all LLM responses with Zod, wrap in try/catch.
 ```
-**Result:** [TO BE FILLED]
+**Result:** Created 8 files: config/llm.ts (model config), lib/anthropic.ts (SDK client with
+callLLM + callLLMWithRetry), lib/llm/prompts.ts (signal extraction + idea generation system
+prompts with typed user prompt builders), lib/llm/schemas.ts (Zod schemas for Signal,
+GeneratedIdea, ScoreBreakdown), lib/llm/parse-response.ts (generic Zod-validated JSON parser
+with markdown fence stripping), lib/services/idea-generator.ts (two-step pipeline: signals →
+ideas with score validation), lib/services/idea-scorer.ts (independent 4-dimension scoring
+with reasoning), api/ideas/generate/route.ts (auth-protected POST, uses service-role client
+for DB insert). Also created lib/supabase/service.ts for service-role operations. Build passes.
 
 ---
 
