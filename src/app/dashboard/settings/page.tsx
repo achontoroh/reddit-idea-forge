@@ -23,20 +23,15 @@ export default async function SettingsPage() {
 
   const initialData = typedSubscription
     ? {
-        email: user.email ?? '',
         categories: typedSubscription.categories,
         is_active: typedSubscription.is_active,
       }
-    : {
-        email: user.email ?? '',
-        categories: [] as string[],
-        is_active: true,
-      }
+    : null
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
-      <SubscriptionForm initialData={typedSubscription ? initialData : null} />
+      <SubscriptionForm email={user.email ?? ''} initialData={initialData} />
     </div>
   )
 }

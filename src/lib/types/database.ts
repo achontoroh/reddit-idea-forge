@@ -102,21 +102,30 @@ export interface Database {
       email_logs: {
         Row: {
           id: string
-          subscription_id: string | null
+          user_id: string
+          email: string
+          status: 'sent' | 'failed'
+          ideas_count: number
+          error_message: string | null
           sent_at: string
-          idea_ids: string[]
         }
         Insert: {
           id?: string
-          subscription_id?: string | null
+          user_id: string
+          email: string
+          status: 'sent' | 'failed'
+          ideas_count: number
+          error_message?: string | null
           sent_at?: string
-          idea_ids?: string[]
         }
         Update: {
           id?: string
-          subscription_id?: string | null
+          user_id?: string
+          email?: string
+          status?: 'sent' | 'failed'
+          ideas_count?: number
+          error_message?: string | null
           sent_at?: string
-          idea_ids?: string[]
         }
         Relationships: []
       }

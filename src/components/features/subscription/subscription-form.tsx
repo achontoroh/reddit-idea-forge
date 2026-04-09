@@ -3,19 +3,17 @@
 import { type FC, useState, useCallback } from 'react'
 import { CATEGORIES } from '@/config/categories'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 interface SubscriptionFormProps {
+  email: string
   initialData?: {
-    email: string
     categories: string[]
     is_active: boolean
   } | null
 }
 
-export const SubscriptionForm: FC<SubscriptionFormProps> = ({ initialData }) => {
-  const [email] = useState(initialData?.email ?? '')
+export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     initialData?.categories ?? []
   )
@@ -72,13 +70,10 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ initialData }) => 
       <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Digest Settings</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Input
-          label="Email address"
-          type="email"
-          value={email}
-          disabled
-          hint="Email from your account"
-        />
+        <div className="mb-6">
+          <p className="text-sm text-gray-500 mb-1">Digests will be sent to</p>
+          <p className="text-sm font-medium text-gray-900">{email}</p>
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
