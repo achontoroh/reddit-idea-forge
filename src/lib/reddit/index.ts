@@ -1,15 +1,13 @@
 import { config } from '@/config/app'
 import { type RedditDataSource } from './source'
 import { MockRedditSource } from './mock-source'
+import { PublicJsonRedditSource } from './client'
 
 export type { RedditDataSource } from './source'
 
 export function getRedditSource(): RedditDataSource {
   if (config.reddit.dataSource === 'api') {
-    // Real Reddit API source — not yet implemented.
-    // Falls back to mock to avoid runtime errors.
-    console.warn('[Reddit] REDDIT_DATA_SOURCE=api but no real source implemented — using mock')
-    return new MockRedditSource()
+    return new PublicJsonRedditSource()
   }
 
   return new MockRedditSource()

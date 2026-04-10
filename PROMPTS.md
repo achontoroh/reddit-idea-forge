@@ -438,3 +438,27 @@ and `IDEAS_WINDOW_DAYS = 7`. `lib/email/template.ts` — same constant. (6) Crea
 `lib/utils/date.ts` with shared `isWithin24Hours`, imported in both `idea-card.tsx` and
 `idea-detail-modal.tsx`. All 16 env vars in code now match `.env.example` exactly. README.md env
 table updated with accurate descriptions. Build passes cleanly.
+
+---
+
+### Prompt 23: Replace Mock Reddit Data with Public JSON Endpoints
+**Ticket:** IF-42
+**Context:** Phase 3 — Reddit closed self-service OAuth API access in 2024. Using public JSON endpoints (no auth token needed) as an interim solution until Reddit approves our API request. Need to wire real Reddit data into the existing data source abstraction.
+**Prompt:**
+```
+Replace mock Reddit data with real Reddit public JSON endpoints. Create
+src/lib/reddit/types.ts (raw API shapes + mapping function), update
+src/config/reddit.ts (TARGET_SUBREDDITS, POSTS_PER_SUBREDDIT, subreddit-to-category
+map), create src/lib/reddit/client.ts (PublicJsonRedditSource class fetching
+/r/{subreddit}/hot.json with rate limiting and error handling), update factory in
+src/lib/reddit/index.ts to return PublicJsonRedditSource when REDDIT_DATA_SOURCE=api.
+Update .env.example. Verify pnpm build passes.
+```
+**Result:** Created 2 new files, modified 2 existing files. `src/lib/reddit/types.ts` — RedditApiResponse,
+RedditApiPost interfaces + mapRawToRedditPost() that maps raw Reddit fields to RedditPost and classifies
+subreddits into app categories via SUBREDDIT_CATEGORY_MAP. `src/lib/reddit/client.ts` —
+PublicJsonRedditSource class that iterates TARGET_SUBREDDITS, fetches hot.json with User-Agent header,
+200ms delay between requests, logs warnings and skips on error. `src/config/reddit.ts` — added
+TARGET_SUBREDDITS (8 subreddits), POSTS_PER_SUBREDDIT=15, SUBREDDIT_CATEGORY_MAP, REDDIT_REQUEST_DELAY_MS.
+`src/lib/reddit/index.ts` — replaced stub warning with actual PublicJsonRedditSource instantiation.
+`.env.example` — added REDDIT_DATA_SOURCE=mock with comment. Build passes cleanly.
