@@ -9,8 +9,8 @@ export async function proxy(request: NextRequest) {
   const isAuthPage = pathname === '/login' || pathname === '/register'
   const isDashboardPage = pathname.startsWith('/dashboard')
 
-  // Redirect authenticated users away from auth pages
-  if (isAuthPage && user) {
+  // Redirect authenticated users away from landing and auth pages
+  if ((pathname === '/' || isAuthPage) && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
