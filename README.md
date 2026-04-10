@@ -6,6 +6,12 @@ AI-powered Reddit pain point scanner that generates scored startup ideas.
 
 IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to generate scored product ideas. It's built for indie hackers and product teams who want data-driven startup inspiration without manually trawling through subreddits. Each idea is scored 0-100 across four dimensions: pain intensity, willingness to pay, competition gap, and total addressable market.
 
+## 🚀 Live Demo
+
+**[https://reddit-idea-forge.vercel.app](https://reddit-idea-forge.vercel.app)**
+
+> After registration, confirm your email and log in manually to access the dashboard.
+
 ## Tech Stack
 
 - **Next.js 14+** (App Router) + **TypeScript**
@@ -104,6 +110,20 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 ## Data Source
 
 By default, IdeaForge uses mock Reddit data so you can run the full pipeline without Reddit API credentials. To switch to real Reddit data, set `dataSource: 'api'` in `src/config/app.ts`.
+
+## Deployment
+
+Deployed on [Vercel](https://vercel.com). To deploy your own instance:
+
+1. Fork this repo
+2. Import to Vercel — Next.js is auto-detected
+3. Add all environment variables from `.env.example`
+4. Set `NEXT_PUBLIC_APP_URL` to your Vercel URL
+5. In Supabase → Authentication → URL Configuration:
+   - Set **Site URL** to your Vercel URL
+   - Add your Vercel URL to **Redirect URLs**
+
+No other configuration needed.
 
 ## License
 
