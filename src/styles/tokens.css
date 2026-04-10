@@ -1,0 +1,65 @@
+/* ── IdeaForge Design Tokens ── */
+
+:root {
+  /* Brand */
+  --color-primary: #4954BD;
+  --color-primary-hover: #3d47a8;
+  --color-primary-active: #323d9e;
+  --color-primary-container: #818CF8;
+  --color-on-primary: #FBF8FF;
+  --color-accent: #FD933D;
+
+  /* Surfaces */
+  --surface-base: #F9F9FE;
+  --surface-lowest: #FFFFFF;
+  --surface-low: #F2F3FA;
+  --surface-highest: #DFE2EC;
+  --color-on-surface: #2E333A;
+  --color-on-surface-muted: #6B7280;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.0rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-modal: 0 20px 40px rgba(46, 51, 58, 0.06);
+  --ghost-border-width: 1.5px;
+  --ghost-border-color: rgba(174, 178, 187, 0.15);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(12px);
+
+  /* Typography tracking */
+  --tracking-display: -0.02em;
+  --tracking-headline: -0.01em;
+  --tracking-label: 0.05em;
+}
+
+.dark {
+  /* Brand */
+  --color-primary: #818CF8;
+  --color-primary-hover: #7078e6;
+  --color-primary-active: #636cd4;
+  --color-primary-container: #4954BD;
+  --color-on-primary: #FBF8FF;
+  --color-accent: #FDBA74;
+
+  /* Surfaces */
+  --surface-base: #1E293B;
+  --surface-lowest: #0F172A;
+  --surface-low: #334155;
+  --surface-highest: #475569;
+  --color-on-surface: #F8FAFC;
+  --color-on-surface-muted: #94A3B8;
+
+  /* Elevation */
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-blur: blur(24px);
+}

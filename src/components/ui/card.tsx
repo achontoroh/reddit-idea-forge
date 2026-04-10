@@ -4,6 +4,7 @@ interface CardProps {
   children: React.ReactNode
   className?: string
   padding?: 'sm' | 'md' | 'lg'
+  modal?: boolean
   onClick?: () => void
 }
 
@@ -17,11 +18,12 @@ export const Card: FC<CardProps> = ({
   children,
   className = '',
   padding = 'md',
+  modal = false,
   onClick,
 }) => {
   return (
     <div
-      className={`rounded-lg border border-gray-200 bg-white ${paddingClasses[padding]} ${className}`}
+      className={`rounded-lg bg-surface-lowest outline outline-[var(--ghost-border-width)] outline-[var(--ghost-border-color)] ${modal ? 'shadow-modal' : ''} ${paddingClasses[padding]} ${className}`}
       onClick={onClick}
     >
       {children}
