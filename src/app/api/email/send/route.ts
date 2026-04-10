@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { config } from '@/config/app'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseServiceRole } from '@/lib/supabase/service'
 import { sendIdeaDigest } from '@/lib/email/client'
 import type { Idea } from '@/lib/types/idea'
-
-const MAX_IDEAS_PER_EMAIL = 3
-const IDEAS_WINDOW_DAYS = 7
 
 const EmailLogInsertSchema = z.object({
   user_id: z.string().uuid(),
@@ -55,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-    const windowStart = new Date(Date.now() - IDEAS_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString()
+    const windowStart = new Date(Date.now() - config.email.windowDays * 24 * 60 * 60 * 1000).toISOString()
 
     let sent = 0
     let skipped = 0
@@ -79,7 +77,7 @@ export async function POST(request: NextRequest) {
         .eq('user_id', subscription.user_id)
         .gte('created_at', windowStart)
         .order('score', { ascending: false })
-        .limit(MAX_IDEAS_PER_EMAIL)
+        .limit(config.email.maxIdeasPerEmail)
 
       const typedIdeas = (ideas ?? []) as Idea[]
 
