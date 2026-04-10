@@ -36,6 +36,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# ai chat history (contains secrets in context)
+/ai-history/
+
 # vercel
 .vercel
 
