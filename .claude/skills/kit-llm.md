@@ -8,46 +8,31 @@ description: "Use when working with LLM integration — prompt design, Anthropic
 ## Architecture Overview
 
 ```
-Mock Reddit posts → Step 1: Signal extraction (LLM) → Step 2: Idea generation + scoring (LLM) → Zod validation → Supabase insert
+Reddit posts (live API or mock) → select-posts (category-balanced, max 8) → Step 1: Signal extraction (LLM) → Step 2: Idea generation + scoring (LLM) → Zod validation → Supabase insert
 ```
 
 Two separate LLM calls with different system prompts optimized for each task.
+Reddit source is swapped via `config.reddit.dataSource` in `src/config/app.ts` (`'api'` | `'mock'`).
 
-## Anthropic SDK Usage
+## LLM Client
+
+The LLM client supports multiple providers configured in `src/config/app.ts`:
 
 ```typescript
-// src/lib/llm/client.ts
-import Anthropic from '@anthropic-ai/sdk'
-import { LLM_CONFIG } from '@/config/llm'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-export async function callLLM(systemPrompt: string, userPrompt: string): Promise<string> {
-  const response = await client.messages.create({
-    model: LLM_CONFIG.model,
-    max_tokens: LLM_CONFIG.maxTokens,
-    temperature: LLM_CONFIG.temperature,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }],
-  })
-
-  const textBlock = response.content.find(block => block.type === 'text')
-  if (!textBlock || textBlock.type !== 'text') throw new Error('No text response from LLM')
-  return textBlock.text
+// src/config/app.ts — LLM config section
+llm: {
+  provider: 'gemini' as 'anthropic' | 'groq' | 'gemini',
+  models: {
+    anthropic: 'claude-sonnet-4-20250514',
+    groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
+    gemini: 'gemma-4-31b-it',
+  },
+  inputPostLimit: 8,
 }
 ```
 
-## Config
-
-```typescript
-// src/config/llm.ts
-export const LLM_CONFIG = {
-  model: 'claude-sonnet-4-20250514',
-  maxTokens: 4096,
-  temperature: 0.7,          // creative variety for ideas
-  scoringTemperature: 0.3,   // consistency for scoring
-} as const
-```
+When adding a new provider, update the `provider` union type and add the model in `models`.
+The active provider + model is selected at runtime from this config — check `src/lib/llm/client.ts` for the dispatcher.
 
 ## Prompt Design Rules
 

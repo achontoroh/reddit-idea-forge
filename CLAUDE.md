@@ -26,9 +26,26 @@ pnpm lint             # ESLint
 - **src/lib/** — Business logic, integrations (Supabase, LLM, email, Reddit)
 - **src/config/** — Constants, prompt templates, categories
 - **src/hooks/** — Client-side React hooks
-- **src/data/** — Static mock data
+- **src/data/** — Mock data (fallback only — real Reddit API is default)
 
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
+
+### Reddit Integration
+- Public JSON API: `reddit.com/r/{sub}/hot.json` — no API key needed
+- Data source toggleable in `src/config/app.ts` (`'mock' | 'api'`, default `'api'`)
+- 8 subreddits configured in `src/config/reddit.ts` with category mapping
+- `select-posts.ts` does round-robin category-balanced selection before feeding LLM (limit: 8 posts)
+- Strategy pattern: `RedditDataSource` interface in `lib/reddit/source.ts`, swapped via factory in `lib/reddit/index.ts`
+
+### Auth Flow (Vercel PKCE Fix)
+- Auth callback/confirm routes write cookies directly to the `NextResponse.redirect()` response — NOT via `cookieStore()`
+- This fixes Supabase PKCE flow on Vercel where `set-cookie` headers were dropped from redirects
+- Pattern: create redirect response first → pass to `createServerClient` cookies config → return same response
+
+### Middleware Auth Redirects
+- `src/proxy.ts` handles route protection via `updateSession` + redirect rules
+- Authenticated users on `/`, `/login`, `/register` → redirect to `/dashboard`
+- Unauthenticated users on `/dashboard/*` → redirect to `/login`
 
 Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 
@@ -52,7 +69,8 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 ## Stack
 - Next.js 14+ (App Router) + TypeScript + Tailwind CSS
 - Supabase (Auth + Postgres + RLS)
-- Anthropic Claude API (Sonnet) for LLM
+- LLM: multi-provider via `src/config/app.ts` — Gemini (active), Anthropic, Groq supported
+- Reddit: public JSON API (no auth token), configurable mock fallback
 - Resend for email
 - Zod for validation
 
