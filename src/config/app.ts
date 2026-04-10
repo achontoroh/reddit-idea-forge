@@ -1,15 +1,17 @@
 export const config = {
   llm: {
-    provider: 'anthropic' as 'anthropic' | 'groq' | 'gemini',
+    provider: 'gemini' as 'anthropic' | 'groq' | 'gemini',
     models: {
       anthropic: 'claude-sonnet-4-20250514',
       groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      gemini: 'gemini-2.0-flash',
+      gemini: 'gemma-4-31b-it',
     },
     inputPostLimit: 8,
   },
   reddit: {
-    dataSource: 'mock' as 'mock' | 'api',
+    dataSource: 'api' as 'mock' | 'api',
+    postsPerSubreddit: 5,
+    requestDelayMs: 200,
   },
   email: {
     maxIdeasPerEmail: 3,
