@@ -1,13 +1,12 @@
+import { config } from '@/config/app'
 import type { Idea } from '@/lib/types/idea'
-
-const MAX_IDEAS_PER_EMAIL = 3
 
 export function buildDigestHtml(
   ideas: Idea[],
   unsubscribeToken: string,
   appUrl: string
 ): string {
-  const topIdeas = ideas.slice(0, MAX_IDEAS_PER_EMAIL)
+  const topIdeas = ideas.slice(0, config.email.maxIdeasPerEmail)
   const unsubscribeUrl = `${appUrl}/unsubscribe?token=${unsubscribeToken}`
 
   const ideaCards = topIdeas

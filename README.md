@@ -39,26 +39,24 @@ pnpm install
 cp .env.example .env.local
 ```
 
-Fill in `.env.local`:
+Fill in `.env.local` with secrets and environment-specific URLs:
 
 | Variable | Required | Description |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL (Settings > API) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon/public key (Settings > API) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key — server only, never expose to client |
-| `LLM_PROVIDER` | No | `anthropic` (default), `groq`, or `gemini` |
 | `ANTHROPIC_API_KEY` | If using Anthropic | From console.anthropic.com |
-| `ANTHROPIC_MODEL` | No | Defaults to `claude-sonnet-4-20250514` |
 | `GROQ_API_KEY` | If using Groq | From console.groq.com |
-| `GROQ_MODEL` | No | Defaults to `meta-llama/llama-4-scout-17b-16e-instruct` |
 | `GEMINI_API_KEY` | If using Gemini | From ai.google.dev |
-| `GEMINI_MODEL` | No | Defaults to `gemini-2.0-flash` |
 | `RESEND_API_KEY` | Yes | From resend.com |
 | `RESEND_FROM_EMAIL` | No | Sender email shown to recipients. Falls back to `onboarding@resend.dev` in dev |
 | `CRON_SECRET` | No | Shared secret for authenticating cron-triggered email sends |
 | `NEXT_PUBLIC_APP_URL` | No | App base URL, defaults to `http://localhost:3000` |
-| `REDDIT_DATA_SOURCE` | No | Set to `api` to use real Reddit. Defaults to mock data |
-| `LLM_INPUT_POST_LIMIT` | No | Max Reddit posts per LLM call, defaults to `5` |
+
+### Configuration
+
+Non-secret configuration (LLM provider, model names, Reddit data source, email limits) lives in `src/config/app.ts` and can be changed directly in code. No env vars needed for these — just edit the config object and redeploy.
 
 ### 3. Supabase setup
 
@@ -105,7 +103,7 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Data Source
 
-By default, IdeaForge uses mock Reddit data so you can run the full pipeline without Reddit API credentials. To switch to real Reddit data, set `REDDIT_DATA_SOURCE=api` in `.env.local`.
+By default, IdeaForge uses mock Reddit data so you can run the full pipeline without Reddit API credentials. To switch to real Reddit data, set `dataSource: 'api'` in `src/config/app.ts`.
 
 ## License
 

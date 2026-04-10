@@ -64,8 +64,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Public
 SUPABASE_SERVICE_ROLE_KEY=        # Secret — server only
 ANTHROPIC_API_KEY=                # Secret — server only
 RESEND_API_KEY=                   # Secret — server only
-REDDIT_DATA_SOURCE=mock           # mock | api
 ```
+Non-secret config (LLM provider, models, Reddit data source, email limits) → `src/config/app.ts`
 
 ## Documentation
 Detailed references in `docs/` — point Claude Code to specific doc when needed.

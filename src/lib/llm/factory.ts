@@ -1,3 +1,4 @@
+import { config } from '@/config/app'
 import { type LLMProvider } from './provider'
 import { AnthropicProvider } from './providers/anthropic'
 import { GroqProvider } from './providers/groq'
@@ -9,7 +10,7 @@ let cachedProvider: LLMProvider | null = null
 let cachedProviderName: string | null = null
 
 export function getLLMProvider(): LLMProvider {
-  const provider = (process.env.LLM_PROVIDER ?? 'anthropic') as ProviderName
+  const provider: ProviderName = config.llm.provider
 
   // Return cached instance if provider hasn't changed
   if (cachedProvider && cachedProviderName === provider) {
