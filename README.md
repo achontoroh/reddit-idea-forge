@@ -10,7 +10,7 @@ IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to ge
 
 **[https://reddit-idea-forge.vercel.app](https://reddit-idea-forge.vercel.app)**
 
-> After registration, confirm your email and log in manually to access the dashboard.
+> After registration, confirm your email — you'll be redirected to the dashboard automatically.
 
 ## Tech Stack
 
@@ -100,16 +100,19 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Key Features
 
-- **Mock Reddit data source** — works out of the box, switchable to real API via env var
+- **Real Reddit data** — scans 8 subreddits via Reddit's public JSON API (no API key needed), with mock fallback available via config
 - **LLM-powered idea generation** with 0-100 scoring across four dimensions (pain intensity, willingness to pay, competition gap, TAM)
 - **Multi-provider LLM support** — Anthropic Claude, Groq, or Google Gemini
 - **Manual "Generate" trigger** from dashboard (cron-ready for future automation)
+- **Auto-redirect** — authenticated users skip the landing page and go straight to the dashboard
 - **Email subscription** with category preferences
 - **Unsubscribe** via token link (no auth required) or settings page
 
 ## Data Source
 
-By default, IdeaForge uses mock Reddit data so you can run the full pipeline without Reddit API credentials. To switch to real Reddit data, set `dataSource: 'api'` in `src/config/app.ts`.
+IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. It scans 8 subreddits (SaaS, startups, smallbusiness, webdev, Entrepreneur, productivity, personalfinance, programming), pulling 5 hot posts from each with a 200ms rate-limit delay between requests. Subreddit list and settings are in `src/config/reddit.ts`.
+
+To fall back to mock data (e.g. for offline dev), set `dataSource: 'mock'` in `src/config/app.ts`.
 
 ## Deployment
 

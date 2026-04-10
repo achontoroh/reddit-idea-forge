@@ -135,6 +135,38 @@ const { data, error } = await supabase
 
 For public routes, skip the auth check but validate the token/input thoroughly.
 
+## Auth Callback Routes (Vercel PKCE Pattern)
+
+Auth routes that exchange codes for sessions must write cookies directly to the redirect response.
+Do NOT use `cookieStore()` — it silently drops `set-cookie` headers on Vercel redirects.
+
+```typescript
+// src/app/auth/confirm/route.ts — pattern for all auth callback routes
+const response = NextResponse.redirect(redirectTo)
+
+const supabase = createServerClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options)
+        )
+      },
+    },
+  }
+)
+
+const { error } = await supabase.auth.exchangeCodeForSession(code)
+if (!error) return response // cookies are already on this response
+```
+
+Both `auth/callback` and `auth/confirm` routes use this pattern. Any new auth route must follow it.
+
 ## Environment Variables in Routes
 
 ```typescript
