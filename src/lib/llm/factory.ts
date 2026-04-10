@@ -17,7 +17,9 @@ export function getLLMProvider(): LLMProvider {
     return cachedProvider
   }
 
-  console.log(`[LLM] Using provider: ${provider}`)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[LLM] Using provider: ${provider}`)
+  }
 
   switch (provider) {
     case 'groq':

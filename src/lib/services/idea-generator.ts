@@ -56,7 +56,9 @@ export async function generateIdeasFromPosts(
   const knownUrls = new Set(urlByPostId.values())
   const validIdeas = ideas.filter((idea) => {
     if (!validateScore(idea)) {
-      console.warn(`[LLM] Score mismatch for "${idea.title}", recalculating`)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`[LLM] Score mismatch for "${idea.title}", recalculating`)
+      }
       const { pain_intensity, willingness_to_pay, competition, tam } =
         idea.score_breakdown
       idea.score = pain_intensity + willingness_to_pay + competition + tam
