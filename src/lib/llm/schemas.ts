@@ -31,6 +31,24 @@ export const GeneratedIdeaSchema = z.object({
   score_breakdown: ScoreBreakdownSchema,
 })
 
+export const MvpComplexitySchema = z.enum(['low', 'medium', 'high'])
+export const MonetizationModelSchema = z.enum(['subscription', 'one-time', 'freemium', 'marketplace'])
+
+/** V2 schema: merged signal + idea generation with additional fields */
+export const GeneratedIdeaV2Schema = z.object({
+  title: z.string(),
+  pitch: z.string(),
+  pain_point: z.string(),
+  target_audience: z.string(),
+  category: z.enum(categorySlugs),
+  source_subreddit: z.string(),
+  source_url: z.string(),
+  score: z.number().min(0).max(100),
+  score_breakdown: ScoreBreakdownSchema,
+  mvp_complexity: MvpComplexitySchema,
+  monetization_model: MonetizationModelSchema,
+})
+
 export const SignalsResponseSchema = z.object({
   signals: z.array(SignalSchema),
 })
@@ -39,5 +57,10 @@ export const IdeasResponseSchema = z.object({
   ideas: z.array(GeneratedIdeaSchema),
 })
 
+export const IdeasV2ResponseSchema = z.object({
+  ideas: z.array(GeneratedIdeaV2Schema),
+})
+
 export type Signal = z.infer<typeof SignalSchema>
 export type GeneratedIdea = z.infer<typeof GeneratedIdeaSchema>
+export type GeneratedIdeaV2 = z.infer<typeof GeneratedIdeaV2Schema>
