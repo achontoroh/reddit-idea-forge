@@ -12,8 +12,7 @@ export default async function DashboardPage() {
   const { data: ideas } = await supabase
     .from('ideas')
     .select('*')
-    .eq('user_id', user?.id ?? '')
-    .order('score', { ascending: false })
+    .order('ai_score', { ascending: false })
     .order('created_at', { ascending: false })
 
   const typedIdeas = (ideas ?? []) as Idea[]

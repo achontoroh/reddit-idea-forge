@@ -35,7 +35,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
           <span className="px-4 py-1.5 bg-primary-container/20 text-primary rounded-full text-[0.6875rem] font-bold tracking-widest uppercase">
             {categoryLabel}
           </span>
-          <ScoreBadge score={typedIdea.score} variant="full" />
+          <ScoreBadge score={typedIdea.ai_score} variant="full" />
         </div>
 
         <h1 className="text-3xl md:text-[3.5rem] leading-[1.1] font-bold text-on-surface tracking-[-0.02em] mb-8 font-heading">

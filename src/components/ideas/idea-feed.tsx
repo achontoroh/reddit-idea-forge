@@ -33,7 +33,7 @@ export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas }) => {
           (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
       case 'top':
-        return [...filtered].sort((a, b) => b.score - a.score)
+        return [...filtered].sort((a, b) => b.ai_score - a.ai_score)
       case 'hot':
       default:
         return filtered
