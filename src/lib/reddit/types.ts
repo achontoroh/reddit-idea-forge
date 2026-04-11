@@ -1,6 +1,17 @@
 import { type CategorySlug } from '@/config/categories'
-import { type RedditPost } from '@/data/reddit-mock'
 import { SUBREDDIT_CATEGORY_MAP } from '@/config/reddit'
+
+export interface RedditPost {
+  id: string
+  subreddit: string
+  title: string
+  body: string
+  score: number
+  num_comments: number
+  url: string
+  created_utc: number
+  category: CategorySlug
+}
 
 /** Shape of a single post inside Reddit's public JSON response */
 export interface RedditApiPost {

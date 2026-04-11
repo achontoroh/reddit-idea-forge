@@ -83,10 +83,9 @@ Open [http://localhost:3000](http://localhost:3000)
 src/
 ├── app/           # Next.js App Router — pages, layouts, API routes
 ├── components/    # UI primitives (ui/) and feature composites (features/)
-├── lib/           # Business logic — supabase, llm, email, reddit integrations
+├── lib/           # Business logic — supabase, llm, email, reddit, pipeline
 ├── config/        # Constants, prompt templates, categories
-├── hooks/         # Client-side React hooks
-└── data/          # Static mock data
+└── hooks/         # Client-side React hooks
 ```
 
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
@@ -107,9 +106,7 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Data Source
 
-IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, pulling hot posts with a 200ms rate-limit delay between requests.
-
-To fall back to mock data (e.g. for offline dev), set `dataSource: 'mock'` in `src/config/app.ts`.
+IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, pulling hot posts with a 200ms rate-limit delay between requests. Fetching runs on a cron schedule (every 6 hours via GitHub Actions) with category rotation — 3 categories per run.
 
 ## Development Setup
 

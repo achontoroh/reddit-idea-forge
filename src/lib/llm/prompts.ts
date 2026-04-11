@@ -1,4 +1,4 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from '@/lib/reddit/types'
 import { CATEGORIES } from '@/config/categories'
 import { type Signal } from './schemas'
 

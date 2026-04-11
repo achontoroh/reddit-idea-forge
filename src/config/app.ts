@@ -7,11 +7,19 @@ export const config = {
       anthropic: 'claude-sonnet-4-20250514',
       groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
       gemini: 'gemma-4-31b-it',
+      /** Secondary model for rotation — alternates with primary every 6 hours */
+      geminiSecondary: 'gemma-4-26b-it',
     },
     inputPostLimit: 8,
   },
+  scoring: {
+    /** Bonus for ideas sourced from posts with cross-subreddit signal */
+    crossSubredditBonus: 5,
+    /** Bonus for ideas sourced from high-engagement (viral) posts */
+    highEngagementBonus: 3,
+  },
   reddit: {
-    dataSource: 'api' as 'mock' | 'api',
+    dataSource: 'api' as const,
     postsPerSubreddit: 5,
     requestDelayMs: 200,
     categories: CATEGORIES,
@@ -27,7 +35,8 @@ export const config = {
     postTtlDays: 30,
   },
   ideas: {
-    ttlDays: 14,
+    ttlDays: 30,
+    dedupWindowDays: 7,
     maxFavoritesPerUser: 20,
   },
 } as const
