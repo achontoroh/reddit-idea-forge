@@ -14,31 +14,31 @@ export function classifyEngagement(score: number): EngagementTier {
   return 'niche'
 }
 
+const STOP_WORDS = new Set([
+  'i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'she', 'it', 'they',
+  'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
+  'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
+  'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+  'should', 'can', 'may', 'might', 'just', 'not', 'no', 'so', 'if',
+  'how', 'what', 'when', 'where', 'why', 'who', 'which', 'that', 'this',
+  'these', 'those', 'am', 'about', 'any', 'all', 'also', 'than', 'too',
+  'very', 'some', 'more', 'most', 'other', 'into', 'out', 'up', 'down',
+  'then', 'there', 'here', 'each', 'every', 'both', 'few', 'many',
+  'much', 'own', 'same', 'like', 'get', 'got', 'need', 'want', 'use',
+  'using', 'used', 'make', 'made', 'way', 'thing', 'things', 'really',
+  'even', 'still', 'already', 'yet', 'after', 'before', 'while',
+])
+
 /**
  * Extract significant words from a title for overlap detection.
  * Strips common stop words and short tokens.
  */
 function extractKeywords(title: string): string[] {
-  const stopWords = new Set([
-    'i', 'me', 'my', 'we', 'our', 'you', 'your', 'he', 'she', 'it', 'they',
-    'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-    'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
-    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
-    'should', 'can', 'may', 'might', 'just', 'not', 'no', 'so', 'if',
-    'how', 'what', 'when', 'where', 'why', 'who', 'which', 'that', 'this',
-    'these', 'those', 'am', 'about', 'any', 'all', 'also', 'than', 'too',
-    'very', 'some', 'more', 'most', 'other', 'into', 'out', 'up', 'down',
-    'then', 'there', 'here', 'each', 'every', 'both', 'few', 'many',
-    'much', 'own', 'same', 'like', 'get', 'got', 'need', 'want', 'use',
-    'using', 'used', 'make', 'made', 'way', 'thing', 'things', 'really',
-    'even', 'still', 'already', 'yet', 'after', 'before', 'while',
-  ])
-
   return title
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter((word) => word.length >= 4 && !stopWords.has(word))
+    .filter((word) => word.length >= 4 && !STOP_WORDS.has(word))
 }
 
 /**
@@ -84,10 +84,10 @@ export function getCrossSubredditKeywordsForPost(
 
 /**
  * Check if a post has any cross-subreddit signal.
+ * Accepts pre-computed keywords to avoid re-extracting.
  */
 export function hasCrossSubredditSignal(
-  post: RedditPostRow,
-  overlaps: Map<string, string[]>
+  crossSubredditKeywords: string[]
 ): boolean {
-  return getCrossSubredditKeywordsForPost(post, overlaps).length > 0
+  return crossSubredditKeywords.length > 0
 }

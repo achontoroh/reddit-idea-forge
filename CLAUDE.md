@@ -27,16 +27,24 @@ pnpm lint             # ESLint
 - **src/config/** — Constants, prompt templates, categories
 - **src/hooks/** — Client-side React hooks
 - **src/styles/** — Design tokens (`tokens.css`)
-- **src/data/** — Mock data (fallback only — real Reddit API is default)
 
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
 
 ### Reddit Integration
 - Public JSON API: `reddit.com/r/{sub}/hot.json` — no API key needed
-- Data source toggleable in `src/config/app.ts` (`'mock' | 'api'`, default `'api'`)
-- 8 subreddits configured in `src/config/reddit.ts` with category mapping
-- `select-posts.ts` does round-robin category-balanced selection before feeding LLM (limit: 8 posts)
+- 8 categories mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`
+- Cron-based fetch with category rotation (3 categories per run, every 6 hours)
+- `lib/reddit/fetch-service.ts` orchestrates fetch → dedup → DB storage
+- `lib/reddit/rotation.ts` selects categories based on UTC hour
 - Strategy pattern: `RedditDataSource` interface in `lib/reddit/source.ts`, swapped via factory in `lib/reddit/index.ts`
+
+### Pipeline (Cron)
+- GitHub Actions triggers `POST /api/cron/generate` every 6 hours and `POST /api/cron/cleanup` daily
+- Pipeline: fetch Reddit posts → pre-LLM enrichment (cross-subreddit overlap, engagement) → LLM generation → score adjustment → dedup → DB insert
+- `lib/pipeline/generate-ideas.ts` — main orchestrator
+- `lib/pipeline/enrichment.ts` — pre-LLM enrichment (keyword overlap, engagement classification)
+- Model rotation: Gemma 31B / 26B alternates every 6 hours via `lib/llm/model-rotation.ts`
+- All cron endpoints protected by `CRON_SECRET` Bearer token (shared via `lib/utils/validation.ts`)
 
 ### Auth Flow (Vercel PKCE Fix)
 - Auth callback/confirm routes write cookies directly to the `NextResponse.redirect()` response — NOT via `cookieStore()`
@@ -55,7 +63,7 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 | Rule | Skill |
 |------|-------|
 | Server secrets (`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`) — NEVER in client components | `/kit-create-api` |
-| LLM prompts in `lib/llm/prompts.ts` — NEVER hardcoded in routes | `/kit-llm` |
+| LLM prompts in `lib/llm/prompts.ts` and `lib/llm/prompts-v2.ts` — NEVER hardcoded in routes | `/kit-llm` |
 | Validate ALL LLM responses with Zod schemas before using | `/kit-llm` |
 | Category list from `config/categories.ts` — single source of truth for UI, API, and LLM | `/kit-create-ui` |
 | Score colors: green (70+), amber (40-69), gray (<40) | `/kit-create-ui` |
@@ -87,7 +95,8 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 - Next.js 14+ (App Router) + TypeScript + Tailwind CSS
 - Supabase (Auth + Postgres + RLS)
 - LLM: multi-provider via `src/config/app.ts` — Gemini (active), Anthropic, Groq supported
-- Reddit: public JSON API (no auth token), configurable mock fallback
+- Reddit: public JSON API (no auth token)
+- GitHub Actions (cron pipeline)
 - Resend for email
 - Zod for validation
 
@@ -100,6 +109,7 @@ SUPABASE_SERVICE_ROLE_KEY=        # Secret — server only
 ANTHROPIC_API_KEY=                # Secret — server only (if using Anthropic)
 GEMINI_API_KEY=                   # Secret — server only (active provider)
 RESEND_API_KEY=                   # Secret — server only
+CRON_SECRET=                      # Secret — Bearer token for cron endpoints
 ```
 Non-secret config (LLM provider, models, Reddit data source, email limits) → `src/config/app.ts`
 

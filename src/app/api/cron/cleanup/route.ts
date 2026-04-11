@@ -1,24 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServiceRole } from '@/lib/supabase/service'
+import { validateCronAuth } from '@/lib/utils/validation'
 
 export async function POST(request: NextRequest) {
-  // Validate CRON_SECRET
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret) {
-    console.error('[Cron/Cleanup] CRON_SECRET env var is not set')
-    return NextResponse.json(
-      { success: false, error: 'Server misconfiguration' },
-      { status: 500 }
-    )
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
-    )
-  }
+  const authError = validateCronAuth(request)
+  if (authError) return authError
 
   try {
     const now = new Date().toISOString()

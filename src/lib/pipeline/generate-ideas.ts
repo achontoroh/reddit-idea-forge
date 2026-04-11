@@ -11,6 +11,7 @@ import {
   detectCrossSubredditOverlap,
   getCrossSubredditKeywordsForPost,
   hasCrossSubredditSignal,
+  type EngagementTier,
 } from './enrichment'
 import type { Database } from '@/lib/types/database'
 
@@ -58,18 +59,28 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
   const crossSubredditOverlaps = detectCrossSubredditOverlap(posts)
   console.log(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
 
-  const enrichedPosts: EnrichedPostInput[] = posts.map((post) => ({
-    id: post.reddit_id,
-    reddit_post_id: post.id,
-    url: post.url,
-    subreddit: post.subreddit,
-    title: post.title,
-    body: post.body,
-    score: post.score,
-    num_comments: post.num_comments,
-    engagement_tier: classifyEngagement(post.score),
-    cross_subreddit_keywords: getCrossSubredditKeywordsForPost(post, crossSubredditOverlaps),
-  }))
+  // Cache engagement tier and cross-subreddit keywords per post URL
+  // to avoid recomputing during score adjustment
+  const postEnrichmentCache = new Map<string, { engagementTier: EngagementTier; crossKeywords: string[] }>()
+
+  const enrichedPosts: EnrichedPostInput[] = posts.map((post) => {
+    const engagementTier = classifyEngagement(post.score)
+    const crossKeywords = getCrossSubredditKeywordsForPost(post, crossSubredditOverlaps)
+    postEnrichmentCache.set(post.url, { engagementTier, crossKeywords })
+
+    return {
+      id: post.reddit_id,
+      reddit_post_id: post.id,
+      url: post.url,
+      subreddit: post.subreddit,
+      title: post.title,
+      body: post.body,
+      score: post.score,
+      num_comments: post.num_comments,
+      engagement_tier: engagementTier,
+      cross_subreddit_keywords: crossKeywords,
+    }
+  })
 
   // 3. Model rotation
   const model = getCurrentRotationModel()
@@ -101,17 +112,16 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     return { postsProcessed: posts.length, ideasGenerated: 0, ideasSkippedDuplicate: 0, model, errors }
   }
 
-  // 5. Post-LLM score adjustment
-  const postsByUrl = new Map(posts.map((p) => [p.url, p]))
+  // 5. Post-LLM score adjustment (using cached enrichment data)
   for (const idea of ideas) {
-    const sourcePost = postsByUrl.get(idea.source_url)
-    if (!sourcePost) continue
+    const cached = postEnrichmentCache.get(idea.source_url)
+    if (!cached) continue
 
     let bonus = 0
-    if (hasCrossSubredditSignal(sourcePost, crossSubredditOverlaps)) {
+    if (hasCrossSubredditSignal(cached.crossKeywords)) {
       bonus += config.scoring.crossSubredditBonus
     }
-    if (classifyEngagement(sourcePost.score) === 'viral') {
+    if (cached.engagementTier === 'viral') {
       bonus += config.scoring.highEngagementBonus
     }
 
@@ -127,23 +137,23 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     }
   }
 
-  // 6. Deduplication: check for existing ideas with same source_url in last 7 days
+  // 6. Deduplication: check for existing ideas with same source_url within dedup window
   const sourceUrls = ideas.map((idea) => idea.source_url)
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+  const dedupCutoff = new Date()
+  dedupCutoff.setDate(dedupCutoff.getDate() - config.ideas.dedupWindowDays)
 
   const { data: existingIdeas } = await supabaseServiceRole
     .from('ideas')
     .select('source_url')
     .in('source_url', sourceUrls)
-    .gte('created_at', sevenDaysAgo.toISOString())
+    .gte('created_at', dedupCutoff.toISOString())
 
   const existingUrls = new Set((existingIdeas ?? []).map((i) => i.source_url))
   const newIdeas = ideas.filter((idea) => !existingUrls.has(idea.source_url))
   const skippedCount = ideas.length - newIdeas.length
 
   if (skippedCount > 0) {
-    console.log(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url in last 7 days)`)
+    console.log(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
   }
 
   // 7. Build post ID lookup (url → DB uuid) for source_post_ids
@@ -164,7 +174,7 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     source_url: idea.source_url,
     ai_score: idea.score,
     ai_score_breakdown: idea.score_breakdown,
-    source_post_ids: resolveSourcePostIds(idea.source_url, urlToPostId),
+    source_post_ids: urlToPostId.has(idea.source_url) ? [urlToPostId.get(idea.source_url)!] : [],
     mvp_complexity: idea.mvp_complexity,
     monetization_model: idea.monetization_model,
     expires_at: expiresAtIso,
@@ -201,17 +211,6 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
   )
 
   return result
-}
-
-/**
- * Resolve source_url to an array of reddit_post UUIDs.
- */
-function resolveSourcePostIds(
-  sourceUrl: string,
-  urlToPostId: Map<string, string>
-): string[] {
-  const postId = urlToPostId.get(sourceUrl)
-  return postId ? [postId] : []
 }
 
 /**
