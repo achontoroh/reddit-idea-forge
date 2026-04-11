@@ -72,10 +72,14 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 
 ## Commit Convention
 - **NEVER commit without asking the user first** — always ask "can I commit?" and wait for confirmation
-- Commit message format: `[IF-XX] Ticket title — brief description`
-- Example: `[IF-111] Dev environment setup — env examples, docs, gitignore`
-- The `[IF-XX]` prefix is the Linear ticket number, title comes from the ticket, description is a short summary of what changed
-- Keep the description concise — one line, not a paragraph
+- Use `/linear-commit` skill for all commits — it handles Linear magic words, ticket linking, and format
+- Linear project prefix: **IF**
+
+## Branching Strategy
+- `main` — production, protected
+- `develop` — integration branch, day-to-day work
+- Branches are named after **epics** (not individual tickets) to link to Linear epics
+- Feature branches merge into `develop` via PR, `develop` merges into `main` for releases
 
 ## Stack
 - Next.js 14+ (App Router) + TypeScript + Tailwind CSS
