@@ -66,13 +66,7 @@ Non-secret configuration (LLM provider, model names, Reddit data source, email l
 
 ### 3. Supabase setup
 
-Run the SQL from `docs/DATABASE_SCHEMA.md` in the Supabase SQL Editor. This creates:
-
-- `profiles` — user profiles (auto-created on signup via trigger)
-- `ideas` — generated product ideas with scoring
-- `subscriptions` — email notification preferences
-- `email_logs` — sent email tracking
-- Row Level Security policies for all tables
+Copy the contents of [`supabase/setup.sql`](supabase/setup.sql) and paste into **Supabase Dashboard → SQL Editor → Run**.
 
 ### 4. Run locally
 
@@ -113,6 +107,26 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. It scans 8 subreddits (SaaS, startups, smallbusiness, webdev, Entrepreneur, productivity, personalfinance, programming), pulling 5 hot posts from each with a 200ms rate-limit delay between requests. Subreddit list and settings are in `src/config/reddit.ts`.
 
 To fall back to mock data (e.g. for offline dev), set `dataSource: 'mock'` in `src/config/app.ts`.
+
+## Development Setup
+
+For feature development and DB migration testing, we use a **separate dev Supabase project** so changes never touch production data.
+
+**Quick start:**
+
+```bash
+# 1. Copy env template and fill in your values
+cp .env.example .env.local
+
+# 2. For dev Supabase, also create dev overrides
+cp .env.development.example .env.development.local
+
+# 3. Run migrations on dev Supabase (see docs)
+
+pnpm dev
+```
+
+See **[docs/DEV_ENVIRONMENT.md](docs/DEV_ENVIRONMENT.md)** for the full guide: creating a dev Supabase project, configuring Vercel preview deployments, and the branching strategy.
 
 ## Deployment
 

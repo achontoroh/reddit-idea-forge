@@ -62,9 +62,20 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 | Error handling — every API route wrapped in try/catch with consistent error format | `/kit-create-api` |
 | Components: kebab-case files, PascalCase named exports, FC with typed props | `/kit-create-ui` |
 | New UI component? Check existing list first, extract to `components/ui/` if reusable, update registry | `/kit-create-ui` |
-| Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:` + Linear ticket ref `(IF-XX)` | — |
 | Mobile-first Tailwind: start mobile, add `md:` and `lg:` breakpoints | `/kit-create-ui` |
-| Log every major task to `PROMPTS.md` (5-10 entries required) | `/kit-log-prompt` |
+| DB schema changes → update `supabase/setup.sql` AND `docs/DATABASE_SCHEMA.md` | `/kit-create-api` |
+
+## Linear Workflow
+- **Before starting a ticket:** read the Linear ticket (via MCP) to understand full context and acceptance criteria — don't rely only on the user's prompt
+- **After completing a ticket:** if the implementation diverged from the original ticket description, update the ticket with what was actually done
+- Linear project: IdeaForge (IF)
+
+## Commit Convention
+- **NEVER commit without asking the user first** — always ask "can I commit?" and wait for confirmation
+- Commit message format: `[IF-XX] Ticket title — brief description`
+- Example: `[IF-111] Dev environment setup — env examples, docs, gitignore`
+- The `[IF-XX]` prefix is the Linear ticket number, title comes from the ticket, description is a short summary of what changed
+- Keep the description concise — one line, not a paragraph
 
 ## Stack
 - Next.js 14+ (App Router) + TypeScript + Tailwind CSS
@@ -101,7 +112,6 @@ All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
 
 | Skill | When to use |
 |-------|-------------|
-| `/kit-log-prompt` | START of every Linear ticket — logs prompt to PROMPTS.md |
 | `/kit-create-api` | API routes, Supabase queries, auth checks, error handling |
 | `/kit-create-ui` | Pages, components, Tailwind patterns, score visualization |
 | `/kit-llm` | LLM pipeline, prompt design, Zod schemas, Anthropic SDK |
