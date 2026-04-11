@@ -1,6 +1,17 @@
-import { type Category } from '@/config/categories'
-import { type RedditPost } from '@/data/reddit-mock'
+import { type CategorySlug } from '@/config/categories'
 import { SUBREDDIT_CATEGORY_MAP } from '@/config/reddit'
+
+export interface RedditPost {
+  id: string
+  subreddit: string
+  title: string
+  body: string
+  score: number
+  num_comments: number
+  url: string
+  created_utc: number
+  category: CategorySlug
+}
 
 /** Shape of a single post inside Reddit's public JSON response */
 export interface RedditApiPost {
@@ -32,7 +43,7 @@ export interface RedditApiResponse {
  */
 export function mapRawToRedditPost(raw: RedditApiPost['data']): RedditPost | null {
   const subredditLower = raw.subreddit.toLowerCase()
-  const category: Category | undefined = SUBREDDIT_CATEGORY_MAP[subredditLower]
+  const category: CategorySlug | undefined = SUBREDDIT_CATEGORY_MAP[subredditLower]
 
   if (!category) {
     return null

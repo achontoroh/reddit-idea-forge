@@ -103,6 +103,7 @@ Rules:
 | `REDDIT_CLIENT_ID` | **No** | Reddit API (optional) |
 | `REDDIT_CLIENT_SECRET` | **No** | Reddit API (optional) |
 | `REDDIT_DATA_SOURCE` | **No** | `mock` or `api` — switches Reddit data source |
+| `CRON_SECRET` | **No** | Bearer token for cron API endpoints. Must also be set in GitHub repo secrets |
 
 `NEXT_PUBLIC_` prefix = exposed to browser, safe for public data only.
 No prefix = server-only, never import in client components.

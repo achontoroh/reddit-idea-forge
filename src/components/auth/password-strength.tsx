@@ -32,7 +32,7 @@ export const PasswordStrength: FC<PasswordStrengthProps> = ({ password }) => {
   return (
     <div className="mt-2 space-y-2">
       {/* Progress bar */}
-      <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-surface-highest overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-300 ${getBarColor(metCount)}`}
           style={{ width: `${(metCount / REQUIREMENTS.length) * 100}%` }}
@@ -45,10 +45,10 @@ export const PasswordStrength: FC<PasswordStrengthProps> = ({ password }) => {
           <li key={label} className="flex items-center gap-1.5 text-xs">
             <span
               className={`inline-block h-1.5 w-1.5 rounded-full transition-colors ${
-                met ? 'bg-green-500' : 'bg-gray-300'
+                met ? 'bg-green-500' : 'bg-surface-highest'
               }`}
             />
-            <span className={met ? 'text-green-600' : 'text-gray-400'}>
+            <span className={met ? 'text-green-600' : 'text-on-surface-muted'}>
               {label}
             </span>
           </li>

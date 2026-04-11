@@ -3,6 +3,8 @@
 import { type FC, type ReactNode, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { createClient } from '@/lib/supabase/client'
 
@@ -22,30 +24,27 @@ const MarketingLayout: FC<MarketingLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-full flex-col">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <Link href="/" className="text-lg font-bold text-indigo-600">
-            IdeaForge
+      <Navbar logoHref="/">
+        <ThemeToggle />
+        {isLoggedIn ? (
+          <Link href="/dashboard">
+            <Button size="sm">Dashboard</Button>
           </Link>
-          <nav className="flex items-center gap-3">
-            {isLoggedIn ? (
-              <Link href="/dashboard">
-                <Button size="sm">Dashboard</Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">
-                  Login
-                </Link>
-                <Link href="/register">
-                  <Button size="sm">Get started</Button>
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
-      <main className="flex-1">{children}</main>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="text-sm font-medium text-on-surface-muted hover:text-on-surface transition-colors"
+            >
+              Log in
+            </Link>
+            <Link href="/register">
+              <Button size="sm">Sign up</Button>
+            </Link>
+          </>
+        )}
+      </Navbar>
+      <main className="flex-1 pt-20">{children}</main>
       <Footer />
     </div>
   )

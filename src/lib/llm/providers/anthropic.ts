@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { LLM_CONFIG } from '@/config/llm'
-import { type LLMProvider, LLMError } from '../provider'
+import { type LLMProvider, type LLMCompleteOptions, LLMError } from '../provider'
 
 export class AnthropicProvider implements LLMProvider {
   readonly name = 'anthropic'
@@ -13,18 +13,18 @@ export class AnthropicProvider implements LLMProvider {
     this.client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   }
 
-  async complete(userPrompt: string, systemPrompt: string): Promise<string> {
+  async complete(userPrompt: string, systemPrompt: string, options?: LLMCompleteOptions): Promise<string> {
     try {
       const response = await this.client.messages.create({
         model: LLM_CONFIG.anthropicModel,
         max_tokens: LLM_CONFIG.maxTokens,
-        temperature: LLM_CONFIG.temperature,
+        temperature: options?.temperature ?? LLM_CONFIG.temperature,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }],
       })
 
       const textBlock = response.content.find((block) => block.type === 'text')
-      if (!textBlock || textBlock.type !== 'text') {
+      if (!textBlock) {
         throw new Error('No text response from LLM')
       }
 

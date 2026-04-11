@@ -1,0 +1,9 @@
+<svg width="512" height="120" viewBox="0 0 512 120" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>IdeaForge wordmark</title>
+    <desc>ideaforge wordmark in two colors — idea in blue, forge in orange</desc>
+    <text x="0" y="90" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="106"
+          dominant-baseline="auto" letter-spacing="-2">
+        <tspan fill="#4954BD">idea</tspan>
+        <tspan fill="#FD933D">forge</tspan>
+    </text>
+</svg>

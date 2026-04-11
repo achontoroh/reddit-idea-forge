@@ -15,18 +15,19 @@ IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to ge
 ## Tech Stack
 
 - **Next.js 14+** (App Router) + **TypeScript**
-- **Tailwind CSS**
+- **Tailwind CSS** + custom design tokens
 - **Supabase** (Auth + Postgres + RLS)
-- **Anthropic Claude API** (claude-sonnet) — idea generation + scoring
+- **Multi-provider LLM** — Google Gemini (active), Anthropic, Groq supported
 - **Resend** — email notifications
 - **Zod** — validation
+- **GitHub Actions** — cron pipeline (v2)
 
 ## Prerequisites
 
 - Node.js 22+
 - pnpm (`npm install -g pnpm`)
 - Supabase account (free tier works)
-- Anthropic API key
+- LLM API key — Gemini (default), Anthropic, or Groq
 - Resend API key (free tier for dev)
 
 ## Getting Started
@@ -66,13 +67,7 @@ Non-secret configuration (LLM provider, model names, Reddit data source, email l
 
 ### 3. Supabase setup
 
-Run the SQL from `docs/DATABASE_SCHEMA.md` in the Supabase SQL Editor. This creates:
-
-- `profiles` — user profiles (auto-created on signup via trigger)
-- `ideas` — generated product ideas with scoring
-- `subscriptions` — email notification preferences
-- `email_logs` — sent email tracking
-- Row Level Security policies for all tables
+Copy the contents of [`supabase/setup.sql`](supabase/setup.sql) and paste into **Supabase Dashboard → SQL Editor → Run**.
 
 ### 4. Run locally
 
@@ -88,10 +83,9 @@ Open [http://localhost:3000](http://localhost:3000)
 src/
 ├── app/           # Next.js App Router — pages, layouts, API routes
 ├── components/    # UI primitives (ui/) and feature composites (features/)
-├── lib/           # Business logic — supabase, llm, email, reddit integrations
+├── lib/           # Business logic — supabase, llm, email, reddit, pipeline
 ├── config/        # Constants, prompt templates, categories
-├── hooks/         # Client-side React hooks
-└── data/          # Static mock data
+└── hooks/         # Client-side React hooks
 ```
 
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
@@ -100,19 +94,39 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Key Features
 
-- **Real Reddit data** — scans 8 subreddits via Reddit's public JSON API (no API key needed), with mock fallback available via config
-- **LLM-powered idea generation** with 0-100 scoring across four dimensions (pain intensity, willingness to pay, competition gap, TAM)
-- **Multi-provider LLM support** — Anthropic Claude, Groq, or Google Gemini
-- **Manual "Generate" trigger** from dashboard (cron-ready for future automation)
+- **Shared idea feed** — AI-generated SaaS ideas from Reddit, browsable by all users (v2 architecture)
+- **8 categories** (DevTools, SaaS, Productivity, Finance, Health, Education, eCommerce, AI) mapped to ~30 subreddits
+- **Dual scoring** — AI score (0-100) + Community score (upvotes/downvotes)
+- **Real Reddit data** via public JSON API (no API key needed), with mock fallback
+- **Multi-provider LLM** — Google Gemini (active), Anthropic Claude, Groq
+- **Design system** — light/dark theme, CSS tokens, mobile-first responsive
 - **Auto-redirect** — authenticated users skip the landing page and go straight to the dashboard
 - **Email subscription** with category preferences
 - **Unsubscribe** via token link (no auth required) or settings page
 
 ## Data Source
 
-IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. It scans 8 subreddits (SaaS, startups, smallbusiness, webdev, Entrepreneur, productivity, personalfinance, programming), pulling 5 hot posts from each with a 200ms rate-limit delay between requests. Subreddit list and settings are in `src/config/reddit.ts`.
+IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, pulling hot posts with a 200ms rate-limit delay between requests. Fetching runs on a cron schedule (every 6 hours via GitHub Actions) with category rotation — 3 categories per run.
 
-To fall back to mock data (e.g. for offline dev), set `dataSource: 'mock'` in `src/config/app.ts`.
+## Development Setup
+
+For feature development and DB migration testing, we use a **separate dev Supabase project** so changes never touch production data.
+
+**Quick start:**
+
+```bash
+# 1. Copy env template and fill in your values
+cp .env.example .env.local
+
+# 2. For dev Supabase, also create dev overrides
+cp .env.development.example .env.development.local
+
+# 3. Run migrations on dev Supabase (see docs)
+
+pnpm dev
+```
+
+See **[docs/DEV_ENVIRONMENT.md](docs/DEV_ENVIRONMENT.md)** for the full guide: creating a dev Supabase project, configuring Vercel preview deployments, and the branching strategy.
 
 ## Deployment
 

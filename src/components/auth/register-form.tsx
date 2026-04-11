@@ -4,6 +4,7 @@ import { type FC, type FormEvent, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { isValidEmail } from '@/lib/utils/validation'
 import { PasswordStrength, isPasswordValid } from './password-strength'
 
 export const RegisterForm: FC = () => {
@@ -18,7 +19,7 @@ export const RegisterForm: FC = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   function validateEmail(value: string) {
-    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (value && !isValidEmail(value)) {
       setEmailError('Enter a valid email')
     } else {
       setEmailError('')
@@ -61,14 +62,14 @@ export const RegisterForm: FC = () => {
   if (success) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Check your email</h1>
-        <p className="text-sm text-gray-500 mb-6">
+        <h1 className="text-2xl font-bold text-on-surface mb-2">Check your email</h1>
+        <p className="text-sm text-on-surface-muted mb-6">
           We sent a confirmation link to <strong>{email}</strong>. Click it to
           activate your account.
         </p>
         <Link
           href="/login"
-          className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+          className="text-sm font-medium text-primary hover:text-primary-hover"
         >
           Back to sign in
         </Link>
@@ -78,8 +79,8 @@ export const RegisterForm: FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-2xl font-bold text-on-surface mb-1">Create account</h1>
+      <p className="text-sm text-on-surface-muted mb-6">
         Sign up to start discovering product ideas
       </p>
 
@@ -123,7 +124,7 @@ export const RegisterForm: FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="text-on-surface-muted hover:text-on-surface cursor-pointer"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 tabIndex={-1}
               >
@@ -150,9 +151,9 @@ export const RegisterForm: FC = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-gray-500">
+      <p className="mt-4 text-center text-sm text-on-surface-muted">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link href="/login" className="font-medium text-primary hover:text-primary-hover">
           Sign in
         </Link>
       </p>

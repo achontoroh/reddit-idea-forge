@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { LLM_CONFIG } from '@/config/llm'
-import { type LLMProvider, LLMError } from '../provider'
+import { type LLMProvider, type LLMCompleteOptions, LLMError } from '../provider'
 
 export class GeminiProvider implements LLMProvider {
   readonly name = 'gemini'
@@ -13,14 +13,14 @@ export class GeminiProvider implements LLMProvider {
     this.client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   }
 
-  async complete(userPrompt: string, systemPrompt: string): Promise<string> {
+  async complete(userPrompt: string, systemPrompt: string, options?: LLMCompleteOptions): Promise<string> {
     try {
       const model = this.client.getGenerativeModel({
-        model: LLM_CONFIG.geminiModel,
+        model: options?.model ?? LLM_CONFIG.geminiModel,
         systemInstruction: systemPrompt,
         generationConfig: {
           maxOutputTokens: LLM_CONFIG.maxTokens,
-          temperature: LLM_CONFIG.temperature,
+          temperature: options?.temperature ?? LLM_CONFIG.temperature,
           responseMimeType: 'application/json',
         },
       })

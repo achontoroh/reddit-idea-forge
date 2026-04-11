@@ -19,8 +19,8 @@ export function buildDigestHtml(
         <p style="margin: 0 0 8px 0; font-size: 14px; color: #374151; line-height: 1.5;">
           ${escapeHtml(idea.pitch)}
         </p>
-        <p style="margin: 0; font-size: 13px; font-weight: 600; color: ${scoreColor(idea.score)};">
-          Score: ${idea.score}/100
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: ${scoreColor(idea.ai_score)};">
+          Score: ${idea.ai_score}/100
         </p>
       </div>`
     )

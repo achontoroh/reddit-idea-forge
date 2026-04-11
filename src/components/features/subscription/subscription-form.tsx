@@ -1,9 +1,9 @@
 'use client'
 
-import { type FC, useState, useCallback } from 'react'
+import { type FC, useState, useEffect, useRef } from 'react'
 import { CATEGORIES } from '@/config/categories'
-import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Chip } from '@/components/ui/chip'
 
 interface SubscriptionFormProps {
   email: string
@@ -21,38 +21,18 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [unsubscribing, setUnsubscribing] = useState(false)
-  const [unsubscribed, setUnsubscribed] = useState(false)
+  const successTimer = useRef<ReturnType<typeof setTimeout>>(null)
 
-  const toggleCategory = useCallback((category: string) => {
+  useEffect(() => {
+    return () => {
+      if (successTimer.current) clearTimeout(successTimer.current)
+    }
+  }, [])
+
+  function toggleCategory(category: string) {
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     )
-  }, [])
-
-  const handleUnsubscribe = async () => {
-    setError(null)
-    setUnsubscribing(true)
-
-    try {
-      const response = await fetch('/api/subscribe', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_active: false }),
-      })
-
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error ?? 'Failed to unsubscribe')
-      }
-
-      setUnsubscribed(true)
-      setIsActive(false)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
-    } finally {
-      setUnsubscribing(false)
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,8 +64,7 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
       }
 
       setSuccess(true)
-      setUnsubscribed(false)
-      setTimeout(() => setSuccess(false), 3000)
+      successTimer.current = setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -94,79 +73,76 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
   }
 
   return (
-    <Card padding="lg">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Digest Settings</h2>
+    <form onSubmit={handleSubmit} className="space-y-12">
+      <section>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-muted mb-6">
+          Email notifications
+        </h2>
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <label className="font-medium text-on-surface" htmlFor="weekly-digest">
+              Weekly digest
+            </label>
+            <button
+              type="button"
+              id="weekly-digest"
+              role="switch"
+              aria-checked={isActive}
+              onClick={() => setIsActive(!isActive)}
+              className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
+                isActive ? 'bg-primary' : 'bg-surface-highest'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
+                  isActive ? 'translate-x-5' : 'translate-x-0.5'
+                } mt-0.5`}
+              />
+            </button>
+          </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="mb-6">
-          <p className="text-sm text-gray-500 mb-1">Digests will be sent to</p>
-          <p className="text-sm font-medium text-gray-900">{email}</p>
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-medium text-on-surface-muted">Email</span>
+            <span className="text-on-surface font-medium">{email}</span>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Categories
-          </label>
-          <div className="grid grid-cols-2 gap-2">
+      <section>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-muted mb-6">
+          Categories
+        </h2>
+        <div className="flex flex-col gap-4">
+          <label className="text-on-surface font-medium">I&apos;m interested in:</label>
+          <div className="flex flex-wrap gap-3">
             {CATEGORIES.map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => toggleCategory(category)}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors cursor-pointer ${
-                  selectedCategories.includes(category)
-                    ? 'bg-indigo-600 text-white'
-                    : 'border border-gray-300 text-gray-700 hover:border-indigo-400'
-                }`}
-              >
-                {category}
-              </button>
+              <Chip
+                key={category.slug}
+                label={category.name}
+                selected={selectedCategories.includes(category.slug)}
+                onClick={() => toggleCategory(category.slug)}
+              />
             ))}
           </div>
         </div>
+      </section>
 
-        <div className="flex items-center justify-between">
-          <label htmlFor="digest-toggle" className="text-sm font-medium text-gray-700">
-            Receive weekly digest
-          </label>
-          <input
-            id="digest-toggle"
-            type="checkbox"
-            checked={isActive}
-            onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-          />
-        </div>
-
-        <Button type="submit" loading={loading} className="w-full">
-          {loading ? 'Saving...' : 'Save settings'}
+      <div className="pt-8">
+        <Button
+          type="submit"
+          loading={loading}
+          className="w-full py-4 rounded-xl"
+        >
+          Save preferences
         </Button>
+      </div>
 
-        {success && (
-          <p className="text-sm text-green-600 text-center">Settings saved!</p>
-        )}
-
-        {error && (
-          <p className="text-sm text-red-600 text-center">{error}</p>
-        )}
-      </form>
-
-      {initialData && (
-        <div className="mt-4 border-t border-gray-200 pt-4 text-center">
-          {unsubscribed ? (
-            <p className="text-sm text-red-600">Unsubscribed</p>
-          ) : (
-            <button
-              type="button"
-              disabled={unsubscribing}
-              onClick={handleUnsubscribe}
-              className="w-full mt-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 cursor-pointer"
-            >
-              {unsubscribing ? 'Unsubscribing...' : 'Unsubscribe from digest emails'}
-            </button>
-          )}
-        </div>
+      {success && (
+        <p className="text-sm text-green-600 text-center">Settings saved!</p>
       )}
-    </Card>
+      {error && (
+        <p className="text-sm text-red-600 text-center">{error}</p>
+      )}
+    </form>
   )
 }

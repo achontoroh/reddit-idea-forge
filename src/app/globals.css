@@ -1,26 +1,118 @@
 @import "tailwindcss";
 
+/* ── IdeaForge Design Tokens ── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --brand-primary: #4954BD;
+  --brand-primary-hover: #3d47a8;
+  --brand-primary-active: #323d9e;
+  --brand-primary-container: #818CF8;
+  --brand-on-primary: #FBF8FF;
+  --brand-accent: #FD933D;
+
+  /* Surfaces */
+  --surface-base: #F9F9FE;
+  --surface-lowest: #FFFFFF;
+  --surface-low: #F2F3FA;
+  --surface-highest: #DFE2EC;
+  --text-on-surface: #2E333A;
+  --text-on-surface-muted: #6B7280;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.0rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-modal: 0 20px 40px rgba(46, 51, 58, 0.06);
+  --ghost-border-width: 1.5px;
+  --ghost-border-color: rgba(174, 178, 187, 0.15);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-blur: blur(12px);
+
+  /* Typography tracking */
+  --tracking-display: -0.02em;
+  --tracking-headline: -0.01em;
+  --tracking-label: 0.05em;
 }
+
+.dark {
+  /* Brand */
+  --brand-primary: #818CF8;
+  --brand-primary-hover: #9BA4F9;
+  --brand-primary-active: #636cd4;
+  --brand-primary-container: #4954BD;
+  --brand-on-primary: #FBF8FF;
+  --brand-accent: #FDBA74;
+
+  /* Surfaces */
+  --surface-base: #1E293B;
+  --surface-lowest: #253347;
+  --surface-low: #334155;
+  --surface-highest: #475569;
+  --text-on-surface: #F8FAFC;
+  --text-on-surface-muted: #94A3B8;
+
+  /* Elevation */
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-blur: blur(24px);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Brand palette */
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-active: var(--brand-primary-active);
+  --color-primary-container: var(--brand-primary-container);
+  --color-on-primary: var(--brand-on-primary);
+  --color-accent: var(--brand-accent);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Surfaces */
+  --color-surface-base: var(--surface-base);
+  --color-surface-lowest: var(--surface-lowest);
+  --color-surface-low: var(--surface-low);
+  --color-surface-highest: var(--surface-highest);
+  --color-on-surface: var(--text-on-surface);
+  --color-on-surface-muted: var(--text-on-surface-muted);
+
+  /* Font families */
+  --font-heading: var(--font-plus-jakarta-sans);
+  --font-sans: var(--font-inter);
+
+  /* Border radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+
+  /* Elevation */
+  --shadow-modal: var(--shadow-modal);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-base);
+  color: var(--text-on-surface);
+  font-family: var(--font-sans);
+}
+
+a,
+button:not(:disabled),
+[role="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+select,
+summary {
+  cursor: pointer;
 }

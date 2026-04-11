@@ -1,0 +1,51 @@
+<svg width="720" height="160" viewBox="0 0 720 160" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>IdeaForge logo horizontal</title>
+    <desc>IdeaForge hexagon icon with ideaforge wordmark to the right</desc>
+    <defs>
+        <clipPath id="leftHalf">
+            <rect x="0" y="0" width="79.5" height="160"/>
+        </clipPath>
+        <clipPath id="rightHalf">
+            <rect x="81.5" y="0" width="78.5" height="160"/>
+        </clipPath>
+        <clipPath id="hexClip">
+            <polygon points="80,14 136.5,47 136.5,113 80,146 23.5,113 23.5,47"/>
+        </clipPath>
+    </defs>
+
+    <!-- icon: left blue half -->
+    <g clip-path="url(#hexClip)">
+        <g clip-path="url(#leftHalf)">
+            <rect x="0" y="0" width="160" height="160" fill="#4954BD"/>
+        </g>
+    </g>
+
+    <!-- icon: right orange half -->
+    <g clip-path="url(#hexClip)">
+        <g clip-path="url(#rightHalf)">
+            <rect x="0" y="0" width="160" height="160" fill="#FD933D"/>
+        </g>
+    </g>
+
+    <!-- white divider -->
+    <g clip-path="url(#hexClip)">
+        <rect x="79.5" y="0" width="2" height="160" fill="#FFFFFF"/>
+    </g>
+
+    <!-- letter i -->
+    <text x="51" y="83" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="56"
+          fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">i
+    </text>
+
+    <!-- letter f -->
+    <text x="109" y="83" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="56"
+          fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">f
+    </text>
+
+    <!-- wordmark: icon width 160 + gap 24 = x 184 -->
+    <text x="184" y="83" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="106"
+          dominant-baseline="central" letter-spacing="-1.5">
+        <tspan fill="#4954BD">idea</tspan>
+        <tspan fill="#FD933D">forge</tspan>
+    </text>
+</svg>
