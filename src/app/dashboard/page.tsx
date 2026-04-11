@@ -5,15 +5,11 @@ import { IdeaFeed } from '@/components/ideas/idea-feed'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  // Auth is already guarded by DashboardLayout — no need to call getUser() again
   const { data: ideas } = await supabase
     .from('ideas')
     .select('*')
-    .eq('user_id', user?.id ?? '')
-    .order('score', { ascending: false })
+    .order('ai_score', { ascending: false })
     .order('created_at', { ascending: false })
 
   const typedIdeas = (ideas ?? []) as Idea[]

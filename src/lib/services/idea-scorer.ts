@@ -1,9 +1,9 @@
 import { type RedditPost } from '@/data/reddit-mock'
 import { getLLMProvider } from '@/lib/llm'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
-import { selectPostsForLLM } from '@/lib/reddit/select-posts'
 import { ScoreBreakdownSchema, type GeneratedIdea } from '@/lib/llm/schemas'
 import { type ScoreBreakdown } from '@/lib/types/idea'
+import { LLM_CONFIG } from '@/config/llm'
 import { z } from 'zod'
 
 const IdeaScoreResponseSchema = z.object({
@@ -43,7 +43,6 @@ export async function scoreIdea(
   idea: GeneratedIdea,
   sourcePosts: RedditPost[]
 ): Promise<IdeaScore> {
-  const selectedPosts = selectPostsForLLM(sourcePosts)
   const userPrompt = `Score this product idea:
 
 Title: ${idea.title}
@@ -53,7 +52,7 @@ Target Audience: ${idea.target_audience}
 Category: ${idea.category}
 
 Source Reddit posts for context:
-${selectedPosts
+${sourcePosts
   .map(
     (p) =>
       `- [${p.subreddit}] "${p.title}" (score: ${p.score}, comments: ${p.num_comments})`
@@ -61,7 +60,9 @@ ${selectedPosts
   .join('\n')}`
 
   const llm = getLLMProvider()
-  const raw = await llm.complete(userPrompt, SCORING_SYSTEM_PROMPT)
+  const raw = await llm.complete(userPrompt, SCORING_SYSTEM_PROMPT, {
+    temperature: LLM_CONFIG.scoringTemperature,
+  })
 
   const parsed = parseLLMResponse(raw, IdeaScoreResponseSchema)
   const total =
