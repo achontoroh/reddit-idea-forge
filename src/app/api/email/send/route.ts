@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { config } from '@/config/app'
+import { CATEGORY_SLUGS } from '@/config/categories'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseServiceRole } from '@/lib/supabase/service'
 import { sendIdeaDigest } from '@/lib/email/client'
@@ -74,9 +75,9 @@ export async function POST(request: NextRequest) {
       const { data: ideas } = await supabaseServiceRole
         .from('ideas')
         .select('*')
-        .eq('user_id', subscription.user_id)
+        .in('category', subscription.categories.length > 0 ? subscription.categories : [...CATEGORY_SLUGS])
         .gte('created_at', windowStart)
-        .order('score', { ascending: false })
+        .order('ai_score', { ascending: false })
         .limit(config.email.maxIdeasPerEmail)
 
       const typedIdeas = (ideas ?? []) as Idea[]

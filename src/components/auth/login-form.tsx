@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button, Input } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { isValidEmail } from '@/lib/utils/validation'
 
 export const LoginForm: FC = () => {
   const router = useRouter()
@@ -15,7 +16,7 @@ export const LoginForm: FC = () => {
   const [formError, setFormError] = useState('')
 
   function validateEmail(value: string) {
-    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (value && !isValidEmail(value)) {
       setEmailError('Enter a valid email')
     } else {
       setEmailError('')
@@ -44,8 +45,8 @@ export const LoginForm: FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">Sign in</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-2xl font-bold text-on-surface mb-1">Sign in</h1>
+      <p className="text-sm text-on-surface-muted mb-6">
         Enter your credentials to access your account
       </p>
 
@@ -81,9 +82,9 @@ export const LoginForm: FC = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-gray-500">
+      <p className="mt-4 text-center text-sm text-on-surface-muted">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link href="/register" className="font-medium text-primary hover:text-primary-hover">
           Create one
         </Link>
       </p>

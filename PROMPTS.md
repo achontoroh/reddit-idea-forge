@@ -462,3 +462,27 @@ PublicJsonRedditSource class that iterates TARGET_SUBREDDITS, fetches hot.json w
 TARGET_SUBREDDITS (8 subreddits), POSTS_PER_SUBREDDIT=15, SUBREDDIT_CATEGORY_MAP, REDDIT_REQUEST_DELAY_MS.
 `src/lib/reddit/index.ts` — replaced stub warning with actual PublicJsonRedditSource instantiation.
 `.env.example` — added REDDIT_DATA_SOURCE=mock with comment. Build passes cleanly.
+
+---
+
+### Prompt 24: Dev Environment Setup — Separate Supabase Project
+**Ticket:** IF-111
+**Context:** Setting up dual-environment support so feature branches and Vercel preview deployments use a separate dev Supabase project, keeping production data safe during migration testing and development.
+**Prompt:**
+```
+Create .env.local.example with all required env vars and comments. Create
+.env.development.example for dev Supabase overrides. Update .gitignore to
+whitelist both example files. Create docs/DEV_ENVIRONMENT.md documenting
+why we have a separate dev Supabase, how to create it, run migrations,
+configure Vercel preview env vars, and the branching strategy. Add
+"Development Setup" section to README.md linking to the doc.
+```
+**Result:** Created 3 new files, modified 3 existing files. `.env.local.example` — full env var reference
+with sections (Supabase, LLM, Email, Reddit, App Config), required/optional markers, and comments
+explaining each var. `.env.development.example` — minimal override file for dev Supabase credentials
+only. `docs/DEV_ENVIRONMENT.md` — comprehensive guide covering: rationale for dual environments,
+step-by-step dev Supabase project creation, credential copying, migration options (SQL Editor + CLI),
+auth URL configuration, Next.js env file hierarchy, Vercel env var scoping (Production vs Preview),
+and branching strategy diagram. Updated `.gitignore` to whitelist both `.example` files alongside
+existing `.env.example`. Added "Development Setup" section to `README.md` with quick-start commands
+and link to full guide. Build passes cleanly.

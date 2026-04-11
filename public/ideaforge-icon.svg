@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg">
+    <title>IdeaForge icon</title>
+    <desc>Hexagon split into blue left half with i and orange right half with f</desc>
+    <defs>
+        <clipPath id="leftHalf">
+            <rect x="0" y="0" width="254.5" height="512"/>
+        </clipPath>
+        <clipPath id="rightHalf">
+            <rect x="257.5" y="0" width="254.5" height="512"/>
+        </clipPath>
+        <clipPath id="hexClip">
+            <polygon points="256,46 437.82,151 437.82,361 256,466 74.18,361 74.18,151"/>
+        </clipPath>
+    </defs>
+    <g clip-path="url(#hexClip)">
+        <g clip-path="url(#leftHalf)">
+            <rect x="0" y="0" width="512" height="512" fill="#4954BD"/>
+        </g>
+    </g>
+    <g clip-path="url(#hexClip)">
+        <g clip-path="url(#rightHalf)">
+            <rect x="0" y="0" width="512" height="512" fill="#FD933D"/>
+        </g>
+    </g>
+    <g clip-path="url(#hexClip)">
+        <rect x="254.5" y="0" width="3" height="512" fill="#FFFFFF"/>
+    </g>
+    <text x="164" y="268" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="180"
+          fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">i
+    </text>
+    <text x="348" y="268" font-family="'Plus Jakarta Sans', 'Montserrat', sans-serif" font-weight="700" font-size="180"
+          fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">f
+    </text>
+</svg>

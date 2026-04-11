@@ -1,5 +1,8 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from '@/lib/reddit/types'
+import { CATEGORIES } from '@/config/categories'
 import { type Signal } from './schemas'
+
+const categoryList = CATEGORIES.map((c) => c.slug).join(', ')
 
 export const PROMPTS = {
   signalExtraction: {
@@ -9,7 +12,7 @@ For each post, identify:
 - The core pain point (one clear sentence)
 - A frequency indicator (how common this problem seems: "very common", "common", "niche")
 - The target audience (who experiences this pain)
-- The category (one of: devtools, health, education, finance, productivity)
+- The category (one of: ${categoryList})
 - The source_url (copy the url field from the input post exactly as-is)
 
 Respond ONLY with valid JSON. No markdown, no preamble, no explanation.
@@ -50,7 +53,7 @@ For each idea, provide:
 - pitch: One-paragraph elevator pitch (2-3 sentences max)
 - pain_point: The core problem this solves (one sentence)
 - target_audience: Who would pay for this
-- category: One of: devtools, health, education, finance, productivity
+- category: One of: ${categoryList}
 - source_subreddit: The subreddit where the pain was identified
 - source_url: the source_url from the primary signal this idea is based on (copy exactly)
 - score: Total viability score 0-100 (sum of breakdown)

@@ -1,6 +1,6 @@
 import Groq from 'groq-sdk'
 import { LLM_CONFIG } from '@/config/llm'
-import { type LLMProvider, LLMError } from '../provider'
+import { type LLMProvider, type LLMCompleteOptions, LLMError } from '../provider'
 
 export class GroqProvider implements LLMProvider {
   readonly name = 'groq'
@@ -13,12 +13,12 @@ export class GroqProvider implements LLMProvider {
     this.client = new Groq({ apiKey: process.env.GROQ_API_KEY })
   }
 
-  async complete(userPrompt: string, systemPrompt: string): Promise<string> {
+  async complete(userPrompt: string, systemPrompt: string, options?: LLMCompleteOptions): Promise<string> {
     try {
       const response = await this.client.chat.completions.create({
         model: LLM_CONFIG.groqModel,
         max_tokens: LLM_CONFIG.maxTokens,
-        temperature: LLM_CONFIG.temperature,
+        temperature: options?.temperature ?? LLM_CONFIG.temperature,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },

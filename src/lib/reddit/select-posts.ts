@@ -1,4 +1,4 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from './types'
 import { REDDIT_CONFIG } from '@/config/reddit'
 
 export function selectPostsForLLM(

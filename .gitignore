@@ -35,6 +35,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.development.example
 
 # ai chat history (contains secrets in context)
 /ai-history/
