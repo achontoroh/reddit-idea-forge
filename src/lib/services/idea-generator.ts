@@ -1,4 +1,4 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from '@/lib/reddit/types'
 import { getLLMProvider } from '@/lib/llm'
 import { PROMPTS } from '@/lib/llm/prompts'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
