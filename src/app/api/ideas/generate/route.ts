@@ -47,9 +47,19 @@ export async function POST() {
     const generatedIdeas = await generateIdeasFromPosts(posts)
 
     // Step 3: Re-score each idea independently for more accurate scoring
+    const postsByCategory = new Map<string, typeof allPosts>()
+    for (const post of allPosts) {
+      const list = postsByCategory.get(post.category)
+      if (list) {
+        list.push(post)
+      } else {
+        postsByCategory.set(post.category, [post])
+      }
+    }
+
     const scoredIdeas = await Promise.all(
       generatedIdeas.map(async (idea) => {
-        const categoryPosts = allPosts.filter((p) => p.category === idea.category)
+        const categoryPosts = postsByCategory.get(idea.category) ?? []
         const score = await scoreIdea(idea, categoryPosts)
         return { idea, score }
       })

@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import { CATEGORIES } from '@/config/categories'
+
+const categorySlugs = CATEGORIES.map((c) => c.slug) as [string, ...string[]]
 
 export const SignalSchema = z.object({
   post_id: z.string(),
@@ -6,7 +9,7 @@ export const SignalSchema = z.object({
   pain_point: z.string(),
   frequency_indicator: z.string(),
   target_audience: z.string(),
-  category: z.enum(['devtools', 'health', 'education', 'finance', 'productivity']),
+  category: z.enum(categorySlugs),
 })
 
 export const ScoreBreakdownSchema = z.object({
@@ -21,7 +24,7 @@ export const GeneratedIdeaSchema = z.object({
   pitch: z.string(),
   pain_point: z.string(),
   target_audience: z.string(),
-  category: z.enum(['devtools', 'health', 'education', 'finance', 'productivity']),
+  category: z.enum(categorySlugs),
   source_subreddit: z.string(),
   source_url: z.string().nullable(),
   score: z.number().min(0).max(100),
