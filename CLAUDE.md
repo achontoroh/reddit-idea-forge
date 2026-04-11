@@ -72,6 +72,7 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 
 ## Commit Convention
 - **NEVER commit without asking the user first** — always ask "can I commit?" and wait for confirmation
+- Commit messages must be in English
 - Use `/linear-commit` skill for all commits — it handles Linear magic words, ticket linking, and format
 - Linear project prefix: **IF**
 
