@@ -40,11 +40,12 @@ async function fetchSubredditPosts(subreddit: string): Promise<RedditPost[]> {
 }
 
 export class PublicJsonRedditSource implements RedditDataSource {
-  async fetchPosts(): Promise<RedditPost[]> {
+  async fetchPosts(subreddits?: string[]): Promise<RedditPost[]> {
+    const targetSubs = subreddits ?? TARGET_SUBREDDITS
     const allPosts: RedditPost[] = []
 
-    for (let i = 0; i < TARGET_SUBREDDITS.length; i++) {
-      const subreddit = TARGET_SUBREDDITS[i]
+    for (let i = 0; i < targetSubs.length; i++) {
+      const subreddit = targetSubs[i]
 
       try {
         const posts = await fetchSubredditPosts(subreddit)
@@ -58,13 +59,13 @@ export class PublicJsonRedditSource implements RedditDataSource {
       }
 
       // Rate limit: delay between requests (skip after last)
-      if (i < TARGET_SUBREDDITS.length - 1) {
+      if (i < targetSubs.length - 1) {
         await delay(REDDIT_CONFIG.requestDelayMs)
       }
     }
 
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[Reddit] Total: ${allPosts.length} posts from ${TARGET_SUBREDDITS.length} subreddits`)
+      console.log(`[Reddit] Total: ${allPosts.length} posts from ${targetSubs.length} subreddits`)
     }
 
     return allPosts
