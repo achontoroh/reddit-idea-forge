@@ -15,18 +15,19 @@ IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to ge
 ## Tech Stack
 
 - **Next.js 14+** (App Router) + **TypeScript**
-- **Tailwind CSS**
+- **Tailwind CSS** + custom design tokens
 - **Supabase** (Auth + Postgres + RLS)
-- **Anthropic Claude API** (claude-sonnet) — idea generation + scoring
+- **Multi-provider LLM** — Google Gemini (active), Anthropic, Groq supported
 - **Resend** — email notifications
 - **Zod** — validation
+- **GitHub Actions** — cron pipeline (v2)
 
 ## Prerequisites
 
 - Node.js 22+
 - pnpm (`npm install -g pnpm`)
 - Supabase account (free tier works)
-- Anthropic API key
+- LLM API key — Gemini (default), Anthropic, or Groq
 - Resend API key (free tier for dev)
 
 ## Getting Started
@@ -94,17 +95,19 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Key Features
 
-- **Real Reddit data** — scans 8 subreddits via Reddit's public JSON API (no API key needed), with mock fallback available via config
-- **LLM-powered idea generation** with 0-100 scoring across four dimensions (pain intensity, willingness to pay, competition gap, TAM)
-- **Multi-provider LLM support** — Anthropic Claude, Groq, or Google Gemini
-- **Manual "Generate" trigger** from dashboard (cron-ready for future automation)
+- **Shared idea feed** — AI-generated SaaS ideas from Reddit, browsable by all users (v2 architecture)
+- **8 categories** (DevTools, SaaS, Productivity, Finance, Health, Education, eCommerce, AI) mapped to ~30 subreddits
+- **Dual scoring** — AI score (0-100) + Community score (upvotes/downvotes)
+- **Real Reddit data** via public JSON API (no API key needed), with mock fallback
+- **Multi-provider LLM** — Google Gemini (active), Anthropic Claude, Groq
+- **Design system** — light/dark theme, CSS tokens, mobile-first responsive
 - **Auto-redirect** — authenticated users skip the landing page and go straight to the dashboard
 - **Email subscription** with category preferences
 - **Unsubscribe** via token link (no auth required) or settings page
 
 ## Data Source
 
-IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. It scans 8 subreddits (SaaS, startups, smallbusiness, webdev, Entrepreneur, productivity, personalfinance, programming), pulling 5 hot posts from each with a 200ms rate-limit delay between requests. Subreddit list and settings are in `src/config/reddit.ts`.
+IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, pulling hot posts with a 200ms rate-limit delay between requests.
 
 To fall back to mock data (e.g. for offline dev), set `dataSource: 'mock'` in `src/config/app.ts`.
 

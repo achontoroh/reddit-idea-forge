@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Project Overview
-IdeaForge — SaaS MVP that scans Reddit for user pain points and generates AI-scored product ideas. Test task, ~8hr scope.
+IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. Currently in v2 development (shared idea feed model).
 
 ## Engineering Mindset
 - Think as a strong senior fullstack TypeScript developer
@@ -26,6 +26,7 @@ pnpm lint             # ESLint
 - **src/lib/** — Business logic, integrations (Supabase, LLM, email, Reddit)
 - **src/config/** — Constants, prompt templates, categories
 - **src/hooks/** — Client-side React hooks
+- **src/styles/** — Design tokens (`tokens.css`)
 - **src/data/** — Mock data (fallback only — real Reddit API is default)
 
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
@@ -96,7 +97,8 @@ See full list with descriptions → `docs/CONVENTIONS.md`
 NEXT_PUBLIC_SUPABASE_URL=         # Public
 NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Public
 SUPABASE_SERVICE_ROLE_KEY=        # Secret — server only
-ANTHROPIC_API_KEY=                # Secret — server only
+ANTHROPIC_API_KEY=                # Secret — server only (if using Anthropic)
+GEMINI_API_KEY=                   # Secret — server only (active provider)
 RESEND_API_KEY=                   # Secret — server only
 ```
 Non-secret config (LLM provider, models, Reddit data source, email limits) → `src/config/app.ts`
@@ -110,6 +112,7 @@ Detailed references in `docs/` — point Claude Code to specific doc when needed
 | `docs/DATABASE_SCHEMA.md` | SQL tables, RLS policies, TypeScript types, migration |
 | `docs/CONVENTIONS.md` | Naming, component patterns, API patterns, env vars, git, Tailwind |
 | `docs/DATA_FLOW.md` | How generation, dashboard, email, and unsubscribe work end-to-end |
+| `docs/DEV_ENVIRONMENT.md` | Dev/staging Supabase setup, Vercel preview, branching |
 | `docs/TASK_SPEC.md` | Original task requirements adapted for our implementation |
 
 ## Available Skills
@@ -120,3 +123,5 @@ All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
 | `/kit-create-api` | API routes, Supabase queries, auth checks, error handling |
 | `/kit-create-ui` | Pages, components, Tailwind patterns, score visualization |
 | `/kit-llm` | LLM pipeline, prompt design, Zod schemas, Anthropic SDK |
+| `/linear-commit` | Git commits linked to Linear tickets via magic words |
+| `/linear-epic-close` | Close an epic: analyze commits, update Linear (epic + project + status update), update docs |
