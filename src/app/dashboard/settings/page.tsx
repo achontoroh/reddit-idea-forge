@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { BackLink } from '@/components/ui/back-link'
 import { SubscriptionForm } from '@/components/features/subscription/subscription-form'
 import { type Subscription } from '@/lib/types/subscription'
 
@@ -29,8 +30,16 @@ export default async function SettingsPage() {
     : null
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+    <div className="max-w-[560px] mx-auto">
+      <BackLink href="/dashboard" />
+      <div className="mb-12">
+        <h1 className="text-4xl md:text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em] text-on-surface mb-2 font-heading">
+          Settings
+        </h1>
+        <p className="text-on-surface-muted">
+          Manage your account preferences and notification rules.
+        </p>
+      </div>
       <SubscriptionForm email={user.email ?? ''} initialData={initialData} />
     </div>
   )

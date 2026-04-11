@@ -15,13 +15,13 @@ export default function UnsubscribeSuccessPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900">You&apos;ve been unsubscribed</h1>
-        <p className="mt-2 text-gray-500">
+        <h1 className="text-2xl font-semibold text-on-surface">You&apos;ve been unsubscribed</h1>
+        <p className="mt-2 text-on-surface-muted">
           You won&apos;t receive any more digest emails from IdeaForge.
         </p>
         <Link
           href="/"
-          className="mt-6 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-500"
+          className="mt-6 inline-block text-sm font-medium text-primary hover:text-primary-hover"
         >
           &larr; Back to IdeaForge
         </Link>

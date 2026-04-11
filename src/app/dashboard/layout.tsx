@@ -1,7 +1,8 @@
 import { type ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Header } from '@/components/layout/header'
+import { Navbar } from '@/components/layout/navbar'
+import { DashboardNavActions } from '@/components/layout/dashboard-nav-actions'
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
@@ -13,8 +14,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <>
-      <Header email={user.email} />
-      <main className="mx-auto w-full max-w-6xl px-4 py-8">
+      <Navbar>
+        <DashboardNavActions email={user.email} />
+      </Navbar>
+      <main className="pt-24 pb-20 px-6 md:px-8 mx-auto w-full max-w-4xl">
         {children}
       </main>
     </>
