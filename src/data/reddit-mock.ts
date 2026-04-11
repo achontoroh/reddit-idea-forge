@@ -221,7 +221,3 @@ export const mockRedditPosts: RedditPost[] = [
     category: 'productivity',
   },
 ]
-
-export function getPostsByCategorySlug(category: CategorySlug): RedditPost[] {
-  return mockRedditPosts.filter((post) => post.category === category)
-}

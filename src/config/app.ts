@@ -1,4 +1,4 @@
-import { getAllSubreddits, CATEGORIES } from './categories'
+import { CATEGORIES } from './categories'
 
 export const config = {
   llm: {
@@ -14,7 +14,6 @@ export const config = {
     dataSource: 'api' as 'mock' | 'api',
     postsPerSubreddit: 5,
     requestDelayMs: 200,
-    subreddits: getAllSubreddits(),
     categories: CATEGORIES,
   },
   email: {

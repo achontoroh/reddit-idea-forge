@@ -4,6 +4,7 @@ import { type FC, type FormEvent, useState } from 'react'
 import Link from 'next/link'
 import { Button, Input } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { isValidEmail } from '@/lib/utils/validation'
 import { PasswordStrength, isPasswordValid } from './password-strength'
 
 export const RegisterForm: FC = () => {
@@ -18,7 +19,7 @@ export const RegisterForm: FC = () => {
   const [showPassword, setShowPassword] = useState(false)
 
   function validateEmail(value: string) {
-    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (value && !isValidEmail(value)) {
       setEmailError('Enter a valid email')
     } else {
       setEmailError('')

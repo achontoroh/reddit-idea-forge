@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button, Input } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { isValidEmail } from '@/lib/utils/validation'
 
 export const LoginForm: FC = () => {
   const router = useRouter()
@@ -15,7 +16,7 @@ export const LoginForm: FC = () => {
   const [formError, setFormError] = useState('')
 
   function validateEmail(value: string) {
-    if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (value && !isValidEmail(value)) {
       setEmailError('Enter a valid email')
     } else {
       setEmailError('')
