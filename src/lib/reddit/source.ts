@@ -1,4 +1,4 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from './types'
 
 export interface RedditDataSource {
   /**

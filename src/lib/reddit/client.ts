@@ -1,4 +1,4 @@
-import { type RedditPost } from '@/data/reddit-mock'
+import { type RedditPost } from './types'
 import {
   TARGET_SUBREDDITS,
   REDDIT_CONFIG,

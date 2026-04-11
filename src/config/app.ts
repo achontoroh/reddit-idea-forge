@@ -19,7 +19,7 @@ export const config = {
     highEngagementBonus: 3,
   },
   reddit: {
-    dataSource: 'api' as 'mock' | 'api',
+    dataSource: 'api' as const,
     postsPerSubreddit: 5,
     requestDelayMs: 200,
     categories: CATEGORIES,
