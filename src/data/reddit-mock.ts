@@ -1,4 +1,4 @@
-import { type Category } from '@/config/categories'
+import { type CategorySlug } from '@/config/categories'
 
 export interface RedditPost {
   id: string
@@ -9,7 +9,7 @@ export interface RedditPost {
   num_comments: number
   url: string
   created_utc: number
-  category: Category
+  category: CategorySlug
 }
 
 export const mockRedditPosts: RedditPost[] = [
@@ -222,6 +222,6 @@ export const mockRedditPosts: RedditPost[] = [
   },
 ]
 
-export function getPostsByCategory(category: Category): RedditPost[] {
+export function getPostsByCategorySlug(category: CategorySlug): RedditPost[] {
   return mockRedditPosts.filter((post) => post.category === category)
 }

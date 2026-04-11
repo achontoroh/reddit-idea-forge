@@ -1,7 +1,7 @@
 'use client'
 
 import { type FC, useState, useEffect, useRef } from 'react'
-import { CATEGORIES, CATEGORY_LABELS } from '@/config/categories'
+import { CATEGORIES } from '@/config/categories'
 import { Button } from '@/components/ui/button'
 import { Chip } from '@/components/ui/chip'
 
@@ -117,10 +117,10 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
           <div className="flex flex-wrap gap-3">
             {CATEGORIES.map((category) => (
               <Chip
-                key={category}
-                label={CATEGORY_LABELS[category]}
-                selected={selectedCategories.includes(category)}
-                onClick={() => toggleCategory(category)}
+                key={category.slug}
+                label={category.name}
+                selected={selectedCategories.includes(category.slug)}
+                onClick={() => toggleCategory(category.slug)}
               />
             ))}
           </div>
