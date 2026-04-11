@@ -2,21 +2,28 @@ import { type FC } from 'react'
 
 interface ScoreBadgeProps {
   score: number
+  variant?: 'compact' | 'full'
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 70) return 'bg-green-100 text-green-700 ring-green-600/20'
-  if (score >= 40) return 'bg-amber-100 text-amber-700 ring-amber-600/20'
-  return 'bg-red-100 text-red-700 ring-red-600/20'
-}
-
-export const ScoreBadge: FC<ScoreBadgeProps> = ({ score }) => {
+export const ScoreBadge: FC<ScoreBadgeProps> = ({ score, variant = 'compact' }) => {
   return (
-    <span
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ring-1 ring-inset ${getScoreColor(score)}`}
+    <div
+      className="inline-flex items-center gap-1 bg-accent px-3 py-1 rounded-full shrink-0"
       title={`Score: ${score}/100`}
     >
-      {score}
-    </span>
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className="text-white"
+      >
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+      </svg>
+      <span className="text-white text-xs font-bold">
+        {score}
+        {variant === 'full' && ' Score'}
+      </span>
+    </div>
   )
 }

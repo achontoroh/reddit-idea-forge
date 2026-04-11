@@ -5,20 +5,20 @@
 
 @theme inline {
   /* Brand palette */
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-hover);
-  --color-primary-active: var(--color-primary-active);
-  --color-primary-container: var(--color-primary-container);
-  --color-on-primary: var(--color-on-primary);
-  --color-accent: var(--color-accent);
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-active: var(--brand-primary-active);
+  --color-primary-container: var(--brand-primary-container);
+  --color-on-primary: var(--brand-on-primary);
+  --color-accent: var(--brand-accent);
 
   /* Surfaces */
   --color-surface-base: var(--surface-base);
   --color-surface-lowest: var(--surface-lowest);
   --color-surface-low: var(--surface-low);
   --color-surface-highest: var(--surface-highest);
-  --color-on-surface: var(--color-on-surface);
-  --color-on-surface-muted: var(--color-on-surface-muted);
+  --color-on-surface: var(--text-on-surface);
+  --color-on-surface-muted: var(--text-on-surface-muted);
 
   /* Font families */
   --font-heading: var(--font-plus-jakarta-sans);
@@ -37,7 +37,7 @@
 
 body {
   background: var(--surface-base);
-  color: var(--color-on-surface);
+  color: var(--text-on-surface);
   font-family: var(--font-sans);
 }
 

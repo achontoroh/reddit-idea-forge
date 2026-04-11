@@ -1,111 +1,86 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-
-const VALUE_PROPS = [
-  {
-    icon: '\uD83D\uDD0D',
-    title: 'Reddit-powered signals',
-    description: 'Pain points extracted from real user discussions across thousands of communities',
-  },
-  {
-    icon: '\uD83E\uDD16',
-    title: 'AI-scored ideas',
-    description: 'Each idea rated 0\u2013100 across pain intensity, market size, and competition',
-  },
-  {
-    icon: '\uD83D\uDCE7',
-    title: 'Email alerts',
-    description: 'Subscribe to get fresh ideas in your chosen categories delivered daily',
-  },
-]
 
 const STEPS = [
   {
-    number: 1,
-    title: 'We scan Reddit',
-    description: 'Our system monitors relevant subreddits for recurring pain points and complaints',
+    number: '01',
+    title: 'Reddit scans',
+    description:
+      'Our engine monitors thousands of subreddits to find recurring pain points and feature requests.',
   },
   {
-    number: 2,
-    title: 'AI generates ideas',
-    description: 'Claude analyzes patterns and generates actionable product ideas with detailed scoring',
+    number: '02',
+    title: 'AI scores ideas',
+    description:
+      'Advanced models evaluate difficulty, market size, and monetization potential for every signal.',
   },
   {
-    number: 3,
-    title: 'You take action',
-    description: 'Browse the feed, filter by score, and subscribe for email alerts in your categories',
+    number: '03',
+    title: 'You get notified',
+    description:
+      'Receive a weekly digest of high-probability ideas that you can start building today.',
   },
 ]
+
+function AuthCta() {
+  return (
+    <div className="flex items-center justify-center gap-4">
+      <Link href="/register">
+        <Button size="lg" className="rounded-full px-8">
+          Sign up
+        </Button>
+      </Link>
+      <Link
+        href="/login"
+        className="text-sm font-medium text-on-surface-muted hover:text-on-surface transition-colors"
+      >
+        Log in
+      </Link>
+    </div>
+  )
+}
 
 export default function LandingPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-indigo-50 to-white py-24 text-center">
-        <div className="mx-auto max-w-5xl px-4">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-            Reddit pain points &rarr; product ideas
+      <section className="pt-12 pb-32 text-center px-6">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="text-4xl md:text-[3.5rem] font-bold font-heading tracking-[-0.02em] leading-tight text-on-surface mb-6">
+            Discover your next SaaS idea
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600 md:text-xl">
-            AI scans Reddit for real problems and generates scored startup ideas for you
+          <p className="text-lg text-on-surface-muted max-w-xl mx-auto mb-10">
+            Stop guessing what people want. We analyze market gaps and high-intent signals to
+            deliver validated opportunities directly to your inbox.
           </p>
-          <div className="mt-8">
-            <Link href="/register">
-              <Button size="lg">Get started &mdash; it&apos;s free</Button>
-            </Link>
-          </div>
+          <AuthCta />
         </div>
       </section>
 
-      {/* Value Props */}
-      <section className="py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {VALUE_PROPS.map((prop) => (
-              <Card key={prop.title} padding="lg">
-                <div className="text-3xl">{prop.icon}</div>
-                <h3 className="mt-3 text-lg font-semibold text-gray-900">{prop.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{prop.description}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="bg-gray-50 py-16">
-        <div className="mx-auto max-w-5xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-bold text-gray-900">How it works</h2>
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-            {STEPS.map((step) => (
-              <div key={step.number} className="flex flex-col items-center text-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">
-                  {step.number}
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900">{step.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{step.description}</p>
+      <section className="px-6 pb-32">
+        <div className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
+          {STEPS.map((step) => (
+            <div
+              key={step.number}
+              className="flex flex-col items-start text-left p-8 rounded-xl bg-surface-lowest"
+            >
+              <div className="text-4xl font-bold text-accent mb-4 font-heading">
+                {step.number}
               </div>
-            ))}
-          </div>
+              <h3 className="text-xl font-semibold text-on-surface mb-2 font-heading">
+                {step.title}
+              </h3>
+              <p className="text-on-surface-muted text-sm leading-relaxed">{step.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="bg-indigo-600 py-16 text-center">
-        <div className="mx-auto max-w-5xl px-4">
-          <h2 className="text-3xl font-bold text-white">Find your next product idea today</h2>
-          <div className="mt-8">
-            <Link href="/register">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="border-white bg-white text-indigo-600 hover:bg-indigo-50"
-              >
-                Get started &mdash; it&apos;s free
-              </Button>
-            </Link>
-          </div>
+      <section className="px-6 pb-32">
+        <div className="mx-auto max-w-4xl py-20 rounded-[2.5rem] bg-surface-highest/30 flex flex-col items-center text-center">
+          <h2 className="text-3xl font-bold text-on-surface mb-10 font-heading">
+            Ready to build?
+          </h2>
+          <AuthCta />
         </div>
       </section>
     </>

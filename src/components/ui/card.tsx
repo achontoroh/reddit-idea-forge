@@ -23,7 +23,7 @@ export const Card: FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-lg bg-surface-lowest outline outline-[var(--ghost-border-width)] outline-[var(--ghost-border-color)] ${modal ? 'shadow-modal' : ''} ${paddingClasses[padding]} ${className}`}
+      className={`rounded-lg bg-surface-lowest ${modal ? 'shadow-modal' : ''} ${paddingClasses[padding]} ${className}`}
       onClick={onClick}
     >
       {children}
