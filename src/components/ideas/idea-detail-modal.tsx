@@ -19,7 +19,7 @@ const CATEGORY_BADGE_VARIANT: Record<string, 'info' | 'success' | 'warning' | 'd
   productivity: 'default',
 }
 
-const SCORE_LABELS: { key: keyof Idea['score_breakdown']; label: string; description: string }[] = [
+const SCORE_LABELS: { key: keyof Idea['ai_score_breakdown']; label: string; description: string }[] = [
   { key: 'pain_intensity', label: 'Pain Intensity', description: 'How severe is the problem?' },
   { key: 'willingness_to_pay', label: 'Willingness to Pay', description: 'Would users pay for a solution?' },
   { key: 'competition', label: 'Competition Gap', description: 'How underserved is this space?' },
@@ -93,7 +93,7 @@ export const IdeaDetailModal: FC<IdeaDetailModalProps> = ({ idea, onClose }) => 
             </div>
             <h2 className="text-xl font-bold text-gray-900">{idea.title}</h2>
           </div>
-          <ScoreBadge score={idea.score} />
+          <ScoreBadge score={idea.ai_score} />
         </div>
 
         {/* Pitch — full, no truncation */}
@@ -113,7 +113,7 @@ export const IdeaDetailModal: FC<IdeaDetailModalProps> = ({ idea, onClose }) => 
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Score Breakdown</h4>
           <div className="flex flex-col gap-3">
             {SCORE_LABELS.map(({ key, label, description }) => {
-              const value = idea.score_breakdown[key]
+              const value = idea.ai_score_breakdown[key]
               return (
                 <div key={key}>
                   <div className="mb-0.5 flex items-center justify-between">

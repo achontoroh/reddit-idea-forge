@@ -14,7 +14,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
     <div className="bg-surface-lowest p-6 rounded-lg transition-shadow">
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-on-surface font-semibold text-lg">{idea.title}</h3>
-        <ScoreBadge score={idea.score} />
+        <ScoreBadge score={idea.ai_score} />
       </div>
       <div className="mb-4">
         <span className="bg-primary-container/20 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">

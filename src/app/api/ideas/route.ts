@@ -18,18 +18,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const category = searchParams.get('category')
 
-    // Query ideas scoped to authenticated user
+    // Query ideas (v2: ideas are shared, not per-user)
     let query = supabase
       .from('ideas')
       .select('*')
-      .eq('user_id', user.id)
 
     if (category && category !== 'all') {
       query = query.eq('category', category)
     }
 
     const { data, error } = await query
-      .order('score', { ascending: false })
+      .order('ai_score', { ascending: false })
       .order('created_at', { ascending: false })
 
     if (error) {

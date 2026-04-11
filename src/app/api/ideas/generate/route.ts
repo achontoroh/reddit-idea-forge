@@ -24,7 +24,6 @@ export async function POST() {
     const { data: existingIdeas } = await (supabaseServiceRole
       .from('ideas') as ReturnType<typeof supabaseServiceRole.from>)
       .select('source_url')
-      .eq('user_id', user.id)
       .not('source_url', 'is', null)
 
     const processedUrls = new Set(
@@ -58,21 +57,20 @@ export async function POST() {
 
     // Step 4: Save to Supabase via service role (bypasses RLS for insert)
     const ideasToInsert = scoredIdeas.map(({ idea, score }) => ({
-      user_id: user.id,
       title: idea.title,
       pitch: idea.pitch,
       pain_point: idea.pain_point,
       category: idea.category,
       source_subreddit: idea.source_subreddit,
       source_url: idea.source_url,
-      score: score.total,
-      score_breakdown: {
+      ai_score: score.total,
+      ai_score_breakdown: {
         pain_intensity: score.pain_intensity,
         willingness_to_pay: score.willingness_to_pay,
         competition: score.competition,
         tam: score.tam,
       } satisfies ScoreBreakdown,
-      is_new: true,
+      target_audience: idea.target_audience,
     }))
 
     // Type assertion needed: supabase-js v2.102 generic resolution

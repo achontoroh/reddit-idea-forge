@@ -5,17 +5,25 @@ export interface ScoreBreakdown {
   tam: number
 }
 
+export type MvpComplexity = 'low' | 'medium' | 'high'
+export type MonetizationModel = 'subscription' | 'one-time' | 'freemium' | 'marketplace'
+
 export interface Idea {
   id: string
-  user_id: string
   title: string
   pitch: string
   pain_point: string
   category: string
   source_subreddit: string
   source_url: string | null
-  score: number
-  score_breakdown: ScoreBreakdown
-  is_new: boolean
+  ai_score: number
+  ai_score_breakdown: ScoreBreakdown
+  target_audience: string | null
+  source_post_ids: string[] | null
+  community_score: number
+  view_count: number
+  mvp_complexity: MvpComplexity | null
+  monetization_model: MonetizationModel | null
+  expires_at: string | null
   created_at: string
 }
