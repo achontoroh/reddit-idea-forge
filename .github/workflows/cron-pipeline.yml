@@ -1,0 +1,47 @@
+name: Cron Pipeline
+
+on:
+  schedule:
+    # Generate: every 6 hours
+    - cron: '0 */6 * * *'
+    # Cleanup: daily at 03:00 UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Job to run'
+        required: true
+        type: choice
+        options:
+          - generate
+          - cleanup
+          - both
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.schedule == '0 */6 * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'generate' || github.event.inputs.job == 'both')
+    steps:
+      - name: Trigger generate pipeline
+        run: |
+          curl -X POST https://reddit-idea-forge.vercel.app/api/cron/generate \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body \
+            --max-time 120
+
+  cleanup:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.schedule == '0 3 * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'cleanup' || github.event.inputs.job == 'both')
+    steps:
+      - name: Trigger cleanup pipeline
+        run: |
+          curl -X POST https://reddit-idea-forge.vercel.app/api/cron/cleanup \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            --fail-with-body \
+            --max-time 60
