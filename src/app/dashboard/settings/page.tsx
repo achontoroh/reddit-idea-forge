@@ -7,12 +7,11 @@ import { type Subscription } from '@/lib/types/subscription'
 export default async function SettingsPage() {
   const supabase = await createClient()
 
+  // Auth is already guarded by DashboardLayout — user.id needed for subscription query
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
 
   const { data: subscription } = await supabase
     .from('subscriptions')

@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { type Idea } from '@/lib/types/idea'
 import { BackLink } from '@/components/ui/back-link'
 import { ScoreBadge } from '@/components/ui/score-badge'
-import { CATEGORY_LABELS, type Category } from '@/config/categories'
+import { CATEGORY_LABELS } from '@/config/categories'
 
 interface IdeaDetailPageProps {
   params: Promise<{ id: string }>
@@ -24,7 +24,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
   }
 
   const typedIdea = idea as Idea
-  const categoryLabel = CATEGORY_LABELS[typedIdea.category as Category] ?? typedIdea.category
+  const categoryLabel = CATEGORY_LABELS[typedIdea.category] ?? typedIdea.category
 
   return (
     <div className="max-w-[720px] mx-auto">
@@ -35,7 +35,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
           <span className="px-4 py-1.5 bg-primary-container/20 text-primary rounded-full text-[0.6875rem] font-bold tracking-widest uppercase">
             {categoryLabel}
           </span>
-          <ScoreBadge score={typedIdea.score} variant="full" />
+          <ScoreBadge score={typedIdea.ai_score} variant="full" />
         </div>
 
         <h1 className="text-3xl md:text-[3.5rem] leading-[1.1] font-bold text-on-surface tracking-[-0.02em] mb-8 font-heading">

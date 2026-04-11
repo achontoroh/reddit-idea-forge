@@ -2,24 +2,15 @@
 
 import { type FC } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
-import { createClient } from '@/lib/supabase/client'
+import { LogoutButton } from '@/components/auth/logout-button'
 
 interface DashboardNavActionsProps {
   email?: string
 }
 
 export const DashboardNavActions: FC<DashboardNavActionsProps> = ({ email }) => {
-  const router = useRouter()
-
-  async function handleLogout() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
-  }
-
   return (
     <>
       <ThemeToggle />
@@ -33,9 +24,7 @@ export const DashboardNavActions: FC<DashboardNavActionsProps> = ({ email }) => 
           Settings
         </Button>
       </Link>
-      <Button variant="secondary" size="sm" onClick={handleLogout}>
-        Log out
-      </Button>
+      <LogoutButton />
     </>
   )
 }

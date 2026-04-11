@@ -1,29 +1,15 @@
-import { type Category } from './categories'
+import { type CategorySlug, getAllSubreddits, CATEGORIES } from './categories'
 import { config } from './app'
 
-/** Subreddits to scan for pain points, grouped by app category */
-export const TARGET_SUBREDDITS: readonly string[] = [
-  'SaaS',
-  'startups',
-  'smallbusiness',
-  'webdev',
-  'Entrepreneur',
-  'productivity',
-  'personalfinance',
-  'programming',
-] as const
+/** Subreddits to scan for pain points — derived from category config */
+export const TARGET_SUBREDDITS: readonly string[] = getAllSubreddits()
 
-/** Maps subreddit names (lowercase) → app category for classification */
-export const SUBREDDIT_CATEGORY_MAP: Record<string, Category> = {
-  saas: 'devtools',
-  startups: 'finance',
-  smallbusiness: 'finance',
-  webdev: 'devtools',
-  entrepreneur: 'productivity',
-  productivity: 'productivity',
-  personalfinance: 'finance',
-  programming: 'devtools',
-}
+/** Maps subreddit names (lowercase) → app category slug for classification */
+export const SUBREDDIT_CATEGORY_MAP: Record<string, CategorySlug> = Object.fromEntries(
+  CATEGORIES.flatMap((c) =>
+    c.subreddits.map((sub) => [sub.toLowerCase(), c.slug as CategorySlug])
+  )
+)
 
 export const REDDIT_CONFIG = {
   postsPerSubreddit: config.reddit.postsPerSubreddit,

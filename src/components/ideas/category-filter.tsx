@@ -1,7 +1,7 @@
 'use client'
 
 import { type FC } from 'react'
-import { CATEGORIES, CATEGORY_LABELS } from '@/config/categories'
+import { CATEGORIES } from '@/config/categories'
 import { Chip } from '@/components/ui/chip'
 
 interface CategoryFilterProps {
@@ -15,10 +15,10 @@ export const CategoryFilter: FC<CategoryFilterProps> = ({ selected, onChange }) 
       <Chip label="All" selected={selected === 'all'} onClick={() => onChange('all')} />
       {CATEGORIES.map((cat) => (
         <Chip
-          key={cat}
-          label={CATEGORY_LABELS[cat]}
-          selected={selected === cat}
-          onClick={() => onChange(cat)}
+          key={cat.slug}
+          label={cat.name}
+          selected={selected === cat.slug}
+          onClick={() => onChange(cat.slug)}
         />
       ))}
     </div>
