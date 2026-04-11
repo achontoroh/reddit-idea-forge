@@ -36,6 +36,7 @@ export const config = {
   },
   ideas: {
     ttlDays: 30,
+    dedupWindowDays: 7,
     maxFavoritesPerUser: 20,
   },
 } as const

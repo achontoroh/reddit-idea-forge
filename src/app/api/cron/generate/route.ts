@@ -1,27 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchAndStorePosts } from '@/lib/reddit/fetch-service'
 import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
+import { validateCronAuth } from '@/lib/utils/validation'
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
 
-  // Validate CRON_SECRET
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret) {
-    console.error('[Cron/Generate] CRON_SECRET env var is not set')
-    return NextResponse.json(
-      { success: false, error: 'Server misconfiguration' },
-      { status: 500 }
-    )
-  }
-
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
-    )
-  }
+  const authError = validateCronAuth(request)
+  if (authError) return authError
 
   try {
     console.log('[Cron/Generate] Starting pipeline...')
