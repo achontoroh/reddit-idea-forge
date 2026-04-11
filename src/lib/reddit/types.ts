@@ -1,4 +1,4 @@
-import { type Category } from '@/config/categories'
+import { type CategorySlug } from '@/config/categories'
 import { type RedditPost } from '@/data/reddit-mock'
 import { SUBREDDIT_CATEGORY_MAP } from '@/config/reddit'
 
@@ -32,7 +32,7 @@ export interface RedditApiResponse {
  */
 export function mapRawToRedditPost(raw: RedditApiPost['data']): RedditPost | null {
   const subredditLower = raw.subreddit.toLowerCase()
-  const category: Category | undefined = SUBREDDIT_CATEGORY_MAP[subredditLower]
+  const category: CategorySlug | undefined = SUBREDDIT_CATEGORY_MAP[subredditLower]
 
   if (!category) {
     return null

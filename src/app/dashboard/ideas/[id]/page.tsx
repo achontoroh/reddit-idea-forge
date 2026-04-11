@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { type Idea } from '@/lib/types/idea'
 import { BackLink } from '@/components/ui/back-link'
 import { ScoreBadge } from '@/components/ui/score-badge'
-import { CATEGORY_LABELS, type Category } from '@/config/categories'
+import { CATEGORY_LABELS } from '@/config/categories'
 
 interface IdeaDetailPageProps {
   params: Promise<{ id: string }>
@@ -24,7 +24,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
   }
 
   const typedIdea = idea as Idea
-  const categoryLabel = CATEGORY_LABELS[typedIdea.category as Category] ?? typedIdea.category
+  const categoryLabel = CATEGORY_LABELS[typedIdea.category] ?? typedIdea.category
 
   return (
     <div className="max-w-[720px] mx-auto">
