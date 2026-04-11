@@ -1,5 +1,7 @@
 export interface LLMCompleteOptions {
   temperature?: number
+  /** Override the default model for this call (provider-specific model ID) */
+  model?: string
 }
 
 export interface LLMProvider {
