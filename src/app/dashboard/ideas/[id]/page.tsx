@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { type Idea } from '@/lib/types/idea'
 import { BackLink } from '@/components/ui/back-link'
+import { Card } from '@/components/ui/card'
 import { ScoreBadge } from '@/components/ui/score-badge'
 import { CATEGORY_LABELS } from '@/config/categories'
 
@@ -53,11 +54,11 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
               Pain Point
             </h2>
           </div>
-          <div className="p-6 rounded-xl bg-surface-lowest">
+          <Card padding="lg" elevated>
             <p className="text-on-surface leading-relaxed">
               {typedIdea.pain_point}
             </p>
-          </div>
+          </Card>
         </section>
 
         <div className="flex justify-center pt-12">

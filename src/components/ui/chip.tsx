@@ -13,7 +13,7 @@ export const Chip: FC<ChipProps> = ({ label, selected, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
         selected
           ? 'bg-primary text-on-primary'
           : 'bg-surface-highest text-on-surface hover:opacity-80'
