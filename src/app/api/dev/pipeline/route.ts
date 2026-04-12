@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { fetchAndStorePosts } from '@/lib/reddit/fetch-service'
 import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
 import { getRotationSlotCount } from '@/lib/reddit/rotation'
+import { AVAILABLE_MODELS } from '@/lib/llm/model-rotation'
 
 function devOnly(): NextResponse | null {
   if (process.env.NODE_ENV !== 'development') {
@@ -26,12 +27,17 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = z
-      .object({ rotationIndex: z.number().int().min(0).optional().default(0) })
+      .object({
+        rotationIndex: z.number().int().min(0).optional().default(0),
+        modelOverride: z.string().optional(),
+      })
       .parse(await request.json())
-    const { rotationIndex } = body
+    const { rotationIndex, modelOverride } = body
 
     const fetchResult = await fetchAndStorePosts(rotationIndex)
-    const genResult = await generateSharedIdeas()
+    const genResult = await generateSharedIdeas(
+      modelOverride ? { modelOverride } : undefined
+    )
     const durationMs = Date.now() - startTime
 
     return NextResponse.json({
@@ -66,5 +72,6 @@ export async function GET() {
 
   return NextResponse.json({
     totalSlots: getRotationSlotCount(),
+    availableModels: AVAILABLE_MODELS,
   })
 }

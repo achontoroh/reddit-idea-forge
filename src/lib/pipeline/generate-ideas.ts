@@ -26,11 +26,16 @@ export interface GenerationResult {
   errors: string[]
 }
 
+export interface GenerationOptions {
+  /** Override the automatic model rotation with a specific model name. */
+  modelOverride?: string
+}
+
 /**
  * Main generation pipeline: fetches unprocessed Reddit posts, enriches them,
  * sends to LLM for merged signal+idea generation, deduplicates, and stores ideas.
  */
-export async function generateSharedIdeas(): Promise<GenerationResult> {
+export async function generateSharedIdeas(options?: GenerationOptions): Promise<GenerationResult> {
   const errors: string[] = []
 
   // 1. Query unprocessed posts, ordered by score desc
@@ -82,9 +87,9 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     }
   })
 
-  // 3. Model rotation
-  const model = getCurrentRotationModel()
-  console.log(`[Pipeline] Using model: ${model}`)
+  // 3. Model selection: explicit override (dev) or automatic rotation (cron)
+  const model = options?.modelOverride ?? getCurrentRotationModel()
+  console.log(`[Pipeline] Using model: ${model}${options?.modelOverride ? ' (manual override)' : ' (rotation)'}`)
 
   // 4. Call LLM with merged prompt
   const provider = getLLMProvider()
