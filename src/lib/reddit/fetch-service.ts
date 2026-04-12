@@ -1,6 +1,7 @@
 import { type Category } from '@/config/categories'
 import { config } from '@/config/app'
 import { supabaseServiceRole } from '@/lib/supabase/service'
+import { logger } from '@/lib/logger'
 import type { Database } from '@/lib/types/database'
 import { getRedditSource } from './index'
 import { getCategoriesToFetch, getSubredditsForCategories } from './rotation'
@@ -26,16 +27,15 @@ export async function fetchAndStoreByCategories(
   const subreddits = getSubredditsForCategories(categories)
   const categorySlugs = categories.map((c) => c.slug)
 
-  console.log(
-    `[FetchService] Starting fetch for categories: ${categorySlugs.join(', ')} ` +
-    `(${subreddits.length} subreddits)`
-  )
+  logger.info(`[FetchService] Starting fetch for categories: ${categorySlugs.join(', ')}`, {
+    subreddits: subreddits.length,
+  })
 
   // Fetch posts from Reddit via the existing source abstraction
   const source = getRedditSource()
   const rawPosts = await source.fetchPosts(subreddits)
 
-  console.log(`[FetchService] Fetched ${rawPosts.length} posts from Reddit`)
+  logger.info(`[FetchService] Fetched ${rawPosts.length} posts from Reddit`)
 
   if (rawPosts.length === 0) {
     return {
@@ -78,7 +78,7 @@ export async function fetchAndStoreByCategories(
 
   if (error) {
     const msg = `[FetchService] DB insert error: ${error.message}`
-    console.error(msg)
+    logger.error(msg)
     errors.push(msg)
     return {
       fetchedCount: rawPosts.length,
@@ -92,9 +92,7 @@ export async function fetchAndStoreByCategories(
   const newCount = data?.length ?? 0
   const skippedCount = rawPosts.length - newCount
 
-  console.log(
-    `[FetchService] Done: ${newCount} new, ${skippedCount} duplicates skipped`
-  )
+  logger.info(`[FetchService] Done: ${newCount} new, ${skippedCount} duplicates skipped`)
 
   return {
     fetchedCount: rawPosts.length,
@@ -113,10 +111,10 @@ export async function fetchAndStoreByCategories(
 export async function fetchAndStorePosts(rotationIndex?: number): Promise<FetchResult> {
   const categories = getCategoriesToFetch(rotationIndex)
 
-  console.log(
-    `[FetchService] Rotation selected: ${categories.map((c) => c.slug).join(', ')} ` +
-    `(slot: ${rotationIndex ?? 'auto'}, UTC hour: ${new Date().getUTCHours()})`
-  )
+  logger.info(`[FetchService] Rotation selected: ${categories.map((c) => c.slug).join(', ')}`, {
+    slot: rotationIndex ?? 'auto',
+    utcHour: new Date().getUTCHours(),
+  })
 
   return fetchAndStoreByCategories(categories)
 }

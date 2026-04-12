@@ -2,6 +2,7 @@ import { type RedditPost } from './types'
 import { type RedditDataSource } from './source'
 import { REDDIT_CONFIG, SUBREDDIT_CATEGORY_MAP } from '@/config/reddit'
 import { type CategorySlug } from '@/config/categories'
+import { logger } from '@/lib/logger'
 
 const USER_AGENT = 'IdeaForge/1.0'
 const ARCTIC_SHIFT_BASE = 'https://arctic-shift.photon-reddit.com/api/posts/search'
@@ -60,9 +61,7 @@ async function fetchSubredditFromArcticShift(
   })
 
   if (!response.ok) {
-    console.warn(
-      `[ArcticShift] Failed to fetch r/${subreddit}: ${response.status} ${response.statusText}`
-    )
+    logger.warn(`[ArcticShift] Failed to fetch r/${subreddit}: ${response.status} ${response.statusText}`)
     return []
   }
 
@@ -104,11 +103,11 @@ export class ArcticShiftSource implements RedditDataSource {
         const posts = await fetchSubredditFromArcticShift(subreddit)
         allPosts.push(...posts)
 
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[ArcticShift] r/${subreddit}: ${posts.length} posts`)
-        }
+        logger.debug(`[ArcticShift] r/${subreddit}: ${posts.length} posts`)
       } catch (error) {
-        console.warn(`[ArcticShift] Error fetching r/${subreddit}:`, error)
+        logger.warn(`[ArcticShift] Error fetching r/${subreddit}`, {
+          error: error instanceof Error ? error.message : String(error),
+        })
       }
 
       // Rate limit: delay between requests (skip after last)
@@ -117,11 +116,7 @@ export class ArcticShiftSource implements RedditDataSource {
       }
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(
-        `[ArcticShift] Total: ${allPosts.length} posts from ${targetSubs.length} subreddits`
-      )
-    }
+    logger.debug(`[ArcticShift] Total: ${allPosts.length} posts from ${targetSubs.length} subreddits`)
 
     return allPosts
   }

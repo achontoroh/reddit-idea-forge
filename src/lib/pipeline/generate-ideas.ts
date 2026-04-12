@@ -1,6 +1,7 @@
 import { config } from '@/config/app'
 import { LLM_CONFIG } from '@/config/llm'
 import { supabaseServiceRole } from '@/lib/supabase/service'
+import { logger } from '@/lib/logger'
 import { getLLMProvider } from '@/lib/llm'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
 import { IdeasV2ResponseSchema, type GeneratedIdeaV2 } from '@/lib/llm/schemas'
@@ -39,7 +40,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
   const errors: string[] = []
 
   // 1. Query unprocessed posts, ordered by score desc
-  console.log('[Pipeline] Querying unprocessed reddit posts...')
+  logger.info('[Pipeline] Querying unprocessed reddit posts...')
   const { data: posts, error: fetchError } = await supabaseServiceRole
     .from('reddit_posts')
     .select('*')
@@ -49,20 +50,20 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
   if (fetchError) {
     const msg = `[Pipeline] Failed to fetch posts: ${fetchError.message}`
-    console.error(msg)
+    logger.error(msg)
     return { postsProcessed: 0, ideasGenerated: 0, ideasSkippedDuplicate: 0, model: '', errors: [msg] }
   }
 
   if (!posts || posts.length === 0) {
-    console.log('[Pipeline] No unprocessed posts found, skipping generation')
+    logger.info('[Pipeline] No unprocessed posts found, skipping generation')
     return { postsProcessed: 0, ideasGenerated: 0, ideasSkippedDuplicate: 0, model: '', errors: [] }
   }
 
-  console.log(`[Pipeline] Found ${posts.length} unprocessed posts`)
+  logger.info(`[Pipeline] Found ${posts.length} unprocessed posts`)
 
   // 2. Pre-LLM enrichment
   const crossSubredditOverlaps = detectCrossSubredditOverlap(posts)
-  console.log(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
+  logger.info(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
 
   // Cache engagement tier and cross-subreddit keywords per post URL
   // to avoid recomputing during score adjustment
@@ -89,7 +90,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
   // 3. Model selection: explicit override (dev) or automatic rotation (cron)
   const model = options?.modelOverride ?? getCurrentRotationModel()
-  console.log(`[Pipeline] Using model: ${model}${options?.modelOverride ? ' (manual override)' : ' (rotation)'}`)
+  logger.info(`[Pipeline] Using model: ${model}${options?.modelOverride ? ' (manual override)' : ' (rotation)'}`)
 
   // 4. Call LLM with merged prompt
   const provider = getLLMProvider()
@@ -98,7 +99,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
   let ideas: GeneratedIdeaV2[]
   try {
-    console.log('[Pipeline] Calling LLM for idea generation...')
+    logger.info('[Pipeline] Calling LLM for idea generation...')
     const rawResponse = await provider.complete(userPrompt, systemPrompt, {
       temperature: LLM_CONFIG.scoringTemperature,
       model,
@@ -106,10 +107,10 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
     const parsed = parseLLMResponse(rawResponse, IdeasV2ResponseSchema)
     ideas = parsed.ideas
-    console.log(`[Pipeline] LLM returned ${ideas.length} ideas`)
+    logger.info(`[Pipeline] LLM returned ${ideas.length} ideas`)
   } catch (error) {
     const msg = `[Pipeline] LLM call failed: ${error instanceof Error ? error.message : String(error)}`
-    console.error(msg)
+    logger.error(msg)
     errors.push(msg)
 
     // Mark posts as processed even on LLM failure to avoid retry loops
@@ -158,7 +159,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
   const skippedCount = ideas.length - newIdeas.length
 
   if (skippedCount > 0) {
-    console.log(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
+    logger.info(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
   }
 
   // 7. Build post ID lookup (url → DB uuid) for source_post_ids
@@ -192,10 +193,10 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
     if (insertError) {
       const msg = `[Pipeline] Failed to insert ideas: ${insertError.message}`
-      console.error(msg)
+      logger.error(msg)
       errors.push(msg)
     } else {
-      console.log(`[Pipeline] Inserted ${ideaInserts.length} ideas`)
+      logger.info(`[Pipeline] Inserted ${ideaInserts.length} ideas`)
     }
   }
 
@@ -210,7 +211,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
     errors,
   }
 
-  console.log(
+  logger.info(
     `[Pipeline] Complete: ${result.postsProcessed} posts processed, ` +
     `${result.ideasGenerated} ideas generated, ${result.ideasSkippedDuplicate} duplicates skipped`
   )
@@ -230,8 +231,8 @@ async function markPostsProcessed(posts: RedditPostRow[]): Promise<void> {
     .in('id', postIds)
 
   if (error) {
-    console.error(`[Pipeline] Failed to mark posts as processed: ${error.message}`)
+    logger.error(`[Pipeline] Failed to mark posts as processed: ${error.message}`)
   } else {
-    console.log(`[Pipeline] Marked ${postIds.length} posts as processed`)
+    logger.info(`[Pipeline] Marked ${postIds.length} posts as processed`)
   }
 }
