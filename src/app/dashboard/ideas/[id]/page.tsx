@@ -33,7 +33,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
   const badges: IdeaBadge[] = []
 
   if (user) {
-    const [voteResult, favoriteResult, prefsResult, viewResult] = await Promise.all([
+    const [voteResult, favoriteResult] = await Promise.all([
       supabase
         .from('idea_votes')
         .select('vote')
@@ -46,31 +46,13 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
         .eq('idea_id', id)
         .eq('user_id', user.id)
         .maybeSingle(),
-      supabase
-        .from('user_preferences')
-        .select('last_seen_at')
-        .eq('user_id', user.id)
-        .maybeSingle(),
-      supabase
-        .from('idea_views')
-        .select('idea_id')
-        .eq('user_id', user.id)
-        .eq('idea_id', id)
-        .maybeSingle(),
     ])
 
     userVote = (voteResult.data?.vote as 1 | -1) ?? null
     isFavorited = !!favoriteResult.data
 
-    // Compute badges for this single idea
-    const lastSeenAt = prefsResult.data?.last_seen_at
-    const hasViewed = !!viewResult.data
+    // No 'new' badge on detail page — viewing it is what clears the badge
     const nowMs = new Date().getTime()
-
-    // 'new' badge: created after last_seen_at AND not viewed
-    if (lastSeenAt && new Date(typedIdea.created_at) > new Date(lastSeenAt) && !hasViewed) {
-      badges.push('new')
-    }
 
     // 'hot' badge: >= 5 upvotes in last 24h
     const twentyFourHoursAgo = new Date(nowMs - 24 * 60 * 60 * 1000).toISOString()

@@ -40,7 +40,7 @@ function computeHotScore(idea: Idea): number {
 /**
  * Compute badges for a set of ideas.
  * Badge criteria:
- *   - 'new':      created after user's last_seen_at AND no idea_views record for this user+idea
+ *   - 'new':      no idea_views record for this user+idea (unread)
  *   - 'hot':      >= 5 upvotes in the last 24 hours
  *   - 'top':      in the top 10 by (ai_score + community_score) among ideas from last 7 days
  *   - 'trending': >= 3 votes (any direction) in the last 48 hours
@@ -64,17 +64,7 @@ async function computeBadges(
     badgeMap.set(id, [])
   }
 
-  // --- 'new' badge: created after last_seen_at AND no view record ---
-  // OPTIMIZATION NOTE: Could be cached per-user session to avoid repeated pref lookups
-  const { data: prefs } = await supabase
-    .from('user_preferences')
-    .select('last_seen_at')
-    .eq('user_id', userId)
-    .maybeSingle()
-
-  const lastSeenAt = prefs?.last_seen_at
-
-  // Fetch user's viewed idea IDs (within the current batch)
+  // --- 'new' badge: user has NOT viewed this idea ---
   const { data: viewedRows } = await supabase
     .from('idea_views')
     .select('idea_id')
@@ -84,10 +74,7 @@ async function computeBadges(
   const viewedIds = new Set((viewedRows ?? []).map((r) => r.idea_id))
 
   for (const idea of ideas) {
-    const isNew = lastSeenAt
-      ? new Date(idea.created_at) > new Date(lastSeenAt) && !viewedIds.has(idea.id)
-      : false // First-time users: no last_seen_at means nothing is "new" yet
-    if (isNew) {
+    if (!viewedIds.has(idea.id)) {
       badgeMap.get(idea.id)!.push('new')
     }
   }

@@ -45,16 +45,19 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
 }) => {
   const [isFavorited, setIsFavorited] = useState(initialFavorited)
   const [isSaving, setIsSaving] = useState(false)
+  const [viewCount, setViewCount] = useState(idea.view_count)
 
   const categoryLabel = CATEGORY_LABELS[idea.category] ?? idea.category
 
-  // Track view on mount
+  // Track view on mount — optimistically increment count
   useEffect(() => {
     if (!isAuthenticated) return
+    setViewCount((prev) => prev + 1)
     fetch(`/api/ideas/${idea.id}/view`, { method: 'POST' }).catch(() => {
       // Silent fail — view tracking is non-critical
+      setViewCount(idea.view_count)
     })
-  }, [idea.id, isAuthenticated])
+  }, [idea.id, isAuthenticated, idea.view_count])
 
   const handleShare = useCallback(() => {
     const subreddit = idea.source_subreddit
@@ -137,7 +140,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
             </svg>
-            <span className="tabular-nums">{idea.view_count}</span>
+            <span className="tabular-nums">{viewCount}</span>
           </div>
 
           <div className="ml-auto flex items-center gap-2">

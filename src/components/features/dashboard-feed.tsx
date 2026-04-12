@@ -1,6 +1,6 @@
 'use client'
 
-import { type FC, useCallback, useEffect, useRef } from 'react'
+import { type FC, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { FeedTabs, type TabMode, type TopPeriod } from './feed-tabs'
 import { CategoryChips } from './category-chips'
@@ -61,29 +61,12 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
   const period = (searchParams.get('period') as TopPeriod) ?? 'week'
   const offset = Math.max(parseInt(searchParams.get('offset') ?? '0', 10), 0)
 
-  const { ideas, total, isLoading, isValidating, mutate } = useDashboardFeed({
+  const { ideas, total, isLoading } = useDashboardFeed({
     tab,
     category,
     period,
     offset,
   })
-
-  // Update last_seen_at on mount (marks current visit timestamp)
-  const lastSeenUpdated = useRef(false)
-  useEffect(() => {
-    if (lastSeenUpdated.current) return
-    lastSeenUpdated.current = true
-    fetch('/api/user/preferences/last-seen', { method: 'PATCH' }).catch(() => {
-      // Non-critical — silently ignore
-    })
-  }, [])
-
-  // Revalidate feed on window focus to refresh badges after viewing an idea
-  useEffect(() => {
-    const onFocus = () => { mutate() }
-    window.addEventListener('focus', onFocus)
-    return () => window.removeEventListener('focus', onFocus)
-  }, [mutate])
 
   const updateParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -169,10 +152,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
       {/* Idea grid */}
       {!showFirstLoad && ideas.length > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
-            {isValidating && (
-              <div className="absolute inset-0 bg-surface-base/50 rounded-lg z-10 pointer-events-none" />
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {ideas.map((idea) => (
               <IdeaCard key={idea.id} idea={idea} />
             ))}
