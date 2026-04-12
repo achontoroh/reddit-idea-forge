@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { type IdeaWithVote } from '@/lib/types/idea'
 import { getCategoryBySlug, CATEGORY_LABELS } from '@/config/categories'
 import { AiScoreBadge, CommunityScore } from './score-display'
-import { StatusBadgeList, deriveStatuses } from './status-badge'
+import { StatusBadgeList } from './status-badge'
 import { IdeaCardTooltip } from './idea-card-tooltip'
 
 interface IdeaCardProps {
@@ -20,7 +20,6 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
   const categoryConfig = getCategoryBySlug(idea.category)
   const categoryLabel = CATEGORY_LABELS[idea.category] ?? idea.category
   const categoryEmoji = categoryConfig?.icon ?? '📁'
-  const statuses = deriveStatuses(idea)
 
   const handleMouseEnter = useCallback(() => {
     // Only show tooltip on hover-capable devices
@@ -55,7 +54,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
               <span aria-hidden="true">{categoryEmoji}</span>
               {categoryLabel}
             </span>
-            <StatusBadgeList statuses={statuses} />
+            <StatusBadgeList badges={idea.badges} />
           </div>
           <AiScoreBadge score={idea.ai_score} />
         </div>

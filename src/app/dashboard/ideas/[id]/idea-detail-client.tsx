@@ -2,7 +2,7 @@
 
 import { type FC, useEffect, useState, useCallback } from 'react'
 import { toast } from 'sonner'
-import { type Idea } from '@/lib/types/idea'
+import { type Idea, type IdeaBadge } from '@/lib/types/idea'
 import { type RedditPost } from '@/lib/types/reddit-post'
 import { BackLink } from '@/components/ui/back-link'
 import { Card } from '@/components/ui/card'
@@ -10,13 +10,14 @@ import { ScoreBadge } from '@/components/ui/score-badge'
 import { VoteButtons } from '@/components/ideas/vote-buttons'
 import { ScoreBreakdown } from '@/components/features/score-breakdown'
 import { RedditSourceCard } from '@/components/features/reddit-source-card'
-import { StatusBadgeList, deriveStatuses } from '@/components/features/status-badge'
+import { StatusBadgeList } from '@/components/features/status-badge'
 import { CATEGORY_LABELS } from '@/config/categories'
 
 interface IdeaDetailClientProps {
   idea: Idea
   userVote: 1 | -1 | null
   isFavorited: boolean
+  badges: IdeaBadge[]
   redditPosts: RedditPost[]
   isAuthenticated: boolean
 }
@@ -38,6 +39,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
   idea,
   userVote,
   isFavorited: initialFavorited,
+  badges,
   redditPosts,
   isAuthenticated,
 }) => {
@@ -45,7 +47,6 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
   const [isSaving, setIsSaving] = useState(false)
 
   const categoryLabel = CATEGORY_LABELS[idea.category] ?? idea.category
-  const statuses = deriveStatuses(idea)
 
   // Track view on mount
   useEffect(() => {
@@ -106,7 +107,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
           <span className="px-3 py-1 bg-primary-container/20 text-primary rounded-full text-[11px] font-bold tracking-widest uppercase">
             {categoryLabel}
           </span>
-          <StatusBadgeList statuses={statuses} />
+          <StatusBadgeList badges={badges} />
           <div className="ml-auto">
             <ScoreBadge score={idea.ai_score} variant="full" />
           </div>

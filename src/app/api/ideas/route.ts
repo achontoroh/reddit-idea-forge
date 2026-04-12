@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { type Idea, type IdeaWithVote } from '@/lib/types/idea'
+import { type Idea, type IdeaWithVote, type IdeaBadge } from '@/lib/types/idea'
 
 type TabMode = 'hot' | 'top' | 'new' | 'foryou'
 type TopPeriod = 'week' | 'month' | 'all'
@@ -35,6 +35,117 @@ function computeHotScore(idea: Idea): number {
   const recencyBoost = ageHours <= HOT_RECENCY_HOURS ? 50 : 0
 
   return idea.ai_score * 2 + idea.community_score * 3 + idea.view_count * 0.5 + recencyBoost
+}
+
+/**
+ * Compute badges for a set of ideas.
+ * Badge criteria:
+ *   - 'new':      created after user's last_seen_at AND no idea_views record for this user+idea
+ *   - 'hot':      >= 5 upvotes in the last 24 hours
+ *   - 'top':      in the top 10 by (ai_score + community_score) among ideas from last 7 days
+ *   - 'trending': >= 3 votes (any direction) in the last 48 hours
+ *
+ * OPTIMIZATION NOTE: Badge computation uses additional subqueries. For MVP this is
+ * acceptable with proper indexes. Future optimization: cache badge data in a
+ * materialized view or compute badges in a background job.
+ */
+async function computeBadges(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  ideas: Idea[],
+  userId: string
+): Promise<Map<string, IdeaBadge[]>> {
+  const badgeMap = new Map<string, IdeaBadge[]>()
+  if (ideas.length === 0) return badgeMap
+
+  const ideaIds = ideas.map((i) => i.id)
+
+  // Initialize all ideas with empty badges
+  for (const id of ideaIds) {
+    badgeMap.set(id, [])
+  }
+
+  // --- 'new' badge: created after last_seen_at AND no view record ---
+  // OPTIMIZATION NOTE: Could be cached per-user session to avoid repeated pref lookups
+  const { data: prefs } = await supabase
+    .from('user_preferences')
+    .select('last_seen_at')
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  const lastSeenAt = prefs?.last_seen_at
+
+  // Fetch user's viewed idea IDs (within the current batch)
+  const { data: viewedRows } = await supabase
+    .from('idea_views')
+    .select('idea_id')
+    .eq('user_id', userId)
+    .in('idea_id', ideaIds)
+
+  const viewedIds = new Set((viewedRows ?? []).map((r) => r.idea_id))
+
+  for (const idea of ideas) {
+    const isNew = lastSeenAt
+      ? new Date(idea.created_at) > new Date(lastSeenAt) && !viewedIds.has(idea.id)
+      : false // First-time users: no last_seen_at means nothing is "new" yet
+    if (isNew) {
+      badgeMap.get(idea.id)!.push('new')
+    }
+  }
+
+  // --- 'hot' badge: >= 5 upvotes in the last 24 hours ---
+  // OPTIMIZATION NOTE: Could use a pre-computed "recent_upvotes" column updated by trigger
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { data: hotVotes } = await supabase
+    .from('idea_votes')
+    .select('idea_id')
+    .in('idea_id', ideaIds)
+    .eq('vote', 1)
+    .gte('created_at', twentyFourHoursAgo)
+
+  const hotCounts = new Map<string, number>()
+  for (const row of hotVotes ?? []) {
+    hotCounts.set(row.idea_id, (hotCounts.get(row.idea_id) ?? 0) + 1)
+  }
+  for (const [ideaId, count] of hotCounts) {
+    if (count >= 5) {
+      badgeMap.get(ideaId)!.push('hot')
+    }
+  }
+
+  // --- 'top' badge: top 10 by (ai_score + community_score) among ideas from last 7 days ---
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const recentIdeas = ideas.filter((i) => new Date(i.created_at) >= new Date(sevenDaysAgo))
+  const sortedByScore = [...recentIdeas].sort(
+    (a, b) => (b.ai_score + b.community_score) - (a.ai_score + a.community_score)
+  )
+  const topIds = new Set(sortedByScore.slice(0, 10).map((i) => i.id))
+
+  for (const ideaId of topIds) {
+    if (badgeMap.has(ideaId)) {
+      badgeMap.get(ideaId)!.push('top')
+    }
+  }
+
+  // --- 'trending' badge: >= 3 votes (any direction) in the last 48 hours ---
+  // OPTIMIZATION NOTE: Could share the vote query with 'hot' and filter by time window
+  const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
+  const { data: trendingVotes } = await supabase
+    .from('idea_votes')
+    .select('idea_id')
+    .in('idea_id', ideaIds)
+    .gte('created_at', fortyEightHoursAgo)
+
+  const trendingCounts = new Map<string, number>()
+  for (const row of trendingVotes ?? []) {
+    trendingCounts.set(row.idea_id, (trendingCounts.get(row.idea_id) ?? 0) + 1)
+  }
+  for (const [ideaId, count] of trendingCounts) {
+    if (count >= 3) {
+      badgeMap.get(ideaId)!.push('trending')
+    }
+  }
+
+  return badgeMap
 }
 
 export async function GET(request: NextRequest) {
@@ -132,7 +243,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform joined data: extract userVote from idea_votes array
-    let ideas: IdeaWithVote[] = (data ?? []).map((row) => {
+    let rawIdeas: (Idea & { userVote: 1 | -1 | null })[] = (data ?? []).map((row) => {
       const { idea_votes, ...idea } = row as Idea & { idea_votes: { vote: number }[] }
       const userVote = idea_votes?.[0]?.vote as 1 | -1 | undefined ?? null
       return { ...idea, userVote }
@@ -141,10 +252,18 @@ export async function GET(request: NextRequest) {
     // For "hot" tab: rank by computed hot score, then paginate
     let total = count ?? 0
     if (tab === 'hot') {
-      ideas.sort((a, b) => computeHotScore(b) - computeHotScore(a))
-      total = ideas.length
-      ideas = ideas.slice(offset, offset + limit)
+      rawIdeas.sort((a, b) => computeHotScore(b) - computeHotScore(a))
+      total = rawIdeas.length
+      rawIdeas = rawIdeas.slice(offset, offset + limit)
     }
+
+    // Compute server-side badges for the page of ideas
+    const badgeMap = await computeBadges(supabase, rawIdeas, user.id)
+
+    const ideas: IdeaWithVote[] = rawIdeas.map((idea) => ({
+      ...idea,
+      badges: badgeMap.get(idea.id) ?? [],
+    }))
 
     return NextResponse.json({
       data: ideas,

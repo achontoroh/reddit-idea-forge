@@ -1,12 +1,11 @@
 import { type FC } from 'react'
-
-export type IdeaStatus = 'new' | 'hot' | 'top' | 'trending'
+import { type IdeaBadge } from '@/lib/types/idea'
 
 interface StatusBadgeProps {
-  status: IdeaStatus
+  status: IdeaBadge
 }
 
-const STATUS_CONFIG: Record<IdeaStatus, { label: string; emoji: string; className: string }> = {
+const STATUS_CONFIG: Record<IdeaBadge, { label: string; emoji: string; className: string }> = {
   new: {
     label: 'New',
     emoji: '✨',
@@ -42,36 +41,28 @@ export const StatusBadge: FC<StatusBadgeProps> = ({ status }) => {
   )
 }
 
+/** Badge priority order: New > Hot > Top > Trending */
+const BADGE_PRIORITY: IdeaBadge[] = ['new', 'hot', 'top', 'trending']
+
 interface StatusBadgeListProps {
-  statuses: IdeaStatus[]
+  badges: IdeaBadge[]
+  maxVisible?: number
 }
 
-export const StatusBadgeList: FC<StatusBadgeListProps> = ({ statuses }) => {
-  if (statuses.length === 0) return null
+export const StatusBadgeList: FC<StatusBadgeListProps> = ({ badges, maxVisible }) => {
+  if (badges.length === 0) return null
+
+  // Sort by priority order and limit if needed
+  const sorted = [...badges].sort(
+    (a, b) => BADGE_PRIORITY.indexOf(a) - BADGE_PRIORITY.indexOf(b)
+  )
+  const visible = maxVisible ? sorted.slice(0, maxVisible) : sorted
 
   return (
     <div className="flex items-center gap-1 flex-wrap">
-      {statuses.map((status) => (
-        <StatusBadge key={status} status={status} />
+      {visible.map((badge) => (
+        <StatusBadge key={badge} status={badge} />
       ))}
     </div>
   )
-}
-
-/** Derive status badges from idea properties */
-export function deriveStatuses(idea: {
-  created_at: string
-  community_score: number
-  ai_score: number
-  view_count: number
-}): IdeaStatus[] {
-  const statuses: IdeaStatus[] = []
-  const ageHours = (Date.now() - new Date(idea.created_at).getTime()) / (1000 * 60 * 60)
-
-  if (ageHours <= 24) statuses.push('new')
-  if (idea.community_score >= 10 && ageHours <= 72) statuses.push('hot')
-  if (idea.ai_score >= 76) statuses.push('top')
-  if (idea.view_count >= 20 && ageHours <= 48) statuses.push('trending')
-
-  return statuses
 }
