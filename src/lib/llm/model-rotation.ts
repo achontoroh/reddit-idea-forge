@@ -4,6 +4,9 @@ const ROTATION_INTERVAL_MS = 6 * 60 * 60 * 1000 // 6 hours
 
 const MODELS = [LLM_CONFIG.geminiModel, LLM_CONFIG.geminiSecondaryModel] as const
 
+/** All available models for manual selection in dev tools. */
+export const AVAILABLE_MODELS: readonly string[] = MODELS
+
 /**
  * Returns the current model based on time rotation.
  * Alternates between primary and secondary Gemini models every 6 hours.

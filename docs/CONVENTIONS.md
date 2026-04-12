@@ -104,6 +104,10 @@ Rules:
 | `REDDIT_CLIENT_SECRET` | **No** | Reddit API (optional) |
 | `REDDIT_DATA_SOURCE` | **No** | `mock` or `api` — switches Reddit data source |
 | `CRON_SECRET` | **No** | Bearer token for cron API endpoints. Must also be set in GitHub repo secrets |
+| `SENTRY_DSN` | **No** | Sentry error tracking DSN (server-side) |
+| `NEXT_PUBLIC_SENTRY_DSN` | Yes | Sentry error tracking DSN (client-side) |
+| `SENTRY_ORG` | **No** | Sentry org slug (for source map uploads) |
+| `SENTRY_PROJECT` | **No** | Sentry project slug (for source map uploads) |
 
 `NEXT_PUBLIC_` prefix = exposed to browser, safe for public data only.
 No prefix = server-only, never import in client components.

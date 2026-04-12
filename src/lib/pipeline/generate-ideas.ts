@@ -1,6 +1,8 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/config/app'
 import { LLM_CONFIG } from '@/config/llm'
 import { supabaseServiceRole } from '@/lib/supabase/service'
+import { logger } from '@/lib/logger'
 import { getLLMProvider } from '@/lib/llm'
 import { parseLLMResponse } from '@/lib/llm/parse-response'
 import { IdeasV2ResponseSchema, type GeneratedIdeaV2 } from '@/lib/llm/schemas'
@@ -26,15 +28,20 @@ export interface GenerationResult {
   errors: string[]
 }
 
+export interface GenerationOptions {
+  /** Override the automatic model rotation with a specific model name. */
+  modelOverride?: string
+}
+
 /**
  * Main generation pipeline: fetches unprocessed Reddit posts, enriches them,
  * sends to LLM for merged signal+idea generation, deduplicates, and stores ideas.
  */
-export async function generateSharedIdeas(): Promise<GenerationResult> {
+export async function generateSharedIdeas(options?: GenerationOptions): Promise<GenerationResult> {
   const errors: string[] = []
 
   // 1. Query unprocessed posts, ordered by score desc
-  console.log('[Pipeline] Querying unprocessed reddit posts...')
+  logger.info('[Pipeline] Querying unprocessed reddit posts...')
   const { data: posts, error: fetchError } = await supabaseServiceRole
     .from('reddit_posts')
     .select('*')
@@ -44,29 +51,30 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
 
   if (fetchError) {
     const msg = `[Pipeline] Failed to fetch posts: ${fetchError.message}`
-    console.error(msg)
+    logger.error(msg)
     return { postsProcessed: 0, ideasGenerated: 0, ideasSkippedDuplicate: 0, model: '', errors: [msg] }
   }
 
   if (!posts || posts.length === 0) {
-    console.log('[Pipeline] No unprocessed posts found, skipping generation')
+    logger.info('[Pipeline] No unprocessed posts found, skipping generation')
     return { postsProcessed: 0, ideasGenerated: 0, ideasSkippedDuplicate: 0, model: '', errors: [] }
   }
 
-  console.log(`[Pipeline] Found ${posts.length} unprocessed posts`)
+  logger.info(`[Pipeline] Found ${posts.length} unprocessed posts`)
 
   // 2. Pre-LLM enrichment
   const crossSubredditOverlaps = detectCrossSubredditOverlap(posts)
-  console.log(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
+  logger.info(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
 
-  // Cache engagement tier and cross-subreddit keywords per post URL
-  // to avoid recomputing during score adjustment
-  const postEnrichmentCache = new Map<string, { engagementTier: EngagementTier; crossKeywords: string[] }>()
+  const now = new Date()
+
+  // Cache enrichment + DB ID per post URL to avoid recomputing during score adjustment
+  const postEnrichmentCache = new Map<string, { postId: string; engagementTier: EngagementTier; crossKeywords: string[] }>()
 
   const enrichedPosts: EnrichedPostInput[] = posts.map((post) => {
     const engagementTier = classifyEngagement(post.score)
     const crossKeywords = getCrossSubredditKeywordsForPost(post, crossSubredditOverlaps)
-    postEnrichmentCache.set(post.url, { engagementTier, crossKeywords })
+    postEnrichmentCache.set(post.url, { postId: post.id, engagementTier, crossKeywords })
 
     return {
       id: post.reddit_id,
@@ -82,9 +90,9 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     }
   })
 
-  // 3. Model rotation
-  const model = getCurrentRotationModel()
-  console.log(`[Pipeline] Using model: ${model}`)
+  // 3. Model selection: explicit override (dev) or automatic rotation (cron)
+  const model = options?.modelOverride ?? getCurrentRotationModel()
+  logger.info(`[Pipeline] Using model: ${model}${options?.modelOverride ? ' (manual override)' : ' (rotation)'}`)
 
   // 4. Call LLM with merged prompt
   const provider = getLLMProvider()
@@ -93,7 +101,7 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
 
   let ideas: GeneratedIdeaV2[]
   try {
-    console.log('[Pipeline] Calling LLM for idea generation...')
+    logger.info('[Pipeline] Calling LLM for idea generation...')
     const rawResponse = await provider.complete(userPrompt, systemPrompt, {
       temperature: LLM_CONFIG.scoringTemperature,
       model,
@@ -101,10 +109,11 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
 
     const parsed = parseLLMResponse(rawResponse, IdeasV2ResponseSchema)
     ideas = parsed.ideas
-    console.log(`[Pipeline] LLM returned ${ideas.length} ideas`)
+    logger.info(`[Pipeline] LLM returned ${ideas.length} ideas`)
   } catch (error) {
     const msg = `[Pipeline] LLM call failed: ${error instanceof Error ? error.message : String(error)}`
-    console.error(msg)
+    logger.error(msg)
+    Sentry.captureException(error, { tags: { pipeline: 'cron', model } })
     errors.push(msg)
 
     // Mark posts as processed even on LLM failure to avoid retry loops
@@ -139,7 +148,7 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
 
   // 6. Deduplication: check for existing ideas with same source_url within dedup window
   const sourceUrls = ideas.map((idea) => idea.source_url)
-  const dedupCutoff = new Date()
+  const dedupCutoff = new Date(now.getTime())
   dedupCutoff.setDate(dedupCutoff.getDate() - config.ideas.dedupWindowDays)
 
   const { data: existingIdeas } = await supabaseServiceRole
@@ -153,14 +162,11 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
   const skippedCount = ideas.length - newIdeas.length
 
   if (skippedCount > 0) {
-    console.log(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
+    logger.info(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
   }
 
-  // 7. Build post ID lookup (url → DB uuid) for source_post_ids
-  const urlToPostId = new Map(posts.map((p) => [p.url, p.id]))
-
-  // 8. Insert ideas
-  const expiresAt = new Date()
+  // 7. Insert ideas into DB
+  const expiresAt = new Date(now.getTime())
   expiresAt.setDate(expiresAt.getDate() + config.ideas.ttlDays)
   const expiresAtIso = expiresAt.toISOString()
 
@@ -174,7 +180,7 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     source_url: idea.source_url,
     ai_score: idea.score,
     ai_score_breakdown: idea.score_breakdown,
-    source_post_ids: urlToPostId.has(idea.source_url) ? [urlToPostId.get(idea.source_url)!] : [],
+    source_post_ids: postEnrichmentCache.has(idea.source_url) ? [postEnrichmentCache.get(idea.source_url)!.postId] : [],
     mvp_complexity: idea.mvp_complexity,
     monetization_model: idea.monetization_model,
     expires_at: expiresAtIso,
@@ -187,14 +193,14 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
 
     if (insertError) {
       const msg = `[Pipeline] Failed to insert ideas: ${insertError.message}`
-      console.error(msg)
+      logger.error(msg)
       errors.push(msg)
     } else {
-      console.log(`[Pipeline] Inserted ${ideaInserts.length} ideas`)
+      logger.info(`[Pipeline] Inserted ${ideaInserts.length} ideas`)
     }
   }
 
-  // 9. Mark source posts as processed
+  // 8. Mark source posts as processed
   await markPostsProcessed(posts)
 
   const result: GenerationResult = {
@@ -205,7 +211,7 @@ export async function generateSharedIdeas(): Promise<GenerationResult> {
     errors,
   }
 
-  console.log(
+  logger.info(
     `[Pipeline] Complete: ${result.postsProcessed} posts processed, ` +
     `${result.ideasGenerated} ideas generated, ${result.ideasSkippedDuplicate} duplicates skipped`
   )
@@ -225,8 +231,8 @@ async function markPostsProcessed(posts: RedditPostRow[]): Promise<void> {
     .in('id', postIds)
 
   if (error) {
-    console.error(`[Pipeline] Failed to mark posts as processed: ${error.message}`)
+    logger.error(`[Pipeline] Failed to mark posts as processed: ${error.message}`)
   } else {
-    console.log(`[Pipeline] Marked ${postIds.length} posts as processed`)
+    logger.info(`[Pipeline] Marked ${postIds.length} posts as processed`)
   }
 }
