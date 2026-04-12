@@ -27,3 +27,16 @@ export interface Idea {
   expires_at: string | null
   created_at: string
 }
+
+export type IdeaBadge = 'new' | 'hot' | 'top' | 'trending'
+
+/** Shared route context for /api/ideas/[id]/* routes */
+export interface IdeaRouteContext {
+  params: Promise<{ id: string }>
+}
+
+/** Idea with the current user's vote and server-computed badges */
+export interface IdeaWithVote extends Idea {
+  userVote: 1 | -1 | null
+  badges: IdeaBadge[]
+}
