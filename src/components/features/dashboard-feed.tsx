@@ -2,10 +2,9 @@
 
 import { type FC, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { FeedTabs, type TabMode, type TopPeriod } from './feed-tabs'
 import { CategoryChips } from './category-chips'
-import { IdeaCard } from '@/components/ideas/idea-card'
+import { IdeaCard } from '@/components/features/idea-card'
 import { useDashboardFeed } from '@/hooks/useDashboardFeed'
 
 interface DashboardFeedProps {
@@ -33,19 +32,21 @@ const EMPTY_STATES: Record<TabMode, { title: string; description: string }> = {
   },
 }
 
-/** Skeleton card for loading state */
+/** Skeleton card matching compact idea card layout */
 const IdeaCardSkeleton: FC = () => (
-  <div className="rounded-lg bg-surface-lowest p-6 animate-pulse">
-    <div className="flex justify-between items-start mb-3">
-      <div className="h-5 bg-surface-highest rounded w-2/3" />
-      <div className="h-8 w-14 bg-surface-highest rounded-full" />
+  <div className="rounded-lg bg-surface-lowest p-4 animate-pulse shadow-sm">
+    <div className="flex items-center justify-between gap-2 mb-2">
+      <div className="h-5 w-20 bg-surface-highest rounded-full" />
+      <div className="h-5 w-12 bg-surface-highest rounded-full" />
     </div>
-    <div className="mb-4">
-      <div className="h-5 w-24 bg-surface-highest rounded-full" />
-    </div>
-    <div className="space-y-2">
-      <div className="h-4 bg-surface-highest rounded w-full" />
-      <div className="h-4 bg-surface-highest rounded w-4/5" />
+    <div className="h-5 bg-surface-highest rounded w-4/5 mb-1.5" />
+    <div className="h-4 bg-surface-highest rounded w-full mb-3" />
+    <div className="flex items-center justify-between">
+      <div className="h-6 w-20 bg-surface-highest rounded-full" />
+      <div className="flex gap-3">
+        <div className="h-4 w-10 bg-surface-highest rounded" />
+        <div className="h-4 w-16 bg-surface-highest rounded" />
+      </div>
     </div>
   </div>
 )
@@ -156,9 +157,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
               <div className="absolute inset-0 bg-surface-base/50 rounded-lg z-10 pointer-events-none" />
             )}
             {ideas.map((idea) => (
-              <Link key={idea.id} href={`/dashboard/ideas/${idea.id}`}>
-                <IdeaCard idea={idea} />
-              </Link>
+              <IdeaCard key={idea.id} idea={idea} />
             ))}
           </div>
 
