@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { type Idea } from '@/lib/types/idea'
+import { type Idea, type IdeaRouteContext } from '@/lib/types/idea'
 import { type RedditPost } from '@/lib/types/reddit-post'
 
 export interface IdeaDetailResponse {
@@ -10,16 +10,11 @@ export interface IdeaDetailResponse {
   redditPosts: RedditPost[]
 }
 
-interface RouteContext {
-  params: Promise<{ id: string }>
-}
-
-export async function GET(_request: NextRequest, context: RouteContext) {
+export async function GET(_request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { id } = await context.params
 
-    // Fetch idea
     const { data: idea, error: ideaError } = await supabase
       .from('ideas')
       .select('*')
@@ -32,14 +27,13 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 
     const typedIdea = idea as Idea
 
-    // Get current user (optional — unauthenticated users can still view)
+    // Unauthenticated users can still view
     const { data: { user } } = await supabase.auth.getUser()
 
     let userVote: 1 | -1 | null = null
     let isFavorited = false
 
     if (user) {
-      // Fetch user's vote and favorite status in parallel
       const [voteResult, favoriteResult] = await Promise.all([
         supabase
           .from('idea_votes')
@@ -59,7 +53,6 @@ export async function GET(_request: NextRequest, context: RouteContext) {
       isFavorited = !!favoriteResult.data
     }
 
-    // Fetch linked Reddit posts via source_post_ids
     let redditPosts: RedditPost[] = []
     if (typedIdea.source_post_ids && typedIdea.source_post_ids.length > 0) {
       const { data: posts } = await supabase

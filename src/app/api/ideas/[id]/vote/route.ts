@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
+import { type IdeaRouteContext } from '@/lib/types/idea'
 
 const VoteSchema = z.object({
   vote: z.union([z.literal(1), z.literal(-1)]),
 })
 
-interface RouteContext {
-  params: Promise<{ id: string }>
+async function fetchCommunityScore(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  ideaId: string
+): Promise<{ ok: true; value: number } | { ok: false; error: unknown }> {
+  const { data, error } = await supabase
+    .from('ideas')
+    .select('community_score')
+    .eq('id', ideaId)
+    .single()
+
+  if (error || !data) return { ok: false, error }
+  return { ok: true, value: data.community_score }
 }
 
-export async function POST(request: NextRequest, context: RouteContext) {
+export async function POST(request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -49,15 +60,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
       )
     }
 
-    // Fetch updated community_score (trigger has already recalculated it)
-    const { data: idea, error: ideaError } = await supabase
-      .from('ideas')
-      .select('community_score')
-      .eq('id', ideaId)
-      .single()
-
-    if (ideaError || !idea) {
-      console.error('[API] vote POST fetch score error:', ideaError)
+    const score = await fetchCommunityScore(supabase, ideaId)
+    if (!score.ok) {
+      console.error('[API] vote POST fetch score error:', score.error)
       return NextResponse.json(
         { error: 'Failed to fetch updated score' },
         { status: 500 }
@@ -65,7 +70,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     return NextResponse.json({
-      community_score: idea.community_score,
+      community_score: score.value,
       userVote: vote,
     })
   } catch (error) {
@@ -77,7 +82,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
+export async function DELETE(_request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -88,7 +93,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
     const { id: ideaId } = await context.params
 
-    // Delete vote — RLS ensures user can only delete their own
     const { error: deleteError } = await supabase
       .from('idea_votes')
       .delete()
@@ -103,15 +107,9 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
       )
     }
 
-    // Fetch updated community_score
-    const { data: idea, error: ideaError } = await supabase
-      .from('ideas')
-      .select('community_score')
-      .eq('id', ideaId)
-      .single()
-
-    if (ideaError || !idea) {
-      console.error('[API] vote DELETE fetch score error:', ideaError)
+    const score = await fetchCommunityScore(supabase, ideaId)
+    if (!score.ok) {
+      console.error('[API] vote DELETE fetch score error:', score.error)
       return NextResponse.json(
         { error: 'Failed to fetch updated score' },
         { status: 500 }
@@ -119,7 +117,7 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
     }
 
     return NextResponse.json({
-      community_score: idea.community_score,
+      community_score: score.value,
       userVote: null,
     })
   } catch (error) {

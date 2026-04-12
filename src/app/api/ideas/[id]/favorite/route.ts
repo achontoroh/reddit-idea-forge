@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { type IdeaRouteContext } from '@/lib/types/idea'
 
-interface RouteContext {
-  params: Promise<{ id: string }>
-}
-
-export async function POST(_request: NextRequest, context: RouteContext) {
+export async function POST(_request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -41,7 +38,7 @@ export async function POST(_request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
+export async function DELETE(_request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

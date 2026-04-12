@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { type IdeaRouteContext } from '@/lib/types/idea'
 
-interface RouteContext {
-  params: Promise<{ id: string }>
-}
-
-export async function POST(_request: NextRequest, context: RouteContext) {
+export async function POST(_request: NextRequest, context: IdeaRouteContext) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -16,19 +13,7 @@ export async function POST(_request: NextRequest, context: RouteContext) {
 
     const { id: ideaId } = await context.params
 
-    // Verify idea exists
-    const { data: idea } = await supabase
-      .from('ideas')
-      .select('id')
-      .eq('id', ideaId)
-      .single()
-
-    if (!idea) {
-      return NextResponse.json({ error: 'Idea not found' }, { status: 404 })
-    }
-
-    // Insert view — ON CONFLICT DO NOTHING (one view per user per idea)
-    // DB trigger handles view_count increment
+    // ON CONFLICT DO NOTHING — FK constraint handles invalid idea_id
     const { error: viewError } = await supabase
       .from('idea_views')
       .upsert(
@@ -44,7 +29,6 @@ export async function POST(_request: NextRequest, context: RouteContext) {
       )
     }
 
-    // Return the actual view count from DB
     const { data: updated } = await supabase
       .from('ideas')
       .select('view_count')
