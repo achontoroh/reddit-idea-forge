@@ -44,7 +44,17 @@ export async function POST(_request: NextRequest, context: RouteContext) {
       )
     }
 
-    return NextResponse.json({ success: true })
+    // Return the actual view count from DB
+    const { data: updated } = await supabase
+      .from('ideas')
+      .select('view_count')
+      .eq('id', ideaId)
+      .single()
+
+    return NextResponse.json({
+      success: true,
+      view_count: updated?.view_count ?? 0,
+    })
   } catch (error) {
     console.error('[API] POST /api/ideas/[id]/view:', error)
     return NextResponse.json(

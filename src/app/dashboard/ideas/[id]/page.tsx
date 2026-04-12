@@ -64,7 +64,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
       .gte('created_at', twentyFourHoursAgo)
     if ((hotCount ?? 0) >= 5) badges.push('hot')
 
-    // 'top' badge: in top 10 by (ai_score + community_score) among last 7 days ideas
+    // 'top' badge: in top 5 by (ai_score + community_score) among last 7 days ideas
     const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000).toISOString()
     if (new Date(typedIdea.created_at) >= new Date(sevenDaysAgo)) {
       // Fetch top candidates sorted by ai_score desc (best available proxy),
@@ -81,7 +81,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
         const topIds = new Set(
           [...topCandidates]
             .sort((a, b) => (b.ai_score + b.community_score) - (a.ai_score + a.community_score))
-            .slice(0, 10)
+            .slice(0, 5)
             .map((i) => i.id)
         )
         if (topIds.has(id)) badges.push('top')

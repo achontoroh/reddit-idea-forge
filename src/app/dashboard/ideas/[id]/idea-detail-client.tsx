@@ -49,15 +49,20 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
 
   const categoryLabel = CATEGORY_LABELS[idea.category] ?? idea.category
 
-  // Track view on mount — optimistically increment count
+  // Track view on mount — update count from server response
   useEffect(() => {
     if (!isAuthenticated) return
-    setViewCount((prev) => prev + 1)
-    fetch(`/api/ideas/${idea.id}/view`, { method: 'POST' }).catch(() => {
-      // Silent fail — view tracking is non-critical
-      setViewCount(idea.view_count)
-    })
-  }, [idea.id, isAuthenticated, idea.view_count])
+    fetch(`/api/ideas/${idea.id}/view`, { method: 'POST' })
+      .then((res) => res.json())
+      .then((data: { view_count?: number }) => {
+        if (typeof data.view_count === 'number') {
+          setViewCount(data.view_count)
+        }
+      })
+      .catch(() => {
+        // Silent fail — view tracking is non-critical
+      })
+  }, [idea.id, isAuthenticated])
 
   const handleShare = useCallback(() => {
     const subreddit = idea.source_subreddit

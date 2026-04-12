@@ -1,14 +1,13 @@
 import { useMemo } from 'react'
 import useSWR from 'swr'
 import { type IdeaWithVote } from '@/lib/types/idea'
-import { type TabMode, type TopPeriod } from '@/components/features/feed-tabs'
+import { type TabMode } from '@/components/features/feed-tabs'
 
 const DEFAULT_LIMIT = 20
 
 interface FeedParams {
   tab: TabMode
   category: string
-  period: TopPeriod
   offset: number
 }
 
@@ -32,10 +31,6 @@ function buildFeedUrl(params: FeedParams): string {
   sp.set('limit', String(DEFAULT_LIMIT))
   sp.set('offset', String(params.offset))
 
-  if (params.tab === 'top') {
-    sp.set('period', params.period)
-  }
-
   return `/api/ideas?${sp.toString()}`
 }
 
@@ -52,7 +47,7 @@ export function useDashboardFeed(params: FeedParams) {
     url,
     fetcher,
     {
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
       dedupingInterval: 5_000,
       keepPreviousData: true,
     }

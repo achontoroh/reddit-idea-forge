@@ -2,7 +2,7 @@
 
 import { type FC, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { FeedTabs, type TabMode, type TopPeriod } from './feed-tabs'
+import { FeedTabs, type TabMode } from './feed-tabs'
 import { CategoryChips } from './category-chips'
 import { IdeaCard } from '@/components/features/idea-card'
 import { useDashboardFeed } from '@/hooks/useDashboardFeed'
@@ -14,13 +14,13 @@ interface DashboardFeedProps {
 const DEFAULT_LIMIT = 20
 
 const EMPTY_STATES: Record<TabMode, { title: string; description: string }> = {
-  top: {
+  latest: {
+    title: 'No ideas yet',
+    description: 'New ideas are generated automatically — check back soon.',
+  },
+  rating: {
     title: 'No ideas for this period',
     description: 'Try a different time range.',
-  },
-  new: {
-    title: 'No new ideas since your last visit',
-    description: 'New ideas are generated automatically — check back soon.',
   },
   foryou: {
     title: 'No ideas in your categories yet',
@@ -52,15 +52,13 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const tab = (searchParams.get('tab') as TabMode) ?? 'new'
+  const tab = (searchParams.get('tab') as TabMode) ?? 'latest'
   const category = searchParams.get('category') ?? 'all'
-  const period = (searchParams.get('period') as TopPeriod) ?? 'week'
   const offset = Math.max(parseInt(searchParams.get('offset') ?? '0', 10), 0)
 
   const { ideas, total, isLoading } = useDashboardFeed({
     tab,
     category,
-    period,
     offset,
   })
 
@@ -75,7 +73,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
         }
       }
       // Remove tab param if it's the default
-      if (params.get('tab') === 'new') params.delete('tab')
+      if (params.get('tab') === 'latest') params.delete('tab')
       router.push(`${pathname}?${params.toString()}`, { scroll: false })
     },
     [searchParams, router, pathname]
@@ -84,13 +82,6 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
   const handleTabChange = useCallback(
     (newTab: TabMode) => {
       updateParams({ tab: newTab, offset: '0' })
-    },
-    [updateParams]
-  )
-
-  const handlePeriodChange = useCallback(
-    (newPeriod: TopPeriod) => {
-      updateParams({ period: newPeriod, offset: '0' })
     },
     [updateParams]
   )
@@ -113,9 +104,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
       <div className="border-b border-[var(--ghost-border-color)] mb-6">
         <FeedTabs
           activeTab={tab}
-          activePeriod={period}
           onTabChange={handleTabChange}
-          onPeriodChange={handlePeriodChange}
         />
       </div>
 
@@ -125,6 +114,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
           userCategories={userCategories}
           selected={category}
           onChange={handleCategoryChange}
+          forYou={tab === 'foryou'}
         />
       </div>
 

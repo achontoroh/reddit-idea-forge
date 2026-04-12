@@ -2,32 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { type Idea, type IdeaWithVote, type IdeaBadge } from '@/lib/types/idea'
 
-type TabMode = 'top' | 'new' | 'foryou'
-type TopPeriod = 'week' | 'month' | 'all'
+type TabMode = 'latest' | 'rating' | 'foryou'
 
-const VALID_TABS: readonly TabMode[] = ['top', 'new', 'foryou']
-const VALID_PERIODS: readonly TopPeriod[] = ['week', 'month', 'all']
-
+const VALID_TABS: readonly TabMode[] = ['latest', 'rating', 'foryou']
 const DEFAULT_LIMIT = 20
 const MAX_LIMIT = 100
-
-function getPeriodFilter(period: TopPeriod): string | null {
-  switch (period) {
-    case 'week':
-      return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    case 'month':
-      return new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-    case 'all':
-      return null
-  }
-}
 
 /**
  * Compute badges for a set of ideas.
  * Badge criteria:
  *   - 'new':      no idea_views record for this user+idea (unread)
  *   - 'hot':      >= 5 upvotes in the last 24 hours
- *   - 'top':      in the top 10 by (ai_score + community_score) among ideas from last 7 days
+ *   - 'top':      in the top 5 by (ai_score + community_score) among ideas from last 7 days
  *   - 'trending': >= 3 votes (any direction) in the last 48 hours
  *
  * OPTIMIZATION NOTE: Badge computation uses additional subqueries. For MVP this is
@@ -84,13 +70,13 @@ async function computeBadges(
     }
   }
 
-  // --- 'top' badge: top 10 by (ai_score + community_score) among ideas from last 7 days ---
+  // --- 'top' badge: top 5 by (ai_score + community_score) among ideas from last 7 days ---
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
   const recentIdeas = ideas.filter((i) => new Date(i.created_at) >= new Date(sevenDaysAgo))
   const sortedByScore = [...recentIdeas].sort(
     (a, b) => (b.ai_score + b.community_score) - (a.ai_score + a.community_score)
   )
-  const topIds = new Set(sortedByScore.slice(0, 10).map((i) => i.id))
+  const topIds = new Set(sortedByScore.slice(0, 5).map((i) => i.id))
 
   for (const ideaId of topIds) {
     if (badgeMap.has(ideaId)) {
@@ -134,10 +120,8 @@ export async function GET(request: NextRequest) {
     // Parse query params
     const { searchParams } = new URL(request.url)
     const tabParam = searchParams.get('tab') as TabMode | null
-    const tab: TabMode = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'new'
+    const tab: TabMode = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'latest'
     const category = searchParams.get('category')
-    const periodParam = searchParams.get('period') as TopPeriod | null
-    const period: TopPeriod = periodParam && VALID_PERIODS.includes(periodParam) ? periodParam : 'week'
     const limit = Math.min(
       Math.max(parseInt(searchParams.get('limit') ?? '', 10) || DEFAULT_LIMIT, 1),
       MAX_LIMIT
@@ -174,21 +158,13 @@ export async function GET(request: NextRequest) {
       query = query.in('category', userCategories)
     }
 
-    // Period filter (for "top" tab)
-    if (tab === 'top') {
-      const timeSince = getPeriodFilter(period)
-      if (timeSince) {
-        query = query.gte('created_at', timeSince)
-      }
-    }
-
     // Sorting
-    if (tab === 'top') {
+    if (tab === 'rating') {
       query = query
         .order('ai_score', { ascending: false })
         .order('community_score', { ascending: false })
         .range(offset, offset + limit - 1)
-    } else if (tab === 'new') {
+    } else if (tab === 'latest') {
       query = query
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1)

@@ -9,17 +9,22 @@ interface CategoryChipsProps {
   userCategories: string[]
   selected: string
   onChange: (category: string) => void
+  /** When true, only show user's preferred categories (For You tab) */
+  forYou?: boolean
 }
 
 export const CategoryChips: FC<CategoryChipsProps> = ({
   userCategories,
   selected,
   onChange,
+  forYou = false,
 }) => {
-  // Show user's preferred categories first, then remaining
   const preferred = CATEGORIES.filter((c) => userCategories.includes(c.slug))
-  const remaining = CATEGORIES.filter((c) => !userCategories.includes(c.slug))
-  const ordered = [...preferred, ...remaining]
+
+  // For You tab: only user's categories. Other tabs: preferred first, then rest.
+  const visible = forYou
+    ? preferred
+    : [...preferred, ...CATEGORIES.filter((c) => !userCategories.includes(c.slug))]
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -28,7 +33,7 @@ export const CategoryChips: FC<CategoryChipsProps> = ({
         selected={selected === 'all'}
         onClick={() => onChange('all')}
       />
-      {ordered.map((cat) => (
+      {visible.map((cat) => (
         <Chip
           key={cat.slug}
           label={cat.name}

@@ -18,6 +18,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
     <div className="group relative">
       <Link
         href={`/dashboard/ideas/${idea.id}`}
+        prefetch={false}
         className="block rounded-lg bg-surface-lowest p-4 transition-all duration-200
           shadow-sm hover:shadow-md hover:-translate-y-0.5
           border border-transparent hover:border-[var(--ghost-border-color)]
@@ -25,9 +26,11 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
           [content-visibility:auto] [contain-intrinsic-size:auto_160px]"
       >
         {/* Top row: status badges + AI score */}
-        <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2">
           <StatusBadgeList badges={idea.badges} />
-          <AiScoreBadge score={idea.ai_score} />
+          <div className="ml-auto">
+            <AiScoreBadge score={idea.ai_score} />
+          </div>
         </div>
 
         {/* Title */}
@@ -50,7 +53,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
 
           <div className="flex items-center gap-3 text-[12px] text-on-surface-muted">
             {/* Category */}
-            <span className="truncate max-w-[120px]">
+            <span className="truncate max-w-[140px] rounded-full bg-surface-highest px-2 py-0.5">
               {categoryLabel}
             </span>
 
