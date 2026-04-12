@@ -97,7 +97,7 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 - **Shared idea feed** — AI-generated SaaS ideas from Reddit, browsable by all users (v2 architecture)
 - **8 categories** (DevTools, SaaS, Productivity, Finance, Health, Education, eCommerce, AI) mapped to ~30 subreddits
 - **Dual scoring** — AI score (0-100) + Community score (upvotes/downvotes)
-- **Real Reddit data** via public JSON API (no API key needed), with mock fallback
+- **Real Reddit data** via Arctic Shift API (primary) and public JSON API (fallback)
 - **Multi-provider LLM** — Google Gemini (active), Anthropic Claude, Groq
 - **Design system** — light/dark theme, CSS tokens, mobile-first responsive
 - **Auto-redirect** — authenticated users skip the landing page and go straight to the dashboard
@@ -106,7 +106,9 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 
 ## Data Source
 
-IdeaForge fetches real posts from Reddit's public JSON API (`reddit.com/r/{sub}/hot.json`) — no API key or OAuth token required. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, pulling hot posts with a 200ms rate-limit delay between requests. Fetching runs on a cron schedule (every 6 hours via GitHub Actions) with category rotation — 3 categories per run.
+IdeaForge fetches real Reddit posts via **Arctic Shift API** (primary) or **Reddit's public JSON API** (fallback). The active source is configured in `src/config/app.ts` (`reddit.dataSource`). Arctic Shift was adopted because Reddit's public JSON API returns 403 on Vercel. 8 categories are mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`, with a 200ms rate-limit delay between requests. Fetching runs on a cron schedule (every 6 hours via GitHub Actions) with category rotation — 3 categories per run.
+
+In development, a floating **Dev Pipeline Panel** lets you manually trigger fetch & generate cycles with explicit rotation slot control, without waiting for cron.
 
 ## Development Setup
 

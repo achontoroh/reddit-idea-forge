@@ -71,10 +71,7 @@ export default function LandingPage() {
       <section className="px-6 pb-32">
         <div className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
           {STEPS.map((step) => (
-            <div
-              key={step.number}
-              className="flex flex-col items-start text-left p-8 rounded-xl bg-surface-lowest"
-            >
+            <Card key={step.number} padding="lg" elevated className="flex flex-col items-start text-left p-8">
               <div className="text-4xl font-bold text-accent mb-4 font-heading">
                 {step.number}
               </div>
@@ -82,7 +79,7 @@ export default function LandingPage() {
                 {step.title}
               </h3>
               <p className="text-on-surface-muted text-sm leading-relaxed">{step.description}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
@@ -109,9 +106,11 @@ export default function LandingPage() {
         </div>
         <div className="mx-auto max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-4">
           {CATEGORIES.map((cat) => (
-            <div
+            <Card
               key={cat.slug}
-              className="flex flex-col items-center gap-2 p-6 rounded-xl bg-surface-lowest transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(46,51,58,0.08)]"
+              padding="lg"
+              elevated
+              className="flex flex-col items-center gap-2 transition-all duration-200 hover:-translate-y-1"
             >
               <span className="text-4xl">{cat.icon}</span>
               <span className="text-sm font-semibold text-on-surface font-heading">
@@ -120,7 +119,7 @@ export default function LandingPage() {
               <span className="text-xs text-on-surface-muted">
                 {cat.subreddits.length} subreddits
               </span>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
@@ -136,7 +135,7 @@ export default function LandingPage() {
           <p className="text-xs text-on-surface-muted uppercase tracking-widest mb-3 font-medium">
             Live example from the feed
           </p>
-          <Card padding="lg" className="space-y-4">
+          <Card padding="lg" elevated className="space-y-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <Badge variant="info">🛠️ DevTools</Badge>
               <ScoreBadge score={84} variant="full" />

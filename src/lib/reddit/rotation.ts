@@ -14,9 +14,14 @@ import { config } from '@/config/app'
  *   Slot 2 (12:00-17:59 UTC): ecommerce, ai, devtools
  *   Slot 3 (18:00-23:59 UTC): saas, productivity, finance
  */
-export function getCategoriesToFetch(now: Date = new Date()): Category[] {
+/**
+ * @param overrideIndex — explicit rotation slot index (used by dev panel).
+ *   When omitted, computes the slot from the current UTC hour (prod behavior).
+ */
+export function getCategoriesToFetch(overrideIndex?: number): Category[] {
   const { fetchIntervalHours, categoriesPerRun } = config.cron
-  const rotationIndex = Math.floor(now.getUTCHours() / fetchIntervalHours)
+  const rotationIndex =
+    overrideIndex ?? Math.floor(new Date().getUTCHours() / fetchIntervalHours)
   const start = (rotationIndex * categoriesPerRun) % CATEGORIES.length
 
   const categories: Category[] = []
@@ -26,6 +31,11 @@ export function getCategoriesToFetch(now: Date = new Date()): Category[] {
   }
 
   return categories
+}
+
+/** Total number of unique rotation slots before categories wrap around */
+export function getRotationSlotCount(): number {
+  return Math.ceil(CATEGORIES.length / config.cron.categoriesPerRun)
 }
 
 /** Returns all subreddits for the given categories (flat, deduplicated) */
