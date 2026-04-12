@@ -2,7 +2,7 @@
 
 import { type FC, useState, useMemo } from 'react'
 import Link from 'next/link'
-import { type Idea } from '@/lib/types/idea'
+import { type IdeaWithVote } from '@/lib/types/idea'
 import { useIdeas } from '@/hooks/useIdeas'
 import { CategoryFilter } from './category-filter'
 import { IdeaCard } from './idea-card'
@@ -10,7 +10,7 @@ import { IdeaCard } from './idea-card'
 type SortMode = 'hot' | 'new' | 'top'
 
 interface IdeaFeedProps {
-  ideas: Idea[]
+  ideas: IdeaWithVote[]
 }
 
 const TABS: { key: SortMode; label: string }[] = [

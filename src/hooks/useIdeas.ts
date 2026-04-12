@@ -1,10 +1,10 @@
 import useSWR from 'swr'
-import { type Idea } from '@/lib/types/idea'
+import { type IdeaWithVote } from '@/lib/types/idea'
 
 const IDEAS_LIMIT = 100
 
 interface IdeasResponse {
-  data: Idea[]
+  data: IdeaWithVote[]
   pagination: {
     total: number
     limit: number
@@ -22,7 +22,7 @@ const fetcher = (url: string) =>
  * Client-side ideas fetcher with stale-while-revalidate.
  * Shows cached data instantly on back-navigation, revalidates in background.
  */
-export function useIdeas(fallbackData: Idea[]) {
+export function useIdeas(fallbackData: IdeaWithVote[]) {
   const { data, error, isLoading, isValidating } = useSWR(
     `/api/ideas?limit=${IDEAS_LIMIT}`,
     fetcher,

@@ -19,6 +19,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
+  // Forward pathname so server components (e.g. dashboard layout) can read it
+  response.headers.set('x-next-pathname', pathname)
+
   return response
 }
 
