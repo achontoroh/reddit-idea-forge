@@ -3,6 +3,16 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/navbar'
 import { DashboardNavActions } from '@/components/layout/dashboard-nav-actions'
+import dynamic from 'next/dynamic'
+
+const DevPipelinePanel =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(() =>
+        import('@/components/features/dev-pipeline-panel').then(
+          (mod) => mod.DevPipelinePanel
+        )
+      )
+    : null
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
@@ -20,6 +30,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <main className="pt-24 pb-20 px-6 md:px-8 mx-auto w-full max-w-4xl">
         {children}
       </main>
+      {DevPipelinePanel && <DevPipelinePanel />}
     </>
   )
 }
