@@ -3,6 +3,7 @@
 import { type FC, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { type Idea } from '@/lib/types/idea'
+import { useIdeas } from '@/hooks/useIdeas'
 import { CategoryFilter } from './category-filter'
 import { IdeaCard } from './idea-card'
 
@@ -18,7 +19,8 @@ const TABS: { key: SortMode; label: string }[] = [
   { key: 'top', label: 'Top' },
 ]
 
-export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas }) => {
+export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas: serverIdeas }) => {
+  const { ideas } = useIdeas(serverIdeas)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortMode, setSortMode] = useState<SortMode>('hot')
 
@@ -70,7 +72,7 @@ export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas }) => {
           No ideas in this category yet.
         </p>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {filteredAndSorted.map((idea) => (
             <Link key={idea.id} href={`/dashboard/ideas/${idea.id}`}>
               <IdeaCard idea={idea} />
