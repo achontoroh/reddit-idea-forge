@@ -54,7 +54,7 @@ export const Input: FC<InputProps> = ({
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className={`
-            block w-full rounded-lg border px-3 py-2 text-sm
+            block w-full rounded-lg border px-3 py-2 text-base md:text-sm
             placeholder:text-on-surface-muted
             focus:outline-none focus:ring-2 focus:ring-offset-1
             disabled:cursor-not-allowed disabled:bg-surface-low disabled:text-on-surface-muted

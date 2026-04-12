@@ -1,0 +1,109 @@
+name: PR Description from Linear
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  fill-pr-description:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Extract Linear issue ID from branch
+        id: extract
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          ISSUE_ID=$(echo "$BRANCH" | grep -oiE 'IF-[0-9]+' | head -1 | tr '[:lower:]' '[:upper:]')
+          if [ -z "$ISSUE_ID" ]; then
+            echo "No Linear issue ID found in branch: $BRANCH"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "issue_id=$ISSUE_ID" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fetch Linear issue
+        if: steps.extract.outputs.skip != 'true'
+        id: linear
+        run: |
+          ISSUE_ID="${{ steps.extract.outputs.issue_id }}"
+
+          RESPONSE=$(curl -s -X POST https://api.linear.app/graphql \
+            -H "Authorization: ${{ secrets.LINEAR_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"{ issue(id: \\\"$ISSUE_ID\\\") { title description url } }\"}")
+
+          TITLE=$(echo "$RESPONSE" | jq -r '.data.issue.title // empty')
+
+          if [ -z "$TITLE" ]; then
+            echo "Linear API returned no issue data for $ISSUE_ID"
+            echo "$RESPONSE" | jq . 2>/dev/null || echo "$RESPONSE"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          DESCRIPTION=$(echo "$RESPONSE" | jq -r '.data.issue.description // ""' | head -c 1500)
+          URL=$(echo "$RESPONSE" | jq -r '.data.issue.url // ""')
+
+          {
+            echo "title<<LINEEOF"
+            echo "$TITLE"
+            echo "LINEEOF"
+            echo "description<<LINEEOF"
+            echo "$DESCRIPTION"
+            echo "LINEEOF"
+            echo "url<<LINEEOF"
+            echo "$URL"
+            echo "LINEEOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Update PR title and description
+        if: steps.extract.outputs.skip != 'true' && steps.linear.outputs.skip != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueId = '${{ steps.extract.outputs.issue_id }}';
+            const title = `${process.env.LINEAR_TITLE}`;
+            const description = `${process.env.LINEAR_DESCRIPTION}`;
+            const url = `${process.env.LINEAR_URL}`;
+
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 50,
+            });
+
+            const commitList = commits
+              .map(c => `- ${c.commit.message.split('\n')[0]}`)
+              .join('\n');
+
+            const body = [
+              `## Linear Issue`,
+              `**[${issueId}](${url})** — ${title}`,
+              ``,
+              `## What was done`,
+              description || '_No description in Linear issue._',
+              ``,
+              `## Commits`,
+              commitList || '_No commits yet._',
+              ``,
+              `---`,
+              `*Auto-generated from Linear issue ${issueId}*`,
+            ].join('\n');
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              title: `[${issueId}] ${title}`,
+              body,
+            });
+
+            core.info(`Updated PR #${context.payload.pull_request.number} from ${issueId}`);
+        env:
+          LINEAR_TITLE: ${{ steps.linear.outputs.title }}
+          LINEAR_DESCRIPTION: ${{ steps.linear.outputs.description }}
+          LINEAR_URL: ${{ steps.linear.outputs.url }}

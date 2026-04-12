@@ -1,6 +1,6 @@
 'use client'
 
-import { type FC, useState, useCallback } from 'react'
+import { type FC, useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
@@ -15,26 +15,45 @@ interface PipelineResult {
   durationMs?: number
   deletedPosts?: number
   deletedIdeas?: number
+  resetPosts?: number
   error?: string
   errors?: string[]
 }
+
+const AUTO_MODEL = '__auto__'
 
 export const DevPipelinePanel: FC = () => {
   const router = useRouter()
   const [generating, setGenerating] = useState(false)
   const [cleaning, setCleaning] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [result, setResult] = useState<PipelineResult | null>(null)
   const [collapsed, setCollapsed] = useState(false)
   const [rotationIndex, setRotationIndex] = useState(0)
+  const [availableModels, setAvailableModels] = useState<string[]>([])
+  const [selectedModel, setSelectedModel] = useState(AUTO_MODEL)
+
+  useEffect(() => {
+    fetch('/api/dev/pipeline')
+      .then((res) => res.json())
+      .then((data: { availableModels?: string[] }) => {
+        if (data.availableModels) setAvailableModels(data.availableModels)
+      })
+      .catch(() => {/* ignore — dev only */})
+  }, [])
 
   const runGenerate = useCallback(async () => {
     setGenerating(true)
     setResult(null)
     try {
+      const body: Record<string, unknown> = { rotationIndex }
+      if (selectedModel !== AUTO_MODEL) {
+        body.modelOverride = selectedModel
+      }
       const res = await fetch('/api/dev/pipeline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rotationIndex }),
+        body: JSON.stringify(body),
       })
       const data: PipelineResult = await res.json()
       setResult(data)
@@ -50,7 +69,7 @@ export const DevPipelinePanel: FC = () => {
     } finally {
       setGenerating(false)
     }
-  }, [router, rotationIndex])
+  }, [router, rotationIndex, selectedModel])
 
   const runCleanup = useCallback(async () => {
     setCleaning(true)
@@ -74,6 +93,28 @@ export const DevPipelinePanel: FC = () => {
     }
   }, [router])
 
+  const runReset = useCallback(async () => {
+    setResetting(true)
+    setResult(null)
+    try {
+      const res = await fetch('/api/dev/reset-ideas', {
+        method: 'POST',
+      })
+      const data: PipelineResult = await res.json()
+      setResult(data)
+      if (data.success) {
+        router.refresh()
+      }
+    } catch (err) {
+      setResult({
+        success: false,
+        error: err instanceof Error ? err.message : 'Network error',
+      })
+    } finally {
+      setResetting(false)
+    }
+  }, [router])
+
   if (collapsed) {
     return (
       <button
@@ -88,7 +129,7 @@ export const DevPipelinePanel: FC = () => {
     )
   }
 
-  const isRunning = generating || cleaning
+  const isRunning = generating || cleaning || resetting
 
   return (
     <div className="fixed bottom-4 right-4 z-50 w-80 rounded-lg border border-amber-500/30 bg-surface-lowest shadow-xl">
@@ -128,6 +169,52 @@ export const DevPipelinePanel: FC = () => {
         >
           Cleanup
         </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={runReset}
+          loading={resetting}
+          disabled={isRunning}
+          className="!border-red-500/30 !text-red-400 hover:!bg-red-500/10"
+        >
+          Reset Ideas
+        </Button>
+      </div>
+
+      {/* Model selector — inline radio buttons */}
+      <div className="px-4 pb-2">
+        <p className="mb-1.5 text-xs text-on-surface-muted">Model</p>
+        <div className="flex flex-col gap-1">
+          {[{ value: AUTO_MODEL, label: 'Auto (rotation)' }, ...availableModels.map((m) => ({ value: m, label: m }))].map(
+            ({ value, label }) => (
+              <label
+                key={value}
+                className={`flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-xs transition-colors ${
+                  selectedModel === value
+                    ? 'bg-amber-500/15 text-amber-500'
+                    : 'text-on-surface-muted hover:bg-surface-low'
+                } ${isRunning ? 'pointer-events-none opacity-50' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="dev-model"
+                  value={value}
+                  checked={selectedModel === value}
+                  onChange={() => setSelectedModel(value)}
+                  className="sr-only"
+                />
+                <span
+                  className={`inline-block h-3 w-3 shrink-0 rounded-full border-2 ${
+                    selectedModel === value
+                      ? 'border-amber-500 bg-amber-500'
+                      : 'border-on-surface-muted/40 bg-transparent'
+                  }`}
+                />
+                <span className="truncate">{label}</span>
+              </label>
+            )
+          )}
+        </div>
       </div>
 
       {/* Rotation info */}
@@ -166,6 +253,9 @@ export const DevPipelinePanel: FC = () => {
             )}
             {result.deletedIdeas != null && (
               <p>Deleted ideas: {result.deletedIdeas}</p>
+            )}
+            {result.resetPosts != null && (
+              <p>Reset posts: {result.resetPosts}</p>
             )}
             {result.error && <p className="text-red-400">{result.error}</p>}
             {result.errors && result.errors.length > 0 && (
