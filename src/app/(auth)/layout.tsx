@@ -8,7 +8,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-surface-base px-4 py-12">
+    <div className="relative flex min-h-screen min-h-dvh items-center justify-center bg-surface-base px-4 py-12">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>

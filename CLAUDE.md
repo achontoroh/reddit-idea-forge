@@ -97,9 +97,10 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 - Next.js 14+ (App Router) + TypeScript + Tailwind CSS
 - Supabase (Auth + Postgres + RLS)
 - LLM: multi-provider via `src/config/app.ts` — Gemini (active), Anthropic, Groq supported
-- Reddit: public JSON API (no auth token)
-- GitHub Actions (cron pipeline)
+- Reddit: Arctic Shift API (primary) + public JSON API (fallback) — configured in `src/config/app.ts`
+- GitHub Actions (cron pipeline + PR automation)
 - SWR for client-side revalidation
+- Sentry for error tracking (cron pipeline)
 - Resend for email
 - Zod for validation
 
@@ -113,6 +114,10 @@ ANTHROPIC_API_KEY=                # Secret — server only (if using Anthropic)
 GEMINI_API_KEY=                   # Secret — server only (active provider)
 RESEND_API_KEY=                   # Secret — server only
 CRON_SECRET=                      # Secret — Bearer token for cron endpoints
+TELEGRAM_BOT_TOKEN=               # Secret — optional, pipeline notifications
+TELEGRAM_CHAT_ID=                 # Secret — optional, pipeline notifications
+SENTRY_DSN=                       # Secret — optional, error tracking
+NEXT_PUBLIC_SENTRY_DSN=           # Public — optional, client-side error tracking
 ```
 Non-secret config (LLM provider, models, Reddit data source, email limits) → `src/config/app.ts`
 
