@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server'
 import { supabaseServiceRole } from '@/lib/supabase/service'
+import { devOnly } from '@/app/api/dev/pipeline/route'
 
 /**
  * POST /api/dev/reset-ideas — delete all ideas and reset posts to unprocessed (dev only).
  */
 export async function POST() {
-  if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.json(
-      { success: false, error: 'Dev only' },
-      { status: 403 }
-    )
-  }
+  const guard = devOnly()
+  if (guard) return guard
 
   try {
-    // Delete all ideas
     const { data: deletedRows, error: ideasError } = await supabaseServiceRole
       .from('ideas')
       .delete()
@@ -22,7 +18,6 @@ export async function POST() {
 
     if (ideasError) throw ideasError
 
-    // Reset all posts to unprocessed so they can be re-generated
     const { data: resetRows, error: postsError } = await supabaseServiceRole
       .from('reddit_posts')
       .update({ processed: false })

@@ -1,4 +1,5 @@
 import { type z } from 'zod'
+import { logger } from '@/lib/logger'
 
 function stripCodeFences(raw: string): string {
   return raw
@@ -69,8 +70,8 @@ function extractBalancedJsonCandidates(raw: string): string[] {
       }
     }
 
-    // Move past this opening bracket whether we matched or not
-    searchFrom = found ? start + 1 : start + 1
+    // Skip past the matched structure to avoid re-scanning overlapping regions
+    searchFrom = found ? start + candidates[candidates.length - 1].length : start + 1
   }
 
   // Sort longest first — the real payload is almost always the largest
@@ -80,7 +81,7 @@ function extractBalancedJsonCandidates(raw: string): string[] {
 
 function normalizeResponse(parsed: unknown): unknown {
   if (Array.isArray(parsed)) {
-    console.log('[LLM] Response is a bare array — wrapping as { ideas: [...] }')
+    logger.info('[LLM] Response is a bare array — wrapping as { ideas: [...] }')
     return { ideas: parsed }
   }
 
@@ -94,8 +95,7 @@ function normalizeResponse(parsed: unknown): unknown {
 }
 
 export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
-  // Log raw LLM output before any cleaning — for debugging parse failures
-  console.log('[LLM] Raw response preview:', raw.slice(0, 500))
+  logger.debug('[LLM] Raw response preview:', { preview: raw.slice(0, 500) })
 
   const cleaned = stripCodeFences(raw)
 
@@ -108,7 +108,7 @@ export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
     // in preamble text like {"ideas": [...]} are false positives)
     const candidates = extractBalancedJsonCandidates(cleaned)
     if (candidates.length === 0) {
-      console.error('[LLM] Failed to locate JSON in response:', cleaned.slice(0, 500))
+      logger.error('[LLM] Failed to locate JSON in response', { preview: cleaned.slice(0, 500) })
       throw new Error('LLM response did not contain valid JSON')
     }
 
@@ -116,7 +116,7 @@ export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
     for (const candidate of candidates) {
       try {
         parsed = JSON.parse(candidate)
-        console.log(`[LLM] Parsed JSON from candidate (${candidate.length} chars, ${candidates.length} total candidates)`)
+        logger.info(`[LLM] Parsed JSON from candidate (${candidate.length} chars, ${candidates.length} total candidates)`)
         break
       } catch (error) {
         lastError = error
@@ -124,19 +124,17 @@ export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
     }
 
     if (parsed === undefined) {
-      console.error('[LLM] All JSON candidates failed to parse. Largest candidate:', candidates[0].slice(0, 500))
+      logger.error('[LLM] All JSON candidates failed to parse', { preview: candidates[0].slice(0, 500) })
       throw lastError
     }
   }
 
-  // Normalize: if the model returned a bare array, wrap it as { ideas: [...] }
-  // so it matches schemas that expect an object with an `ideas` key
   const normalized = normalizeResponse(parsed)
 
   const result = schema.safeParse(normalized)
 
   if (!result.success) {
-    console.error('[LLM] Validation failed:', result.error.issues)
+    logger.error('[LLM] Validation failed', { issues: result.error.issues })
     throw new Error(`LLM response validation failed: ${result.error.message}`)
   }
 

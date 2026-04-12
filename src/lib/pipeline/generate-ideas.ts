@@ -66,14 +66,15 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
   const crossSubredditOverlaps = detectCrossSubredditOverlap(posts)
   logger.info(`[Pipeline] Cross-subreddit keywords detected: ${crossSubredditOverlaps.size}`)
 
-  // Cache engagement tier and cross-subreddit keywords per post URL
-  // to avoid recomputing during score adjustment
-  const postEnrichmentCache = new Map<string, { engagementTier: EngagementTier; crossKeywords: string[] }>()
+  const now = new Date()
+
+  // Cache enrichment + DB ID per post URL to avoid recomputing during score adjustment
+  const postEnrichmentCache = new Map<string, { postId: string; engagementTier: EngagementTier; crossKeywords: string[] }>()
 
   const enrichedPosts: EnrichedPostInput[] = posts.map((post) => {
     const engagementTier = classifyEngagement(post.score)
     const crossKeywords = getCrossSubredditKeywordsForPost(post, crossSubredditOverlaps)
-    postEnrichmentCache.set(post.url, { engagementTier, crossKeywords })
+    postEnrichmentCache.set(post.url, { postId: post.id, engagementTier, crossKeywords })
 
     return {
       id: post.reddit_id,
@@ -147,7 +148,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
 
   // 6. Deduplication: check for existing ideas with same source_url within dedup window
   const sourceUrls = ideas.map((idea) => idea.source_url)
-  const dedupCutoff = new Date()
+  const dedupCutoff = new Date(now.getTime())
   dedupCutoff.setDate(dedupCutoff.getDate() - config.ideas.dedupWindowDays)
 
   const { data: existingIdeas } = await supabaseServiceRole
@@ -164,11 +165,8 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
     logger.info(`[Pipeline] Skipped ${skippedCount} duplicate ideas (same source_url within ${config.ideas.dedupWindowDays}-day window)`)
   }
 
-  // 7. Build post ID lookup (url → DB uuid) for source_post_ids
-  const urlToPostId = new Map(posts.map((p) => [p.url, p.id]))
-
-  // 8. Insert ideas
-  const expiresAt = new Date()
+  // 7. Insert ideas into DB
+  const expiresAt = new Date(now.getTime())
   expiresAt.setDate(expiresAt.getDate() + config.ideas.ttlDays)
   const expiresAtIso = expiresAt.toISOString()
 
@@ -182,7 +180,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
     source_url: idea.source_url,
     ai_score: idea.score,
     ai_score_breakdown: idea.score_breakdown,
-    source_post_ids: urlToPostId.has(idea.source_url) ? [urlToPostId.get(idea.source_url)!] : [],
+    source_post_ids: postEnrichmentCache.has(idea.source_url) ? [postEnrichmentCache.get(idea.source_url)!.postId] : [],
     mvp_complexity: idea.mvp_complexity,
     monetization_model: idea.monetization_model,
     expires_at: expiresAtIso,
@@ -202,7 +200,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
     }
   }
 
-  // 9. Mark source posts as processed
+  // 8. Mark source posts as processed
   await markPostsProcessed(posts)
 
   const result: GenerationResult = {

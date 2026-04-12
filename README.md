@@ -19,8 +19,9 @@ IdeaForge is a SaaS MVP that scans Reddit for user pain points and uses AI to ge
 - **Supabase** (Auth + Postgres + RLS)
 - **Multi-provider LLM** — Google Gemini (active), Anthropic, Groq supported
 - **Resend** — email notifications
+- **Sentry** — error tracking (cron pipeline)
 - **Zod** — validation
-- **GitHub Actions** — cron pipeline (v2)
+- **GitHub Actions** — cron pipeline + PR automation (v2)
 
 ## Prerequisites
 
@@ -60,6 +61,10 @@ Fill in `.env.local` with secrets and environment-specific URLs:
 | `RESEND_FROM_EMAIL` | No | Sender email shown to recipients. Falls back to `onboarding@resend.dev` in dev |
 | `CRON_SECRET` | No | Shared secret for authenticating cron-triggered email sends |
 | `NEXT_PUBLIC_APP_URL` | No | App base URL, defaults to `http://localhost:3000` |
+| `TELEGRAM_BOT_TOKEN` | No | Telegram bot token for pipeline notifications |
+| `TELEGRAM_CHAT_ID` | No | Telegram chat ID for pipeline notifications |
+| `SENTRY_DSN` | No | Sentry DSN for server-side error tracking |
+| `NEXT_PUBLIC_SENTRY_DSN` | No | Sentry DSN for client-side error tracking |
 
 ### Configuration
 

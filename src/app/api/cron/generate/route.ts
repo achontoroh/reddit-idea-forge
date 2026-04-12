@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
 
     const durationMs = Date.now() - startTime
 
-    // Fire-and-forget — never block the response
     sendTelegramNotification(
       `<b>✅ IdeaForge Pipeline</b>\n` +
       `📥 Fetched: ${fetchResult.newCount} new posts\n` +

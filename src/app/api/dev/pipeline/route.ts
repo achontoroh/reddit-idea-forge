@@ -5,7 +5,7 @@ import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
 import { getRotationSlotCount } from '@/lib/reddit/rotation'
 import { AVAILABLE_MODELS } from '@/lib/llm/model-rotation'
 
-function devOnly(): NextResponse | null {
+export function devOnly(): NextResponse | null {
   if (process.env.NODE_ENV !== 'development') {
     return NextResponse.json(
       { success: false, error: 'Dev only' },

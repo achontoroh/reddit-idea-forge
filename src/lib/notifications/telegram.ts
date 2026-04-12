@@ -7,7 +7,7 @@ export async function sendTelegramNotification(message: string): Promise<void> {
   const chatId = process.env.TELEGRAM_CHAT_ID
 
   if (!token || !chatId) {
-    logger.warn('[Telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set — skipping notification')
+    logger.debug('[Telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set — skipping notification')
     return
   }
 

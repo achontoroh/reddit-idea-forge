@@ -43,14 +43,14 @@ function getAfterDate(): string {
 }
 
 async function fetchSubredditFromArcticShift(
-  subreddit: string
+  subreddit: string,
+  afterDate: string
 ): Promise<RedditPost[]> {
-  // Fetch up to 100 most recent posts; dedup + scoring happens downstream in fetch-service.
   const params = new URLSearchParams({
     subreddit,
     limit: String(FETCH_LIMIT),
     sort: 'desc',
-    after: getAfterDate(),
+    after: afterDate,
     fields: 'id,subreddit,title,selftext,score,num_comments,created_utc',
   })
 
@@ -95,12 +95,13 @@ export class ArcticShiftSource implements RedditDataSource {
     const targetSubs =
       subreddits ?? (await import('@/config/reddit')).TARGET_SUBREDDITS
     const allPosts: RedditPost[] = []
+    const afterDate = getAfterDate()
 
     for (let i = 0; i < targetSubs.length; i++) {
       const subreddit = targetSubs[i]
 
       try {
-        const posts = await fetchSubredditFromArcticShift(subreddit)
+        const posts = await fetchSubredditFromArcticShift(subreddit, afterDate)
         allPosts.push(...posts)
 
         logger.debug(`[ArcticShift] r/${subreddit}: ${posts.length} posts`)
