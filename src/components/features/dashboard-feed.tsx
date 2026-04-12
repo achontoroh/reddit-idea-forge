@@ -14,10 +14,6 @@ interface DashboardFeedProps {
 const DEFAULT_LIMIT = 20
 
 const EMPTY_STATES: Record<TabMode, { title: string; description: string }> = {
-  hot: {
-    title: 'No trending ideas yet',
-    description: 'Check back soon!',
-  },
   top: {
     title: 'No ideas for this period',
     description: 'Try a different time range.',
@@ -56,7 +52,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
   const router = useRouter()
   const pathname = usePathname()
 
-  const tab = (searchParams.get('tab') as TabMode) ?? 'hot'
+  const tab = (searchParams.get('tab') as TabMode) ?? 'new'
   const category = searchParams.get('category') ?? 'all'
   const period = (searchParams.get('period') as TopPeriod) ?? 'week'
   const offset = Math.max(parseInt(searchParams.get('offset') ?? '0', 10), 0)
@@ -79,7 +75,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
         }
       }
       // Remove tab param if it's the default
-      if (params.get('tab') === 'hot') params.delete('tab')
+      if (params.get('tab') === 'new') params.delete('tab')
       router.push(`${pathname}?${params.toString()}`, { scroll: false })
     },
     [searchParams, router, pathname]
@@ -134,7 +130,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
 
       {/* Loading skeletons — first load only */}
       {showFirstLoad && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <IdeaCardSkeleton key={i} />
           ))}
@@ -152,7 +148,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
       {/* Idea grid */}
       {!showFirstLoad && ideas.length > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {ideas.map((idea) => (
               <IdeaCard key={idea.id} idea={idea} />
             ))}

@@ -2,17 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { type Idea, type IdeaWithVote, type IdeaBadge } from '@/lib/types/idea'
 
-type TabMode = 'hot' | 'top' | 'new' | 'foryou'
+type TabMode = 'top' | 'new' | 'foryou'
 type TopPeriod = 'week' | 'month' | 'all'
 
-const VALID_TABS: readonly TabMode[] = ['hot', 'top', 'new', 'foryou']
+const VALID_TABS: readonly TabMode[] = ['top', 'new', 'foryou']
 const VALID_PERIODS: readonly TopPeriod[] = ['week', 'month', 'all']
 
 const DEFAULT_LIMIT = 20
 const MAX_LIMIT = 100
-
-/** Recency boost window for "hot" tab — ideas within this window get boosted */
-const HOT_RECENCY_HOURS = 24
 
 function getPeriodFilter(period: TopPeriod): string | null {
   switch (period) {
@@ -23,18 +20,6 @@ function getPeriodFilter(period: TopPeriod): string | null {
     case 'all':
       return null
   }
-}
-
-/**
- * Compute a "hot" score: weighted combination of recency, community score, and views.
- * Ideas within the last HOT_RECENCY_HOURS get a boost.
- */
-function computeHotScore(idea: Idea): number {
-  const ageMs = Date.now() - new Date(idea.created_at).getTime()
-  const ageHours = ageMs / (1000 * 60 * 60)
-  const recencyBoost = ageHours <= HOT_RECENCY_HOURS ? 50 : 0
-
-  return idea.ai_score * 2 + idea.community_score * 3 + idea.view_count * 0.5 + recencyBoost
 }
 
 /**
@@ -149,7 +134,7 @@ export async function GET(request: NextRequest) {
     // Parse query params
     const { searchParams } = new URL(request.url)
     const tabParam = searchParams.get('tab') as TabMode | null
-    const tab: TabMode = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'hot'
+    const tab: TabMode = tabParam && VALID_TABS.includes(tabParam) ? tabParam : 'new'
     const category = searchParams.get('category')
     const periodParam = searchParams.get('period') as TopPeriod | null
     const period: TopPeriod = periodParam && VALID_PERIODS.includes(periodParam) ? periodParam : 'week'
@@ -197,12 +182,8 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Sorting — "hot" sorts client-side after fetch, others sort server-side
-    if (tab === 'hot') {
-      // Fetch a broader set for hot ranking, then slice for pagination
-      // We need all candidate ideas to rank by hotness, so fetch more
-      query = query.order('created_at', { ascending: false }).limit(500)
-    } else if (tab === 'top') {
+    // Sorting
+    if (tab === 'top') {
       query = query
         .order('ai_score', { ascending: false })
         .order('community_score', { ascending: false })
@@ -230,19 +211,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform joined data: extract userVote from idea_votes array
-    let rawIdeas: (Idea & { userVote: 1 | -1 | null })[] = (data ?? []).map((row) => {
+    const rawIdeas: (Idea & { userVote: 1 | -1 | null })[] = (data ?? []).map((row) => {
       const { idea_votes, ...idea } = row as Idea & { idea_votes: { vote: number }[] }
       const userVote = idea_votes?.[0]?.vote as 1 | -1 | undefined ?? null
       return { ...idea, userVote }
     })
 
-    // For "hot" tab: rank by computed hot score, then paginate
-    let total = count ?? 0
-    if (tab === 'hot') {
-      rawIdeas.sort((a, b) => computeHotScore(b) - computeHotScore(a))
-      total = rawIdeas.length
-      rawIdeas = rawIdeas.slice(offset, offset + limit)
-    }
+    const total = count ?? 0
 
     // Compute server-side badges for the page of ideas
     const badgeMap = await computeBadges(supabase, rawIdeas, user.id)

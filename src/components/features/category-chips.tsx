@@ -22,13 +22,7 @@ export const CategoryChips: FC<CategoryChipsProps> = ({
   const ordered = [...preferred, ...remaining]
 
   return (
-    <div
-      className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"
-      style={{
-        maskImage: 'linear-gradient(to right, black calc(100% - 32px), transparent)',
-        WebkitMaskImage: 'linear-gradient(to right, black calc(100% - 32px), transparent)',
-      }}
-    >
+    <div className="flex flex-wrap gap-2">
       <Chip
         label="All"
         selected={selected === 'all'}
@@ -37,7 +31,7 @@ export const CategoryChips: FC<CategoryChipsProps> = ({
       {ordered.map((cat) => (
         <Chip
           key={cat.slug}
-          label={`${cat.icon} ${cat.name}`}
+          label={cat.name}
           selected={selected === cat.slug}
           onClick={() => onChange(cat.slug)}
         />

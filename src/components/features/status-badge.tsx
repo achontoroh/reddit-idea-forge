@@ -5,25 +5,21 @@ interface StatusBadgeProps {
   status: IdeaBadge
 }
 
-const STATUS_CONFIG: Record<IdeaBadge, { label: string; emoji: string; className: string }> = {
+const STATUS_CONFIG: Record<IdeaBadge, { label: string; className: string }> = {
   new: {
     label: 'New',
-    emoji: '✨',
     className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
   },
   hot: {
     label: 'Hot',
-    emoji: '🔥',
     className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
   },
   top: {
     label: 'Top',
-    emoji: '👑',
     className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
   },
   trending: {
     label: 'Trending',
-    emoji: '📈',
     className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
   },
 }
@@ -33,9 +29,8 @@ export const StatusBadge: FC<StatusBadgeProps> = ({ status }) => {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-tight ${config.className}`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold leading-tight ${config.className}`}
     >
-      <span aria-hidden="true">{config.emoji}</span>
       {config.label}
     </span>
   )

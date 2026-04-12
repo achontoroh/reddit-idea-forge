@@ -32,7 +32,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
         type="button"
         onClick={handleUpvote}
         disabled={isLoading}
-        aria-label="Upvote"
+        aria-label="Like"
         className={`${btnPadding} rounded-full transition-colors ${
           userVote === 1
             ? 'text-green-500'
@@ -49,7 +49,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 19V5M5 12l7-7 7 7" />
+          <path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z" />
         </svg>
       </button>
 
@@ -61,7 +61,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
         type="button"
         onClick={handleDownvote}
         disabled={isLoading}
-        aria-label="Downvote"
+        aria-label="Dislike"
         className={`${btnPadding} rounded-full transition-colors ${
           userVote === -1
             ? 'text-red-500'
@@ -78,7 +78,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="M12 5v14M19 12l-7 7-7-7" />
+          <path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z" />
         </svg>
       </button>
     </div>

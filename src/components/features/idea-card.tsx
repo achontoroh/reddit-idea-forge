@@ -1,44 +1,21 @@
 'use client'
 
-import { type FC, useRef, useState, useCallback } from 'react'
+import { type FC } from 'react'
 import Link from 'next/link'
 import { type IdeaWithVote } from '@/lib/types/idea'
-import { getCategoryBySlug, CATEGORY_LABELS } from '@/config/categories'
+import { CATEGORY_LABELS } from '@/config/categories'
 import { AiScoreBadge, CommunityScore } from './score-display'
 import { StatusBadgeList } from './status-badge'
-import { IdeaCardTooltip } from './idea-card-tooltip'
 
 interface IdeaCardProps {
   idea: IdeaWithVote
 }
 
 export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const [showTooltip, setShowTooltip] = useState(false)
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const categoryConfig = getCategoryBySlug(idea.category)
   const categoryLabel = CATEGORY_LABELS[idea.category] ?? idea.category
-  const categoryEmoji = categoryConfig?.icon ?? '📁'
-
-  const handleMouseEnter = useCallback(() => {
-    // Only show tooltip on hover-capable devices
-    if (!window.matchMedia('(hover: hover)').matches) return
-    hoverTimeout.current = setTimeout(() => setShowTooltip(true), 300)
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current)
-    setShowTooltip(false)
-  }, [])
 
   return (
-    <div
-      ref={cardRef}
-      className="group relative"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="group relative">
       <Link
         href={`/dashboard/ideas/${idea.id}`}
         className="block rounded-lg bg-surface-lowest p-4 transition-all duration-200
@@ -47,15 +24,9 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
           focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
           [content-visibility:auto] [contain-intrinsic-size:auto_160px]"
       >
-        {/* Top row: category badge + status badges + AI score */}
+        {/* Top row: status badges + AI score */}
         <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2 min-w-0 flex-wrap">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary-container/20 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary shrink-0">
-              <span aria-hidden="true">{categoryEmoji}</span>
-              {categoryLabel}
-            </span>
-            <StatusBadgeList badges={idea.badges} />
-          </div>
+          <StatusBadgeList badges={idea.badges} />
           <AiScoreBadge score={idea.ai_score} />
         </div>
 
@@ -64,12 +35,12 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
           {idea.title}
         </h3>
 
-        {/* Pitch — single line truncated */}
-        <p className="text-on-surface-muted text-sm leading-relaxed line-clamp-1 mb-3">
+        {/* Pitch */}
+        <p className="text-on-surface-muted text-sm leading-relaxed mb-3">
           {idea.pitch}
         </p>
 
-        {/* Bottom row: community score, views, subreddit */}
+        {/* Bottom row: like/dislike, category, views, subreddit */}
         <div className="flex items-center justify-between gap-3">
           <CommunityScore
             ideaId={idea.id}
@@ -78,6 +49,11 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
           />
 
           <div className="flex items-center gap-3 text-[12px] text-on-surface-muted">
+            {/* Category */}
+            <span className="truncate max-w-[120px]">
+              {categoryLabel}
+            </span>
+
             {/* View count */}
             <span className="inline-flex items-center gap-1" title={`${idea.view_count} views`}>
               <svg
@@ -105,14 +81,6 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
         </div>
       </Link>
 
-      {/* Hover tooltip — hidden on touch devices (no hover capability) */}
-      <IdeaCardTooltip
-        pitch={idea.pitch}
-        painPoint={idea.pain_point}
-        targetAudience={idea.target_audience}
-        anchorRef={cardRef}
-        visible={showTooltip}
-      />
     </div>
   )
 }

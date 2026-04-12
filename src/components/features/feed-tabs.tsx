@@ -2,7 +2,7 @@
 
 import { type FC, useState, useRef, useEffect } from 'react'
 
-export type TabMode = 'hot' | 'top' | 'new' | 'foryou'
+export type TabMode = 'top' | 'new' | 'foryou'
 export type TopPeriod = 'week' | 'month' | 'all'
 
 interface FeedTabsProps {
@@ -13,9 +13,8 @@ interface FeedTabsProps {
 }
 
 const TABS: { key: TabMode; label: string }[] = [
-  { key: 'hot', label: 'Hot' },
-  { key: 'top', label: 'Top' },
   { key: 'new', label: 'New' },
+  { key: 'top', label: 'Top' },
   { key: 'foryou', label: 'For You' },
 ]
 
