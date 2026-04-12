@@ -1,11 +1,8 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { type Idea } from '@/lib/types/idea'
-import { BackLink } from '@/components/ui/back-link'
-import { Card } from '@/components/ui/card'
-import { ScoreBadge } from '@/components/ui/score-badge'
-import { VoteButtons } from '@/components/ideas/vote-buttons'
-import { CATEGORY_LABELS } from '@/config/categories'
+import { type RedditPost } from '@/lib/types/reddit-post'
+import { IdeaDetailClient } from './idea-detail-client'
 
 interface IdeaDetailPageProps {
   params: Promise<{ id: string }>
@@ -15,6 +12,7 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
   const { id } = await params
   const supabase = await createClient()
 
+  // Fetch idea
   const { data: idea } = await supabase
     .from('ideas')
     .select('*')
@@ -27,90 +25,50 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
 
   const typedIdea = idea as Idea
 
-  // Fetch current user's vote for this idea
+  // Get current user
   const { data: { user } } = await supabase.auth.getUser()
+
   let userVote: 1 | -1 | null = null
+  let isFavorited = false
+
   if (user) {
-    const { data: voteRow } = await supabase
-      .from('idea_votes')
-      .select('vote')
-      .eq('idea_id', id)
-      .eq('user_id', user.id)
-      .maybeSingle()
-    userVote = (voteRow?.vote as 1 | -1) ?? null
+    const [voteResult, favoriteResult] = await Promise.all([
+      supabase
+        .from('idea_votes')
+        .select('vote')
+        .eq('idea_id', id)
+        .eq('user_id', user.id)
+        .maybeSingle(),
+      supabase
+        .from('user_favorites')
+        .select('id')
+        .eq('idea_id', id)
+        .eq('user_id', user.id)
+        .maybeSingle(),
+    ])
+
+    userVote = (voteResult.data?.vote as 1 | -1) ?? null
+    isFavorited = !!favoriteResult.data
   }
 
-  const categoryLabel = CATEGORY_LABELS[typedIdea.category] ?? typedIdea.category
+  // Fetch linked Reddit posts
+  let redditPosts: RedditPost[] = []
+  if (typedIdea.source_post_ids && typedIdea.source_post_ids.length > 0) {
+    const { data: posts } = await supabase
+      .from('reddit_posts')
+      .select('*')
+      .in('id', typedIdea.source_post_ids)
+
+    redditPosts = (posts as RedditPost[]) ?? []
+  }
 
   return (
-    <div className="max-w-[720px] mx-auto">
-      <BackLink href="/dashboard" />
-
-      <article>
-        <div className="flex items-center gap-4 mb-8">
-          <span className="px-4 py-1.5 bg-primary-container/20 text-primary rounded-full text-[0.6875rem] font-bold tracking-widest uppercase">
-            {categoryLabel}
-          </span>
-          <ScoreBadge score={typedIdea.ai_score} variant="full" />
-        </div>
-
-        <h1 className="text-3xl md:text-[3.5rem] leading-[1.1] font-bold text-on-surface tracking-[-0.02em] mb-8 font-heading">
-          {typedIdea.title}
-        </h1>
-
-        <p className="text-lg leading-relaxed text-on-surface-muted mb-16">
-          {typedIdea.pitch}
-        </p>
-
-        <div className="mb-16">
-          <VoteButtons
-            ideaId={typedIdea.id}
-            initialVote={userVote}
-            initialScore={typedIdea.community_score}
-            size="lg"
-          />
-        </div>
-
-        <section className="mb-20">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-            <h2 className="text-[0.6875rem] font-bold tracking-[0.05em] uppercase text-on-surface-muted">
-              Pain Point
-            </h2>
-          </div>
-          <Card padding="lg" elevated>
-            <p className="text-on-surface leading-relaxed">
-              {typedIdea.pain_point}
-            </p>
-          </Card>
-        </section>
-
-        <div className="flex justify-center pt-12">
-          <a
-            href={typedIdea.source_url ?? `https://reddit.com/r/${typedIdea.source_subreddit}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full hover:bg-surface-low transition-all group"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-on-surface-muted group-hover:text-accent transition-colors"
-            >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <span className="text-sm font-semibold text-on-surface-muted">
-              View Reddit source discussion
-            </span>
-          </a>
-        </div>
-      </article>
-    </div>
+    <IdeaDetailClient
+      idea={typedIdea}
+      userVote={userVote}
+      isFavorited={isFavorited}
+      redditPosts={redditPosts}
+      isAuthenticated={!!user}
+    />
   )
 }
