@@ -27,3 +27,8 @@ export interface Idea {
   expires_at: string | null
   created_at: string
 }
+
+/** Idea with the current user's vote attached (null = no vote) */
+export interface IdeaWithVote extends Idea {
+  userVote: 1 | -1 | null
+}

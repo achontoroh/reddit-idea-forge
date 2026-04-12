@@ -4,6 +4,7 @@ import { type Idea } from '@/lib/types/idea'
 import { BackLink } from '@/components/ui/back-link'
 import { Card } from '@/components/ui/card'
 import { ScoreBadge } from '@/components/ui/score-badge'
+import { VoteButtons } from '@/components/ideas/vote-buttons'
 import { CATEGORY_LABELS } from '@/config/categories'
 
 interface IdeaDetailPageProps {
@@ -25,6 +26,20 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
   }
 
   const typedIdea = idea as Idea
+
+  // Fetch current user's vote for this idea
+  const { data: { user } } = await supabase.auth.getUser()
+  let userVote: 1 | -1 | null = null
+  if (user) {
+    const { data: voteRow } = await supabase
+      .from('idea_votes')
+      .select('vote')
+      .eq('idea_id', id)
+      .eq('user_id', user.id)
+      .maybeSingle()
+    userVote = (voteRow?.vote as 1 | -1) ?? null
+  }
+
   const categoryLabel = CATEGORY_LABELS[typedIdea.category] ?? typedIdea.category
 
   return (
@@ -46,6 +61,15 @@ export default async function IdeaDetailPage({ params }: IdeaDetailPageProps) {
         <p className="text-lg leading-relaxed text-on-surface-muted mb-16">
           {typedIdea.pitch}
         </p>
+
+        <div className="mb-16">
+          <VoteButtons
+            ideaId={typedIdea.id}
+            initialVote={userVote}
+            initialScore={typedIdea.community_score}
+            size="lg"
+          />
+        </div>
 
         <section className="mb-20">
           <div className="flex items-center gap-2 mb-4">

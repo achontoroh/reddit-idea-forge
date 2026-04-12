@@ -1,18 +1,25 @@
 import { createClient } from '@/lib/supabase/server'
-import { type Idea } from '@/lib/types/idea'
+import { type Idea, type IdeaWithVote } from '@/lib/types/idea'
 import { IdeaFeed } from '@/components/ideas/idea-feed'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Auth is already guarded by DashboardLayout — no need to call getUser() again
+  // Auth is already guarded by DashboardLayout — user is guaranteed here
+  const { data: { user } } = await supabase.auth.getUser()
+
   const { data: ideas } = await supabase
     .from('ideas')
-    .select('*')
+    .select('*, idea_votes!left(vote)')
+    .eq('idea_votes.user_id', user!.id)
     .order('ai_score', { ascending: false })
     .order('created_at', { ascending: false })
 
-  const typedIdeas = (ideas ?? []) as Idea[]
+  const typedIdeas: IdeaWithVote[] = (ideas ?? []).map((row) => {
+    const { idea_votes, ...idea } = row as Idea & { idea_votes: { vote: number }[] }
+    const userVote = idea_votes?.[0]?.vote as 1 | -1 | undefined ?? null
+    return { ...idea, userVote }
+  })
 
   return (
     <div>

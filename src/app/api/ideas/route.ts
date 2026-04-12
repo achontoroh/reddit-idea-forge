@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { type Idea } from '@/lib/types/idea'
+import { type Idea, type IdeaWithVote } from '@/lib/types/idea'
 
 const VALID_SORT = ['ai_score', 'community_score', 'created_at'] as const
 type SortField = (typeof VALID_SORT)[number]
@@ -45,10 +45,11 @@ export async function GET(request: NextRequest) {
     )
     const offset = Math.max(parseInt(searchParams.get('offset') ?? '', 10) || 0, 0)
 
-    // Build query — shared pool, no user_id filter
+    // Build query — left join idea_votes for current user's vote
     let query = supabase
       .from('ideas')
-      .select('*', { count: 'exact' })
+      .select('*, idea_votes!left(vote)', { count: 'exact' })
+      .eq('idea_votes.user_id', user.id)
 
     // Exclude expired ideas
     query = query.or('expires_at.is.null,expires_at.gt.now()')
@@ -75,8 +76,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Transform joined data: extract userVote from idea_votes array
+    const ideas: IdeaWithVote[] = (data ?? []).map((row) => {
+      const { idea_votes, ...idea } = row as Idea & { idea_votes: { vote: number }[] }
+      const userVote = idea_votes?.[0]?.vote as 1 | -1 | undefined ?? null
+      return { ...idea, userVote }
+    })
+
     return NextResponse.json({
-      data: (data ?? []) as Idea[],
+      data: ideas,
       pagination: {
         total: count ?? 0,
         limit,
