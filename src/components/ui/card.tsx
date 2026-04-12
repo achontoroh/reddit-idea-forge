@@ -5,6 +5,7 @@ interface CardProps {
   className?: string
   padding?: 'sm' | 'md' | 'lg'
   modal?: boolean
+  elevated?: boolean
   onClick?: () => void
 }
 
@@ -19,11 +20,18 @@ export const Card: FC<CardProps> = ({
   className = '',
   padding = 'md',
   modal = false,
+  elevated = false,
   onClick,
 }) => {
+  const shadow = modal
+    ? 'shadow-modal'
+    : elevated
+      ? 'shadow-md hover:shadow-lg'
+      : ''
+
   return (
     <div
-      className={`rounded-lg bg-surface-lowest ${modal ? 'shadow-modal' : ''} ${paddingClasses[padding]} ${className}`}
+      className={`rounded-lg bg-surface-lowest transition-shadow ${shadow} ${paddingClasses[padding]} ${className}`}
       onClick={onClick}
     >
       {children}

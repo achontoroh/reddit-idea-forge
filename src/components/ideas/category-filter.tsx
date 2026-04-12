@@ -11,7 +11,7 @@ interface CategoryFilterProps {
 
 export const CategoryFilter: FC<CategoryFilterProps> = ({ selected, onChange }) => {
   return (
-    <div className="flex gap-2 flex-nowrap overflow-x-auto pb-1 -mb-1">
+    <div className="flex gap-2 flex-wrap">
       <Chip label="All" selected={selected === 'all'} onClick={() => onChange('all')} />
       {CATEGORIES.map((cat) => (
         <Chip
