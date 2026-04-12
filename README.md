@@ -100,12 +100,17 @@ See `docs/PROJECT_STRUCTURE.md` for the full file tree with explanations.
 ## Key Features
 
 - **Shared idea feed** — AI-generated SaaS ideas from Reddit, browsable by all users (v2 architecture)
+- **Smart dashboard** — feed tabs (Latest / Rating / For You), category chip filtering, SWR pagination
+- **Onboarding** — new users select 2-4 categories to personalize their "For You" feed
+- **Idea cards** — compact view with hover tooltip preview, dual score (AI + community), status badges
+- **Idea detail pages** — `/dashboard/ideas/[id]` with score breakdown, Reddit sources, favorites
+- **Voting** — upvote/downvote with optimistic UI, DB triggers for community score
+- **Badge system** — server-computed New / Hot / Top / Trending badges with view tracking
 - **8 categories** (DevTools, SaaS, Productivity, Finance, Health, Education, eCommerce, AI) mapped to ~30 subreddits
 - **Dual scoring** — AI score (0-100) + Community score (upvotes/downvotes)
 - **Real Reddit data** via Arctic Shift API (primary) and public JSON API (fallback)
 - **Multi-provider LLM** — Google Gemini (active), Anthropic Claude, Groq
 - **Design system** — light/dark theme, CSS tokens, mobile-first responsive
-- **Auto-redirect** — authenticated users skip the landing page and go straight to the dashboard
 - **Email subscription** with category preferences
 - **Unsubscribe** via token link (no auth required) or settings page
 

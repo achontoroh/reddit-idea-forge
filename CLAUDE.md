@@ -53,10 +53,21 @@ Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles 
 - This fixes Supabase PKCE flow on Vercel where `set-cookie` headers were dropped from redirects
 - Pattern: create redirect response first → pass to `createServerClient` cookies config → return same response
 
+### Dashboard & Feed
+- Feed tabs: Latest / Rating / For You — tab-driven sorting and filtering in `src/app/api/ideas/route.ts`
+- Category chips filter ideas client-side within the active tab
+- "For You" tab filters by user's preferred categories from `user_preferences`
+- Server-computed badges (New / Hot / Top / Trending) via `computeBadges()` in ideas route
+- Voting: `useVote` hook with optimistic UI, SWR cache sync, DB triggers for `community_score`
+- Idea detail: `/dashboard/ideas/[id]` — server component fetches idea + Reddit sources, client component handles voting/favorites/view tracking
+- Onboarding: `/dashboard/onboarding` — category selection (min 2, max 4), middleware redirect for new users
+- Shared `IdeaRouteContext` type in `lib/types/idea.ts` for all `[id]/*` API routes
+
 ### Middleware Auth Redirects
 - `src/proxy.ts` handles route protection via `updateSession` + redirect rules
 - Authenticated users on `/`, `/login`, `/register` → redirect to `/dashboard`
 - Unauthenticated users on `/dashboard/*` → redirect to `/login`
+- New users without onboarding → redirect to `/dashboard/onboarding`
 
 Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 
