@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  experimental: {
+    staleTimes: {
+      dynamic: 30,
+    },
+  },
 };
 
 export default nextConfig;
