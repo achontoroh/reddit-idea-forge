@@ -3,6 +3,7 @@ import { fetchAndStorePosts } from '@/lib/reddit/fetch-service'
 import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
 import { validateCronAuth } from '@/lib/utils/validation'
 import { logger } from '@/lib/logger'
+import { sendTelegramNotification } from '@/lib/notifications/telegram'
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
@@ -28,6 +29,14 @@ export async function POST(request: NextRequest) {
 
     const durationMs = Date.now() - startTime
 
+    // Fire-and-forget — never block the response
+    sendTelegramNotification(
+      `<b>✅ IdeaForge Pipeline</b>\n` +
+      `📥 Fetched: ${fetchResult.newCount} new posts\n` +
+      `💡 Ideas generated: ${genResult.ideasGenerated}\n` +
+      `⏱ Duration: ${(durationMs / 1000).toFixed(1)}s`
+    ).catch(() => {/* swallow — logged inside */})
+
     return NextResponse.json({
       success: true,
       fetched: fetchResult.fetchedCount,
@@ -39,14 +48,22 @@ export async function POST(request: NextRequest) {
       errors: [...fetchResult.errors, ...genResult.errors],
     })
   } catch (error) {
-    logger.error('[Cron/Generate] Pipeline failed', {
-      error: error instanceof Error ? error.message : String(error),
-    })
+    const durationMs = Date.now() - startTime
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
+    logger.error('[Cron/Generate] Pipeline failed', { error: errorMessage })
+
+    sendTelegramNotification(
+      `<b>❌ IdeaForge Pipeline</b>\n` +
+      `💥 ${errorMessage}\n` +
+      `⏱ Duration: ${(durationMs / 1000).toFixed(1)}s`
+    ).catch(() => {/* swallow — logged inside */})
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        durationMs: Date.now() - startTime,
+        error: errorMessage,
+        durationMs,
       },
       { status: 500 }
     )
