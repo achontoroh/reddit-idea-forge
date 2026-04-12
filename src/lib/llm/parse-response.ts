@@ -60,6 +60,21 @@ function extractBalancedJson(raw: string): string | null {
   return null
 }
 
+function normalizeResponse(parsed: unknown): unknown {
+  if (Array.isArray(parsed)) {
+    console.log('[LLM] Response is a bare array — wrapping as { ideas: [...] }')
+    return { ideas: parsed }
+  }
+
+  if (typeof parsed === 'object' && parsed !== null && 'ideas' in parsed) {
+    return parsed
+  }
+
+  throw new Error(
+    `LLM response has unexpected shape: expected object with "ideas" key or array, got ${typeof parsed}`
+  )
+}
+
 export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
   const cleaned = stripCodeFences(raw)
 
@@ -84,7 +99,14 @@ export function parseLLMResponse<T>(raw: string, schema: z.ZodType<T>): T {
     }
   }
 
-  const result = schema.safeParse(parsed)
+  // Log raw response prefix for debugging
+  console.log('[LLM] Raw response preview:', cleaned.slice(0, 500))
+
+  // Normalize: if the model returned a bare array, wrap it as { ideas: [...] }
+  // so it matches schemas that expect an object with an `ideas` key
+  const normalized = normalizeResponse(parsed)
+
+  const result = schema.safeParse(normalized)
 
   if (!result.success) {
     console.error('[LLM] Validation failed:', result.error.issues)
