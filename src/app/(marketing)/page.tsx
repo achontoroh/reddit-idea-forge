@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { CATEGORIES } from '@/config/categories'
 
-
 const STEPS = [
   {
     number: '01',

@@ -107,11 +107,6 @@ export async function fetchAndStoreByCategories(
 
 /**
  * Main entry point for the cron pipeline.
- * Determines which categories to fetch based on current UTC time,
- * then fetches and stores posts.
- */
-/**
- * Main entry point for the cron pipeline.
  * @param rotationIndex — explicit rotation slot (used by dev panel).
  *   When omitted, determines the slot from current UTC time (prod behavior).
  */
