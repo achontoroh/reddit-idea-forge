@@ -110,12 +110,17 @@ export async function fetchAndStoreByCategories(
  * Determines which categories to fetch based on current UTC time,
  * then fetches and stores posts.
  */
-export async function fetchAndStorePosts(): Promise<FetchResult> {
-  const categories = getCategoriesToFetch()
+/**
+ * Main entry point for the cron pipeline.
+ * @param rotationIndex — explicit rotation slot (used by dev panel).
+ *   When omitted, determines the slot from current UTC time (prod behavior).
+ */
+export async function fetchAndStorePosts(rotationIndex?: number): Promise<FetchResult> {
+  const categories = getCategoriesToFetch(rotationIndex)
 
   console.log(
     `[FetchService] Rotation selected: ${categories.map((c) => c.slug).join(', ')} ` +
-    `(UTC hour: ${new Date().getUTCHours()})`
+    `(slot: ${rotationIndex ?? 'auto'}, UTC hour: ${new Date().getUTCHours()})`
   )
 
   return fetchAndStoreByCategories(categories)

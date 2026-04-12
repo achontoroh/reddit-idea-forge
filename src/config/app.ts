@@ -19,7 +19,7 @@ export const config = {
     highEngagementBonus: 3,
   },
   reddit: {
-    dataSource: 'api' as const,
+    dataSource: 'arctic-shift' as 'api' | 'arctic-shift',
     postsPerSubreddit: 5,
     requestDelayMs: 200,
     categories: CATEGORIES,
