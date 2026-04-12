@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
 import { fetchAndStorePosts } from '@/lib/reddit/fetch-service'
 import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
 import { getRotationSlotCount } from '@/lib/reddit/rotation'
@@ -24,14 +25,10 @@ export async function POST(request: NextRequest) {
   const startTime = Date.now()
 
   try {
-    const body: unknown = await request.json()
-    const rotationIndex =
-      typeof body === 'object' &&
-      body !== null &&
-      'rotationIndex' in body &&
-      typeof (body as Record<string, unknown>).rotationIndex === 'number'
-        ? ((body as Record<string, unknown>).rotationIndex as number)
-        : 0
+    const body = z
+      .object({ rotationIndex: z.number().int().min(0).optional().default(0) })
+      .parse(await request.json())
+    const { rotationIndex } = body
 
     const fetchResult = await fetchAndStorePosts(rotationIndex)
     const genResult = await generateSharedIdeas()

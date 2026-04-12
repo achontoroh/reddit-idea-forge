@@ -31,12 +31,14 @@ pnpm lint             # ESLint
 Key principle: `app/` handles routing, `components/` handles UI, `lib/` handles logic. Never mix.
 
 ### Reddit Integration
-- Public JSON API: `reddit.com/r/{sub}/hot.json` — no API key needed
+- Two data sources: **Arctic Shift API** (primary) and **Public JSON API** (fallback) — configured in `src/config/app.ts`
+- Arctic Shift adopted because Reddit public JSON returns 403 on Vercel
 - 8 categories mapped to ~30 subreddits in `src/config/categories.ts` and `src/config/reddit.ts`
 - Cron-based fetch with category rotation (3 categories per run, every 6 hours)
 - `lib/reddit/fetch-service.ts` orchestrates fetch → dedup → DB storage
-- `lib/reddit/rotation.ts` selects categories based on UTC hour
+- `lib/reddit/rotation.ts` selects categories based on UTC hour (or explicit override for dev)
 - Strategy pattern: `RedditDataSource` interface in `lib/reddit/source.ts`, swapped via factory in `lib/reddit/index.ts`
+- Dev pipeline panel: floating UI for manual fetch/generate with rotation slot control
 
 ### Pipeline (Cron)
 - GitHub Actions triggers `POST /api/cron/generate` every 6 hours and `POST /api/cron/cleanup` daily
@@ -97,6 +99,7 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 - LLM: multi-provider via `src/config/app.ts` — Gemini (active), Anthropic, Groq supported
 - Reddit: public JSON API (no auth token)
 - GitHub Actions (cron pipeline)
+- SWR for client-side revalidation
 - Resend for email
 - Zod for validation
 
@@ -135,3 +138,4 @@ All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
 | `/kit-llm` | LLM pipeline, prompt design, Zod schemas, Anthropic SDK |
 | `/linear-commit` | Git commits linked to Linear tickets via magic words |
 | `/linear-epic-close` | Close an epic: analyze commits, update Linear (epic + project + status update), update docs |
+| `/simplify-branch` | Run full code simplification across all changes in the current branch vs base branch |

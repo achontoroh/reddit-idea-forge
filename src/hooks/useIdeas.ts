@@ -1,6 +1,8 @@
 import useSWR from 'swr'
 import { type Idea } from '@/lib/types/idea'
 
+const IDEAS_LIMIT = 100
+
 interface IdeasResponse {
   data: Idea[]
   pagination: {
@@ -22,15 +24,15 @@ const fetcher = (url: string) =>
  */
 export function useIdeas(fallbackData: Idea[]) {
   const { data, error, isLoading, isValidating } = useSWR(
-    '/api/ideas?limit=100',
+    `/api/ideas?limit=${IDEAS_LIMIT}`,
     fetcher,
     {
       fallbackData: {
         data: fallbackData,
-        pagination: { total: fallbackData.length, limit: 100, offset: 0 },
+        pagination: { total: fallbackData.length, limit: IDEAS_LIMIT, offset: 0 },
       },
       revalidateOnFocus: false,
-      revalidateOnMount: true,
+      revalidateOnMount: false,
       dedupingInterval: 30_000,
     }
   )

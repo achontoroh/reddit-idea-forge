@@ -1,6 +1,6 @@
 'use client'
 
-import { type FC, useState, useCallback, useRef } from 'react'
+import { type FC, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
@@ -25,7 +25,7 @@ export const DevPipelinePanel: FC = () => {
   const [cleaning, setCleaning] = useState(false)
   const [result, setResult] = useState<PipelineResult | null>(null)
   const [collapsed, setCollapsed] = useState(false)
-  const rotationRef = useRef(0)
+  const [rotationIndex, setRotationIndex] = useState(0)
 
   const runGenerate = useCallback(async () => {
     setGenerating(true)
@@ -34,11 +34,11 @@ export const DevPipelinePanel: FC = () => {
       const res = await fetch('/api/dev/pipeline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rotationIndex: rotationRef.current }),
+        body: JSON.stringify({ rotationIndex }),
       })
       const data: PipelineResult = await res.json()
       setResult(data)
-      rotationRef.current += 1
+      setRotationIndex((prev) => prev + 1)
       if (data.success && data.ideasGenerated && data.ideasGenerated > 0) {
         router.refresh()
       }
@@ -50,7 +50,7 @@ export const DevPipelinePanel: FC = () => {
     } finally {
       setGenerating(false)
     }
-  }, [router])
+  }, [router, rotationIndex])
 
   const runCleanup = useCallback(async () => {
     setCleaning(true)
@@ -132,7 +132,7 @@ export const DevPipelinePanel: FC = () => {
 
       {/* Rotation info */}
       <div className="px-4 pb-2 text-xs text-on-surface-muted">
-        Next rotation slot: {rotationRef.current}
+        Next rotation slot: {rotationIndex}
       </div>
 
       {/* Result */}
