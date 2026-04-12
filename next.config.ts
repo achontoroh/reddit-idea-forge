@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Fetch logging disabled — it produces noisy "Cache skipped reason" and
@@ -16,4 +17,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Suppress source map upload logs during build
+  silent: true,
+
+  // Upload source maps for better stack traces
+  org: "a-chontoroh",
+  project: "ideaforge",
+
+  // Tree-shake Sentry debug logging to reduce bundle size
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+  },
+});

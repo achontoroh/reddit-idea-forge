@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import { fetchAndStorePosts } from '@/lib/reddit/fetch-service'
 import { generateSharedIdeas } from '@/lib/pipeline/generate-ideas'
 import { validateCronAuth } from '@/lib/utils/validation'
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     logger.error('[Cron/Generate] Pipeline failed', { error: errorMessage })
+    Sentry.captureException(error, { tags: { pipeline: 'cron' } })
 
     sendTelegramNotification(
       `<b>❌ IdeaForge Pipeline</b>\n` +

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { config } from '@/config/app'
 import { LLM_CONFIG } from '@/config/llm'
 import { supabaseServiceRole } from '@/lib/supabase/service'
@@ -111,6 +112,7 @@ export async function generateSharedIdeas(options?: GenerationOptions): Promise<
   } catch (error) {
     const msg = `[Pipeline] LLM call failed: ${error instanceof Error ? error.message : String(error)}`
     logger.error(msg)
+    Sentry.captureException(error, { tags: { pipeline: 'cron', model } })
     errors.push(msg)
 
     // Mark posts as processed even on LLM failure to avoid retry loops

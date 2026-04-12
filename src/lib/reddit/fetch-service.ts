@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 import { type Category } from '@/config/categories'
 import { config } from '@/config/app'
 import { supabaseServiceRole } from '@/lib/supabase/service'
@@ -79,6 +80,7 @@ export async function fetchAndStoreByCategories(
   if (error) {
     const msg = `[FetchService] DB insert error: ${error.message}`
     logger.error(msg)
+    Sentry.captureException(new Error(msg), { tags: { pipeline: 'cron' } })
     errors.push(msg)
     return {
       fetchedCount: rawPosts.length,
