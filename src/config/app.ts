@@ -8,7 +8,7 @@ export const config = {
       groq: 'meta-llama/llama-4-scout-17b-16e-instruct',
       gemini: 'gemma-4-31b-it',
       /** Secondary model for rotation — alternates with primary every 6 hours */
-      geminiSecondary: 'gemma-4-26b-it',
+      geminiSecondary: 'gemma-4-26b-a4b-it',
     },
     inputPostLimit: 8,
   },
