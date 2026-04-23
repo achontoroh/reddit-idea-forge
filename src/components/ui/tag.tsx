@@ -17,7 +17,6 @@ export const Tag: FC<TagProps> = ({
   className,
 }) => {
   const dotStyle: CSSProperties = { background: `var(--cat-${category})` }
-  const display = (label ?? categoryLabels[category]).toUpperCase()
 
   return (
     <span
@@ -27,7 +26,7 @@ export const Tag: FC<TagProps> = ({
       data-active={active ? 'true' : undefined}
     >
       <span className="tag-dot" aria-hidden="true" style={dotStyle} />
-      <span className="tag-label">{display}</span>
+      <span className="tag-label">{label ?? categoryLabels[category]}</span>
     </span>
   )
 }

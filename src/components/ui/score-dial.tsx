@@ -1,6 +1,6 @@
 'use client'
 
-import { type CSSProperties, type FC, useEffect, useState } from 'react'
+import { type CSSProperties, type FC, useEffect, useRef } from 'react'
 import { scoreSignalToken } from '@/lib/utils/score'
 
 export type ScoreDialSize = 'sm' | 'md' | 'lg'
@@ -20,6 +20,16 @@ const SIZE_SPECS: Record<ScoreDialSize, { dial: number; numeral: number }> = {
 }
 
 const STROKE = 2
+
+const CENTER_STYLE: CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  lineHeight: 1,
+  pointerEvents: 'none',
+}
 
 function clampValue(value: number): number {
   if (!Number.isFinite(value)) {
@@ -49,29 +59,27 @@ export const ScoreDial: FC<ScoreDialProps> = ({
   const circumference = 2 * Math.PI * radius
   const targetOffset = circumference * (1 - clamped / 10)
 
-  const [offset, setOffset] = useState<number>(animate ? circumference : targetOffset)
+  // Animate via direct DOM mutation: render starts at empty (circumference), then
+  // an rAF-scheduled style write triggers the CSS transition to targetOffset.
+  // Bypassing React state here avoids a guaranteed second render per dial — meaningful
+  // when a feed mounts dozens at once. Reduced-motion is handled by tokens.css
+  // (`--dur-dial` collapses to 0ms), so the transition snaps instantly.
+  const indicatorRef = useRef<SVGCircleElement>(null)
 
   useEffect(() => {
     if (!animate) return
-    // Reduced motion is handled by tokens.css: `--dur-dial` collapses to 0ms under
-    // `prefers-reduced-motion: reduce`, so the transition below snaps instantly.
-    const raf = requestAnimationFrame(() => setOffset(targetOffset))
+    const raf = requestAnimationFrame(() => {
+      if (indicatorRef.current) {
+        indicatorRef.current.style.strokeDashoffset = String(targetOffset)
+      }
+    })
     return () => cancelAnimationFrame(raf)
   }, [animate, targetOffset])
 
   const display = clamped.toFixed(1)
   const denomSize = Math.round(numeral * 0.7)
   const ringColor = scoreSignalToken(clamped)
-
-  const centerStyle: CSSProperties = {
-    position: 'absolute',
-    inset: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    lineHeight: 1,
-    pointerEvents: 'none',
-  }
+  const initialOffset = animate ? circumference : targetOffset
 
   const numeralStyle: CSSProperties = {
     fontFamily: 'var(--font-serif)',
@@ -127,6 +135,7 @@ export const ScoreDial: FC<ScoreDialProps> = ({
             strokeWidth={STROKE}
           />
           <circle
+            ref={indicatorRef}
             cx={dial / 2}
             cy={dial / 2}
             r={radius}
@@ -135,12 +144,12 @@ export const ScoreDial: FC<ScoreDialProps> = ({
             strokeWidth={STROKE}
             strokeLinecap="butt"
             strokeDasharray={circumference}
-            strokeDashoffset={offset}
+            strokeDashoffset={initialOffset}
             style={indicatorStyle}
             data-score-dial-indicator
           />
         </svg>
-        <span style={centerStyle} aria-hidden="true">
+        <span style={CENTER_STYLE} aria-hidden="true">
           <span style={numeralStyle} data-score-dial-numeral>
             {display}
           </span>

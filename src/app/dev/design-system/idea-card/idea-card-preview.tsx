@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Kicker } from '@/components/ui/kicker'
 import { IdeaCard, type IdeaCardProps, type IdeaCardVariant } from '@/components/features/idea-card'
-import type { CategoryKey } from '@/lib/design-system/categories'
 
 type Idea = IdeaCardProps['idea']
 
@@ -20,7 +19,7 @@ const REAL: Record<IdeaCardVariant, Idea> = {
   list: mkIdea({
     id: 'l1',
     title: 'Postgres branching for feature environments',
-    category: 'devt' as CategoryKey,
+    category: 'devt',
     score: 8.4,
     summary: 'Dev teams waste 40min/day on staging conflicts. $340/mo ceiling.',
     isNew: true,
@@ -28,7 +27,7 @@ const REAL: Record<IdeaCardVariant, Idea> = {
   featured: mkIdea({
     id: 'f1',
     title: 'AI-assisted incident post-mortems with linked evidence',
-    category: 'ai' as CategoryKey,
+    category: 'ai',
     score: 9.1,
     summary:
       'Every SRE we talked to runs post-mortems in Google Docs with grep-and-paste logs. Fix that.',
@@ -37,13 +36,13 @@ const REAL: Record<IdeaCardVariant, Idea> = {
   compact: mkIdea({
     id: 'c1',
     title: 'Stripe billing audit co-pilot',
-    category: 'fin' as CategoryKey,
+    category: 'fin',
     score: 7.6,
   }),
   grid: mkIdea({
     id: 'g1',
     title: 'Calendar block for focus rituals',
-    category: 'prod' as CategoryKey,
+    category: 'prod',
     score: 6.8,
   }),
 }
@@ -204,7 +203,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'l2',
               title: 'Unified changelog generator for monorepos',
-              category: 'devt' as CategoryKey,
+              category: 'devt',
               score: 5.4,
               summary: 'Conventional-commits not enough once 8 teams ship from one repo.',
             })}
@@ -217,7 +216,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'l3',
               title: 'No summary field — edge case for optional prop',
-              category: 'saas' as CategoryKey,
+              category: 'saas',
               score: 7.1,
             })}
             variant="list"
@@ -250,7 +249,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'c2',
               title: 'Very long title that must clamp to a single line in the compact variant',
-              category: 'ai' as CategoryKey,
+              category: 'ai',
               score: 9.9,
             })}
             variant="compact"
@@ -259,7 +258,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'c3',
               title: 'Low score example',
-              category: 'health' as CategoryKey,
+              category: 'health',
               score: 2.3,
             })}
             variant="compact"
@@ -277,7 +276,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'g2',
               title: 'Portfolio rebalancer with tax-loss harvesting',
-              category: 'fin' as CategoryKey,
+              category: 'fin',
               score: 8.9,
               isNew: true,
             })}
@@ -288,7 +287,7 @@ export function IdeaCardPreview() {
             idea={mkIdea({
               id: 'g3',
               title: 'Legal brief summarizer with cite-check',
-              category: 'legal' as CategoryKey,
+              category: 'legal',
               score: 7.2,
             })}
             variant="grid"

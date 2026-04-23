@@ -14,7 +14,6 @@ export interface InputProps
   label?: string
   hint?: string
   error?: string
-  state?: 'default' | 'focus' | 'error' | 'disabled'
   className?: string
 }
 
@@ -24,7 +23,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     label,
     hint,
     error,
-    state,
     className,
     disabled,
     id: idProp,
@@ -36,7 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const id = idProp ?? generatedId
   const hintId = hint ? `${id}-hint` : undefined
   const errorId = error ? `${id}-error` : undefined
-  const resolvedState = state ?? (error ? 'error' : disabled ? 'disabled' : 'default')
+  const resolvedState = error ? 'error' : disabled ? 'disabled' : 'default'
 
   return (
     <div className={className ? `input-field ${className}` : 'input-field'}>

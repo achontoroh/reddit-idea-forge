@@ -11,20 +11,18 @@ export interface TextareaProps
   label?: string
   hint?: string
   error?: string
-  state?: 'default' | 'focus' | 'error' | 'disabled'
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
-    { label, hint, error, state, className, disabled, id: idProp, rows = 4, ...rest },
+    { label, hint, error, className, disabled, id: idProp, rows = 4, ...rest },
     ref,
   ) {
     const generatedId = useId()
     const id = idProp ?? generatedId
     const hintId = hint ? `${id}-hint` : undefined
     const errorId = error ? `${id}-error` : undefined
-    const resolvedState =
-      state ?? (error ? 'error' : disabled ? 'disabled' : 'default')
+    const resolvedState = error ? 'error' : disabled ? 'disabled' : 'default'
 
     return (
       <div className={className ? `input-field ${className}` : 'input-field'}>

@@ -157,20 +157,9 @@
   --shadow-focus: 0 0 0 3px rgba(217, 119, 87, 0.25);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --ink-paper: #0f0f10;
-    --ink-paper-2: #18181a;
-    --ink-paper-3: #222224;
-    --ink-400: #7a7a80;
-    --ink-600: #a8a8ac;
-    --ink-700: #c7c7ca;
-    --ink-800: #ebebec;
-    --ink-900: #fafafa;
-    --border-hair: 1px solid rgba(255, 255, 255, 0.08);
-    --border-input: 1px solid rgba(255, 255, 255, 0.12);
-  }
-}
+/* System dark-mode preference is handled by the FOUC script in `app/layout.tsx`,
+   which sets `data-theme="dark"` on <html> before paint when the user has no
+   stored preference and `prefers-color-scheme: dark` matches. */
 
 /* ─────────────────────────── REDUCED MOTION ─────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

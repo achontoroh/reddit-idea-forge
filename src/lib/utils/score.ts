@@ -40,3 +40,27 @@ export function scoreSignalLevel(display: number): ScoreSignalLevel {
 export function scoreSignalToken(display: number): string {
   return `var(--signal-${scoreSignalLevel(display)})`
 }
+
+/**
+ * Tailwind class strings for the signal level.
+ * - `pill`: tinted background + colored text (used by score badges)
+ * - `bar`: solid fill (used by score-breakdown progress bars)
+ */
+const SIGNAL_PILL_CLASSES: Record<ScoreSignalLevel, string> = {
+  high: 'bg-signal-high/10 text-signal-high',
+  mid: 'bg-signal-mid/10 text-signal-mid',
+  low: 'bg-signal-low/10 text-signal-low',
+}
+
+const SIGNAL_BAR_CLASSES: Record<ScoreSignalLevel, string> = {
+  high: 'bg-signal-high',
+  mid: 'bg-signal-mid',
+  low: 'bg-signal-low',
+}
+
+export function scoreSignalClasses(
+  level: ScoreSignalLevel,
+  tone: 'pill' | 'bar' = 'pill',
+): string {
+  return tone === 'bar' ? SIGNAL_BAR_CLASSES[level] : SIGNAL_PILL_CLASSES[level]
+}

@@ -1,5 +1,5 @@
 import { type FC } from 'react'
-import { scoreSignalLevel } from '@/lib/utils/score'
+import { scoreSignalClasses, scoreSignalLevel } from '@/lib/utils/score'
 
 interface ScoreBadgeProps {
   /** Display score on the 0–10 scale. Convert DB /100 with `displayScore()` first. */
@@ -7,15 +7,9 @@ interface ScoreBadgeProps {
   variant?: 'compact' | 'full'
 }
 
-const SIGNAL_CLASSES: Record<'high' | 'mid' | 'low', string> = {
-  high: 'bg-signal-high/10 text-signal-high',
-  mid: 'bg-signal-mid/10 text-signal-mid',
-  low: 'bg-signal-low/10 text-signal-low',
-}
-
 export const ScoreBadge: FC<ScoreBadgeProps> = ({ score, variant = 'compact' }) => {
   const display = score.toFixed(1)
-  const classes = SIGNAL_CLASSES[scoreSignalLevel(score)]
+  const classes = scoreSignalClasses(scoreSignalLevel(score))
 
   return (
     <div

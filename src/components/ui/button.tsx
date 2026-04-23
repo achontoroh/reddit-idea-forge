@@ -34,10 +34,11 @@ export const Button: FC<ButtonProps> = ({
   'aria-label': ariaLabel,
 }) => {
   useEffect(() => {
+    // Single-accent rule (see docs/design/components.md §Button) — dev-only assertion.
+    if (process.env.NODE_ENV === 'production') return
     if (!accent) return
     accentMountedCount += 1
-    if (process.env.NODE_ENV !== 'production' && accentMountedCount > 1) {
-      // Single-accent rule: only one accent button per viewport (see docs/design/components.md §Button).
+    if (accentMountedCount > 1) {
       console.warn(
         `[ideaforge] ${accentMountedCount} accent buttons mounted simultaneously — only one is allowed per viewport.`,
       )

@@ -1,3 +1,13 @@
+/**
+ * Editorial palette keys for the IF-125 design system (Tag, InterestChip,
+ * IdeaCard, Header). These keys back the `--cat-*` color vars in tokens.css
+ * and are decoupled from the canonical DB taxonomy in `@/config/categories`.
+ *
+ * IF-138 (Phase 11 dashboard wiring) introduces the slug → editorial-key
+ * mapping that lets the editorial IdeaCard render real `IdeaWithVote` data.
+ * Until then, do not pass DB category slugs (e.g. `'devtools'`, `'finance'`)
+ * to consumers of `CategoryKey` — they will fall through `categoryLabels`.
+ */
 export const CATEGORY_KEYS = [
   'devt',
   'ai',
