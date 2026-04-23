@@ -528,6 +528,199 @@ h4 {
   display: inline-block;
 }
 
+/* ─────────────────────────── IDEA CARD ───────────────────────────
+   Composed from Tag + ScoreDial + Fraunces title. Four variants via
+   data-variant on the root. Whole card is a single clickable surface
+   (button or plain div) — no inner interactive elements. Hover only
+   shifts the background to --ink-paper-2; no lift, scale, or shadow. */
+.idea-card {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--ink-900);
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.idea-card:not(button) {
+  cursor: default;
+}
+
+.idea-card:hover {
+  background: var(--ink-paper-2);
+}
+
+.idea-card:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.idea-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.idea-card-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ink-900);
+  margin: 0;
+}
+
+.idea-card-summary {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-600);
+  margin: 0;
+}
+
+.idea-card-new {
+  color: var(--accent);
+}
+
+.idea-card-numeral {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--type-numeral-md-size);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+
+.idea-card-numeral [data-idea-card-denom] {
+  margin-left: 2px;
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-weight: 400;
+  font-size: calc(var(--type-numeral-md-size) * 0.7);
+  color: var(--ink-400);
+}
+
+/* ───── LIST — hairline bottom border only ───── */
+.idea-card[data-variant='list'] {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 16px;
+  row-gap: 4px;
+  padding: 16px 12px;
+  border-bottom: var(--border-hair);
+}
+.idea-card[data-variant='list'] .idea-card-head {
+  grid-column: 1 / -1;
+}
+.idea-card[data-variant='list'] .idea-card-title {
+  grid-column: 1;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.idea-card[data-variant='list'] .idea-card-summary {
+  grid-column: 1;
+}
+.idea-card[data-variant='list'] .idea-card-score-slot {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  align-self: center;
+}
+
+/* ───── FEATURED — full hairline border, paper-2 bg, larger title ───── */
+.idea-card[data-variant='featured'] {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 24px;
+  row-gap: 10px;
+  padding: 24px;
+  background: var(--ink-paper-2);
+  border: var(--border-hair);
+  border-radius: var(--radius-md);
+}
+.idea-card[data-variant='featured'] .idea-card-head {
+  grid-column: 1 / -1;
+}
+.idea-card[data-variant='featured'] .idea-card-title {
+  grid-column: 1;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.idea-card[data-variant='featured'] .idea-card-summary {
+  grid-column: 1;
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-600);
+}
+.idea-card[data-variant='featured'] .idea-card-score-slot {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  align-self: center;
+}
+
+/* ───── COMPACT — single row ≤ 300px, dot + title + inline numeral ───── */
+.idea-card[data-variant='compact'] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 300px;
+  padding: 10px 0;
+}
+.idea-card[data-variant='compact'] .idea-card-head {
+  flex: 0 0 auto;
+}
+.idea-card[data-variant='compact'] .idea-card-head .tag-label {
+  display: none;
+}
+.idea-card[data-variant='compact'] .idea-card-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 20px;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.idea-card[data-variant='compact'] .idea-card-score-slot {
+  flex: 0 0 auto;
+}
+
+/* ───── GRID — square-ish stack, tag top / title center / dial bottom-right ───── */
+.idea-card[data-variant='grid'] {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  padding: 16px;
+  min-height: 180px;
+  border: var(--border-hair);
+  border-radius: var(--radius-md);
+}
+.idea-card[data-variant='grid'] .idea-card-head {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+.idea-card[data-variant='grid'] .idea-card-title {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: center;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.idea-card[data-variant='grid'] .idea-card-score-slot {
+  grid-column: 2;
+  grid-row: 3;
+  justify-self: end;
+}
+
 /* ─────────────────────────── UTILITIES ─────────────────────────── */
 a,
 button:not(:disabled),

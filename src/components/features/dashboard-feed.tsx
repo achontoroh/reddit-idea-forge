@@ -4,7 +4,7 @@ import { type FC, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { FeedTabs, type TabMode } from './feed-tabs'
 import { CategoryChips } from './category-chips'
-import { IdeaCard } from '@/components/features/idea-card'
+import { IdeaCardLegacy } from '@/components/features/idea-card-legacy'
 import { useDashboardFeed } from '@/hooks/useDashboardFeed'
 
 interface DashboardFeedProps {
@@ -140,7 +140,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
         <>
           <div className="grid grid-cols-1 gap-4">
             {ideas.map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
+              <IdeaCardLegacy key={idea.id} idea={idea} />
             ))}
           </div>
 
