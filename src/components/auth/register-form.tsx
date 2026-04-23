@@ -16,11 +16,10 @@ export const RegisterForm: FC = () => {
   const [emailError, setEmailError] = useState('')
   const [formError, setFormError] = useState('')
   const [passwordFocused, setPasswordFocused] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
 
   function validateEmail(value: string) {
     if (value && !isValidEmail(value)) {
-      setEmailError('Enter a valid email')
+      setEmailError('Email must be valid.')
     } else {
       setEmailError('')
     }
@@ -31,7 +30,7 @@ export const RegisterForm: FC = () => {
     setFormError('')
 
     if (!isPasswordValid(password)) {
-      setFormError('Password does not meet all requirements')
+      setFormError('Password must meet all requirements.')
       return
     }
 
@@ -62,14 +61,14 @@ export const RegisterForm: FC = () => {
   if (success) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-on-surface mb-2">Check your email</h1>
-        <p className="text-sm text-on-surface-muted mb-6">
+        <h1 className="text-2xl font-bold text-ink-900 mb-2">Check your email</h1>
+        <p className="text-sm text-ink-400 mb-6">
           We sent a confirmation link to <strong>{email}</strong>. Click it to
           activate your account.
         </p>
         <Link
           href="/login"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
+          className="text-sm font-medium text-accent hover:text-accent-hover"
         >
           Back to sign in
         </Link>
@@ -79,13 +78,13 @@ export const RegisterForm: FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-on-surface mb-1">Create account</h1>
-      <p className="text-sm text-on-surface-muted mb-6">
+      <h1 className="text-2xl font-bold text-ink-900 mb-1">Create account</h1>
+      <p className="text-sm text-ink-400 mb-6">
         Sign up to start discovering product ideas
       </p>
 
       {formError && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger" role="alert">
           {formError}
         </p>
       )}
@@ -113,33 +112,13 @@ export const RegisterForm: FC = () => {
         <div>
           <Input
             label="Password"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => { setPassword(e.target.value); setFormError('') }}
             onBlur={() => setPasswordFocused(password.length > 0)}
             onFocus={() => setPasswordFocused(true)}
             disabled={loading}
-            suffix={
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="text-on-surface-muted hover:text-on-surface cursor-pointer"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                  </svg>
-                ) : (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                )}
-              </button>
-            }
           />
           {(passwordFocused || password.length > 0) && (
             <PasswordStrength password={password} />
@@ -147,13 +126,13 @@ export const RegisterForm: FC = () => {
         </div>
 
         <Button type="submit" loading={loading} className="w-full">
-          Create account
+          Create account →
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-on-surface-muted">
+      <p className="mt-4 text-center text-sm text-ink-400">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-primary hover:text-primary-hover">
+        <Link href="/login" className="font-medium text-accent hover:text-accent-hover">
           Sign in
         </Link>
       </p>

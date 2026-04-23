@@ -114,7 +114,7 @@ export function useVote(ideaId: string, initialVote: VoteValue, initialScore: nu
       setUserVote(prevVote)
       setCommunityScore(prevScore)
       voteCache.set(ideaId, { vote: prevVote, score: prevScore })
-      toast.error('Failed to save your vote. Please try again.')
+      toast.error("Something didn't work. Try again in a moment.")
     } finally {
       setIsLoading(false)
       inflightRef.current = false

@@ -12,6 +12,7 @@ import { ScoreBreakdown } from '@/components/features/score-breakdown'
 import { RedditSourceCard } from '@/components/features/reddit-source-card'
 import { StatusBadgeList } from '@/components/features/status-badge'
 import { CATEGORY_LABELS } from '@/config/categories'
+import { displayScore } from '@/lib/utils/score'
 
 interface IdeaDetailClientProps {
   idea: Idea
@@ -23,9 +24,9 @@ interface IdeaDetailClientProps {
 }
 
 const MVP_LABELS: Record<string, { label: string; color: string }> = {
-  low: { label: 'Low Complexity', color: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300' },
-  medium: { label: 'Medium Complexity', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300' },
-  high: { label: 'High Complexity', color: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300' },
+  low: { label: 'Low Complexity', color: 'bg-signal-high/10 text-signal-high' },
+  medium: { label: 'Medium Complexity', color: 'bg-signal-mid/10 text-signal-mid' },
+  high: { label: 'High Complexity', color: 'bg-danger/10 text-danger' },
 }
 
 const MONETIZATION_LABELS: Record<string, string> = {
@@ -68,22 +69,22 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
     const subreddit = idea.source_subreddit
     const text = [
       idea.title,
-      `Score: ${idea.ai_score}/100`,
+      `Score: ${displayScore(idea.ai_score).toFixed(1)}/10`,
       idea.pitch,
       `Source: r/${subreddit}`,
       'Found on IdeaForge',
     ].join(' — ')
 
     navigator.clipboard.writeText(text).then(() => {
-      toast.success('Copied to clipboard!')
+      toast.success('Copied to clipboard.')
     }).catch(() => {
-      toast.error('Failed to copy')
+      toast.error("Something didn't work. Try again in a moment.")
     })
   }, [idea])
 
   const handleFavorite = useCallback(async () => {
     if (!isAuthenticated) {
-      toast.error('Sign in to save ideas')
+      toast.error('Sign in to save ideas.')
       return
     }
     if (isSaving) return
@@ -99,7 +100,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
       if (!res.ok) throw new Error()
     } catch {
       setIsFavorited(prev)
-      toast.error('Failed to update favorite')
+      toast.error("Something didn't work. Try again in a moment.")
     } finally {
       setIsSaving(false)
     }
@@ -112,22 +113,22 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
       <article>
         {/* ── Header: category + status + score ── */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
-          <span className="px-3 py-1 bg-primary-container/20 text-primary rounded-full text-[11px] font-bold tracking-widest uppercase">
+          <span className="px-3 py-1 bg-accent-soft text-accent rounded-full text-[11px] font-bold tracking-widest uppercase">
             {categoryLabel}
           </span>
           <StatusBadgeList badges={badges} />
           <div className="ml-auto">
-            <ScoreBadge score={idea.ai_score} variant="full" />
+            <ScoreBadge score={displayScore(idea.ai_score)} variant="full" />
           </div>
         </div>
 
         {/* ── Title ── */}
-        <h1 className="text-3xl md:text-[2.75rem] leading-[1.15] font-bold text-on-surface tracking-[-0.02em] mb-4 font-heading">
+        <h1 className="text-3xl md:text-[2.75rem] leading-[1.15] font-bold text-ink-900 tracking-[-0.02em] mb-4 font-serif">
           {idea.title}
         </h1>
 
         {/* ── Pitch ── */}
-        <p className="text-lg leading-relaxed text-on-surface-muted mb-8">
+        <p className="text-lg leading-relaxed text-ink-400 mb-8">
           {idea.pitch}
         </p>
 
@@ -140,7 +141,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
             size="lg"
           />
 
-          <div className="flex items-center gap-1 text-sm text-on-surface-muted ml-2">
+          <div className="flex items-center gap-1 text-sm text-ink-400 ml-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
@@ -156,8 +157,8 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
               disabled={isSaving}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 isFavorited
-                  ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-                  : 'bg-surface-low text-on-surface-muted hover:bg-surface-lowest hover:text-on-surface'
+                  ? 'bg-signal-mid/10 text-signal-mid'
+                  : 'bg-ink-paper-2 text-ink-400 hover:bg-ink-paper hover:text-ink-900'
               } disabled:opacity-50`}
               aria-label={isFavorited ? 'Remove from saved' : 'Save idea'}
             >
@@ -180,7 +181,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-surface-low text-on-surface-muted hover:bg-surface-lowest hover:text-on-surface transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-ink-paper-2 text-ink-400 hover:bg-ink-paper hover:text-ink-900 transition-all"
               aria-label="Share idea"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -195,7 +196,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
               <button
                 type="button"
                 disabled
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-surface-low text-on-surface-muted opacity-50 cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-ink-paper-2 text-ink-400 opacity-50 cursor-not-allowed"
                 aria-label="Deep Dive — coming soon"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -204,7 +205,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
                 </svg>
                 Deep Dive
               </button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-on-surface text-surface text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-ink-900 text-ink-paper text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
                 Coming soon
               </div>
             </div>
@@ -215,7 +216,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
         <section className="mb-12">
           <SectionHeader icon="pain" label="Pain Point" />
           <Card padding="lg" elevated>
-            <p className="text-on-surface leading-relaxed">
+            <p className="text-ink-900 leading-relaxed">
               {idea.pain_point}
             </p>
           </Card>
@@ -226,7 +227,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
           <section className="mb-12">
             <SectionHeader icon="audience" label="Target Audience" />
             <Card padding="lg" elevated>
-              <p className="text-on-surface leading-relaxed">
+              <p className="text-ink-900 leading-relaxed">
                 {idea.target_audience}
               </p>
             </Card>
@@ -255,7 +256,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
                 </span>
               )}
               {idea.monetization_model && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-accent/10 text-accent">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="1" x2="12" y2="23" />
                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -281,7 +282,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
               href={idea.source_url ?? `https://reddit.com/r/${idea.source_subreddit}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-surface-lowest hover:bg-surface-low transition-all group"
+              className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-ink-paper hover:bg-ink-paper-2 transition-all group"
             >
               <svg
                 width="20"
@@ -292,11 +293,11 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-on-surface-muted group-hover:text-accent transition-colors"
+                className="text-ink-400 group-hover:text-accent transition-colors"
               >
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              <span className="text-sm font-semibold text-on-surface-muted group-hover:text-on-surface transition-colors">
+              <span className="text-sm font-semibold text-ink-400 group-hover:text-ink-900 transition-colors">
                 View discussion on r/{idea.source_subreddit}
               </span>
               <svg
@@ -308,7 +309,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-on-surface-muted opacity-0 group-hover:opacity-100 transition-opacity"
+                className="text-ink-400 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                 <polyline points="15 3 21 3 21 9" />
@@ -337,7 +338,7 @@ const SECTION_ICONS: Record<SectionIcon, { color: string }> = {
 const SectionHeader: FC<{ icon: SectionIcon; label: string }> = ({ icon, label }) => (
   <div className="flex items-center gap-2 mb-4">
     <span className={`w-1.5 h-1.5 rounded-full ${SECTION_ICONS[icon].color}`} />
-    <h2 className="text-[11px] font-bold tracking-[0.05em] uppercase text-on-surface-muted">
+    <h2 className="text-[11px] font-bold tracking-[0.05em] uppercase text-ink-400">
       {label}
     </h2>
   </div>

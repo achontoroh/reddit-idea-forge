@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IdeaForge — Design Review</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* IdeaForge tokens (copied from tokens.css for 1:1 feel) */
+    --brand-primary:        #4954BD;
+    --brand-primary-hover:  #3d47a8;
+    --brand-primary-container: #818CF8;
+    --brand-on-primary:     #FBF8FF;
+    --brand-accent:         #FD933D;
+
+    --surface-base:    #F9F9FE;
+    --surface-lowest:  #FFFFFF;
+    --surface-low:     #F2F3FA;
+    --surface-highest: #DFE2EC;
+    --on-surface:      #2E333A;
+    --on-surface-muted:#6B7280;
+
+    --ghost-border: rgba(174, 178, 187, 0.25);
+
+    --radius-sm: 0.25rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    /* Review-doc own accents */
+    --ink:            #1b1d22;
+    --paper:          #faf7f2;
+    --paper-tint:     #f3ede3;
+    --rule:           #1b1d22;
+    --flag-bad:       #c0392b;
+    --flag-warn:      #b47a12;
+    --flag-ok:        #2e7d4f;
+
+    --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-body:    "Inter", system-ui, sans-serif;
+    --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 80px 56px 160px;
+  }
+
+  /* ── Typography ── */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.55;
+  }
+  h1.doc-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    margin: 16px 0 28px;
+    text-wrap: balance;
+  }
+  h1.doc-title em {
+    font-style: normal;
+    color: var(--brand-primary);
+  }
+  h1.doc-title em + em { color: var(--brand-accent); }
+
+  h2.section-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 3.2vw, 40px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin: 0 0 8px;
+  }
+  h3.issue-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.015em;
+    margin: 0 0 6px;
+  }
+  p.lede {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    max-width: 64ch;
+    color: color-mix(in oklab, var(--ink) 82%, transparent);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* ── Rules & dividers ── */
+  .rule { border: 0; height: 1px; background: var(--rule); opacity: 0.85; margin: 0; }
+  .rule-soft { background: color-mix(in oklab, var(--ink) 15%, transparent); }
+
+  /* ── Header ── */
+  .doc-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: end;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 56px;
+  }
+  .meta-stack {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    text-align: right;
+    color: color-mix(in oklab, var(--ink) 70%, transparent);
+  }
+  .meta-stack b { color: var(--ink); font-weight: 600; }
+
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -0.015em;
+  }
+  .brand-mark .hex { width: 28px; height: 28px; display: inline-block; }
+  .brand-mark .blue { color: var(--brand-primary); }
+  .brand-mark .orange { color: var(--brand-accent); }
+
+  /* ── TL;DR box ── */
+  .tldr {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 40px;
+    padding: 32px 0 40px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 96px;
+  }
+  .tldr .key { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.55; }
+  .verdict-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+  }
+  .verdict-cell .n {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    display: block;
+  }
+  .verdict-cell .n.good { color: var(--flag-ok); }
+  .verdict-cell .n.warn { color: var(--flag-warn); }
+  .verdict-cell .n.bad  { color: var(--flag-bad); }
+  .verdict-cell .l {
+    margin-top: 6px;
+    font-size: 13px;
+    color: color-mix(in oklab, var(--ink) 70%, transparent);
+    line-height: 1.4;
+  }
+
+  /* ── Section ── */
+  section.block {
+    padding: 56px 0 80px;
+    border-top: 1px solid var(--rule);
+  }
+  section.block:first-of-type { border-top: 0; padding-top: 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 32px;
+    align-items: baseline;
+    margin-bottom: 40px;
+  }
+  .section-number {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    opacity: 0.55;
+  }
+
+  /* ── Issue card ── */
+  .issue {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 32px;
+    padding: 40px 0;
+    border-top: 1px dashed color-mix(in oklab, var(--ink) 25%, transparent);
+  }
+  .issue:first-child { border-top: 0; padding-top: 0; }
+  .issue-meta .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 9px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .tag.bad  { background: color-mix(in oklab, var(--flag-bad) 14%, transparent); color: var(--flag-bad); }
+  .tag.warn { background: color-mix(in oklab, var(--flag-warn) 18%, transparent); color: var(--flag-warn); }
+  .tag.ok   { background: color-mix(in oklab, var(--flag-ok) 14%, transparent); color: var(--flag-ok); }
+  .issue-meta .impact {
+    margin-top: 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.6;
+    opacity: 0.65;
+  }
+  .issue-meta .impact b { display:block; font-weight: 600; color: var(--ink); opacity:1; margin-top: 6px; letter-spacing: 0.04em; }
+
+  .issue p { margin: 0 0 12px; max-width: 64ch; }
+  .issue p.q {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+    color: color-mix(in oklab, var(--ink) 85%, transparent);
+  }
+  .issue ul {
+    margin: 10px 0 4px;
+    padding-left: 18px;
+    max-width: 64ch;
+  }
+  .issue li { margin-bottom: 4px; }
+  .issue li::marker { color: color-mix(in oklab, var(--ink) 50%, transparent); }
+
+  code.inline {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: color-mix(in oklab, var(--ink) 6%, transparent);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ── Before / After shelf ── */
+  .ba {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .ba.single { grid-template-columns: 1fr; }
+  .ba-cell {
+    background: var(--surface-base);
+    border: 1px solid var(--ghost-border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .ba-cell.plain { background: var(--paper-tint); border-style: dashed; }
+  .ba-cell .label {
+    position: absolute;
+    top: 12px; left: 16px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 3px;
+  }
+  .ba-cell .label.before { background: color-mix(in oklab, var(--flag-bad) 15%, transparent); color: var(--flag-bad); }
+  .ba-cell .label.after  { background: color-mix(in oklab, var(--flag-ok) 15%, transparent); color: var(--flag-ok); }
+  .ba-cell .body { padding-top: 28px; }
+
+  /* ── Reusable IdeaForge-ish mock styles (for live examples) ── */
+  .if-font-heading { font-family: var(--font-display); }
+  .if-font-body    { font-family: var(--font-body); }
+
+  .if-card {
+    background: var(--surface-lowest);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 2px rgba(18,22,28,0.04);
+  }
+  .if-muted { color: var(--on-surface-muted); }
+  .if-title { color: var(--on-surface); font-weight: 600; font-size: 15px; line-height: 1.35; margin: 0 0 6px; }
+  .if-pitch { color: var(--on-surface-muted); font-size: 14px; line-height: 1.5; margin: 0; }
+
+  .if-badge {
+    display: inline-flex; align-items: center;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 999px;
+    line-height: 1;
+  }
+  .if-badge.new  { background: #DBEAFE; color: #1D4ED8; }
+  .if-badge.hot  { background: #FEE2E2; color: #B91C1C; }
+  .if-badge.top  { background: #FEF3C7; color: #B45309; }
+  .if-badge.trending { background: #DCFCE7; color: #15803D; }
+
+  .if-chip-cat {
+    font-size: 11px;
+    color: var(--on-surface-muted);
+    background: var(--surface-highest);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .ai-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .ai-pill.g { background: #DCFCE7; color: #166534; }
+  .ai-pill.b { background: #DBEAFE; color: #1D4ED8; }
+  .ai-pill.a { background: #FEF3C7; color: #92400E; }
+  .ai-pill.r { background: #FEE2E2; color: #B91C1C; }
+
+  .vote-pill {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: var(--surface-low);
+    border-radius: 999px;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: var(--on-surface);
+  }
+  .vote-pill .score { font-weight: 700; padding: 0 4px; font-variant-numeric: tabular-nums; }
+  .vote-pill .ico {
+    width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center;
+    color: var(--on-surface-muted);
+  }
+
+  /* Proposed card */
+  .idea-card-v2 {
+    background: var(--surface-lowest);
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 16px;
+    align-items: start;
+    box-shadow: 0 1px 2px rgba(18,22,28,0.04);
+    border: 1px solid transparent;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    cursor: pointer;
+  }
+  .idea-card-v2:hover { border-color: var(--ghost-border); box-shadow: 0 4px 14px rgba(18,22,28,0.06); }
+  .score-dial {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: conic-gradient(var(--brand-primary) calc(var(--p, 76) * 1%), color-mix(in oklab, var(--brand-primary) 15%, transparent) 0);
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .score-dial::before {
+    content: ""; position: absolute; inset: 4px; border-radius: 11px; background: var(--surface-lowest);
+  }
+  .score-dial span {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--on-surface);
+    font-variant-numeric: tabular-nums;
+  }
+  .score-dial em {
+    position: relative;
+    display: block;
+    font-style: normal;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--on-surface-muted);
+    margin-top: -4px;
+    text-align: center;
+  }
+  .idea-card-v2 .meta-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--on-surface-muted);
+    margin-bottom: 6px;
+  }
+  .idea-card-v2 .meta-row .dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.4; }
+  .idea-card-v2 h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    color: var(--on-surface);
+  }
+  .idea-card-v2 .pitch {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--on-surface-muted);
+    margin: 0 0 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .idea-card-v2 .tags {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .idea-card-v2 .tag-attr {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--on-surface-muted);
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface-low);
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+  }
+  .idea-card-v2 .tag-attr b { color: var(--on-surface); font-weight: 600; }
+  .idea-card-v2 .side {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  }
+  .idea-card-v2 .votes-v2 {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: var(--surface-low);
+    border-radius: 999px;
+    padding: 2px;
+  }
+  .idea-card-v2 .votes-v2 button {
+    all: unset; width: 24px; height: 24px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--on-surface-muted);
+    cursor: pointer;
+  }
+  .idea-card-v2 .votes-v2 .s { font-size: 12px; font-weight: 700; padding: 0 4px; font-variant-numeric: tabular-nums; color: var(--on-surface); }
+  .idea-card-v2 .meta-row .sub {
+    color: var(--brand-primary);
+    font-weight: 500;
+  }
+
+  /* ── Color scale visual ── */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .swatch {
+    border-radius: 8px;
+    aspect-ratio: 2 / 1;
+    display: flex; align-items: flex-end; padding: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.85);
+  }
+  .swatch.light { color: rgba(0,0,0,0.6); }
+  .swatch-legend {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    opacity: 0.6;
+  }
+
+  /* Score-scale chips (tiny) */
+  .scale-row {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  /* Section nav */
+  .nav-toc {
+    position: sticky;
+    top: 24px;
+    margin-bottom: 64px;
+    padding: 18px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--paper) 50%, white);
+    display: flex; flex-wrap: wrap; gap: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nav-toc a { color: var(--ink); text-decoration: none; opacity: 0.75; transition: opacity 0.15s; }
+  .nav-toc a:hover { opacity: 1; }
+  .nav-toc .sep { opacity: 0.35; }
+
+  /* Chips row for tweaks */
+  .tweaks-panel {
+    position: fixed;
+    right: 24px; bottom: 24px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    display: none;
+    z-index: 50;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    max-width: 280px;
+  }
+  .tweaks-panel.on { display: block; }
+  .tweaks-panel h5 {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    font-weight: 700;
+  }
+  .tweaks-panel .row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tweaks-panel button {
+    all: unset;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.08);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 10.5px;
+  }
+  .tweaks-panel button.on { background: var(--brand-accent); color: var(--ink); font-weight: 700; }
+  .tweaks-panel label { opacity: 0.65; display: block; margin-bottom: 4px; }
+
+  /* recommendations list */
+  .reco {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 32px;
+    margin-top: 24px;
+  }
+  .reco-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px dashed color-mix(in oklab, var(--ink) 15%, transparent);
+    align-items: baseline;
+  }
+  .reco-row .n { font-family: var(--font-mono); font-size: 11px; opacity: 0.55; }
+  .reco-row .t { font-family: var(--font-display); font-weight: 600; font-size: 15px; line-height: 1.35; }
+  .reco-row .s {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 4px;
+  }
+  .reco-row .s.high { background: color-mix(in oklab, var(--flag-bad) 15%, transparent); color: var(--flag-bad); }
+  .reco-row .s.med  { background: color-mix(in oklab, var(--flag-warn) 18%, transparent); color: var(--flag-warn); }
+  .reco-row .s.low  { background: color-mix(in oklab, var(--flag-ok) 14%, transparent); color: var(--flag-ok); }
+
+  /* footer */
+  footer.doc-footer {
+    margin-top: 120px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: color-mix(in oklab, var(--ink) 60%, transparent);
+  }
+
+  @media (max-width: 800px) {
+    .page { padding: 48px 24px 120px; }
+    .doc-header, .tldr, .section-head, .issue { grid-template-columns: 1fr; gap: 16px; }
+    .meta-stack { text-align: left; }
+    .verdict-grid { grid-template-columns: repeat(2, 1fr); }
+    .ba { grid-template-columns: 1fr; }
+    .reco { grid-template-columns: 1fr; }
+    .swatches { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ───────────────── HEADER ───────────────── -->
+  <header class="doc-header">
+    <div>
+      <div class="brand-mark">
+        <svg class="hex" viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <clipPath id="hexMini"><polygon points="60,8 106,34 106,86 60,112 14,86 14,34"/></clipPath>
+          </defs>
+          <g clip-path="url(#hexMini)">
+            <rect x="0" y="0" width="60" height="120" fill="#4954BD"/>
+            <rect x="60" y="0" width="60" height="120" fill="#FD933D"/>
+            <rect x="58" y="0" width="4" height="120" fill="#fff"/>
+          </g>
+        </svg>
+        <span><span class="blue">idea</span><span class="orange">forge</span></span>
+      </div>
+      <div class="eyebrow" style="margin-top: 28px;">Product Design Review · v1</div>
+      <h1 class="doc-title">What works,<br/>what gets in<br/><em>the</em> <em>way.</em></h1>
+      <p class="lede">Ревью поточного UI IdeaForge — від токенів до idea card. Нижче шість конкретних точок напруги, кожна з візуальним «до / після» і пропозицією, яку можна винести в окремий PR.</p>
+    </div>
+    <div class="meta-stack">
+      <div><b>Reviewer</b><br/>Design, external</div>
+      <div style="margin-top:10px"><b>Scope</b><br/>Marketing · Dashboard<br/>Idea card · Detail</div>
+      <div style="margin-top:10px"><b>Date</b><br/>22 Apr 2026</div>
+      <div style="margin-top:10px"><b>Method</b><br/>Code-read of /src<br/>No live app capture</div>
+    </div>
+  </header>
+
+  <!-- ───────────────── TL;DR ───────────────── -->
+  <div class="tldr">
+    <div class="key">TL;DR</div>
+    <div>
+      <p class="lede" style="font-size:20px">
+        Фундамент у вас сильний — токени, Tailwind theme, hook-орієнтована архітектура. Проблема не в «поганому коді», а в тому, що <b>візуальна ієрархія idea card змагається сама з собою</b>: два скори, чотири бейджі, category chip і subreddit — все однакового вагу. Плюс марочні дрібниці: емодзі як іконки категорій, слабка плитка ролей кольору, та «коробкова» плоскість карток у фіді.
+      </p>
+      <div class="verdict-grid">
+        <div class="verdict-cell"><span class="n good">12</span><span class="l">Сильних рішень: токени, dark-mode, тип. пари, SWR + optimistic vote</span></div>
+        <div class="verdict-cell"><span class="n warn">6</span><span class="l">Середні проблеми: ієрархія картки, бейджі, chip-style, landing tone</span></div>
+        <div class="verdict-cell"><span class="n bad">3</span><span class="l">Критичні: 2 скори поруч, 4-кольоровий AI-score, емодзі-іконки</span></div>
+        <div class="verdict-cell"><span class="n">4</span><span class="l">Швидких win за 1–2 дні — див. Recommendations</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────── TOC ───────────────── -->
+  <nav class="nav-toc" aria-label="Table of contents">
+    <a href="#tokens">01 Tokens</a><span class="sep">/</span>
+    <a href="#typography">02 Typography</a><span class="sep">/</span>
+    <a href="#card">03 Idea card</a><span class="sep">/</span>
+    <a href="#score">04 Scoring</a><span class="sep">/</span>
+    <a href="#badges">05 Badges &amp; chips</a><span class="sep">/</span>
+    <a href="#landing">06 Landing</a><span class="sep">/</span>
+    <a href="#recommendations">07 Recommendations</a>
+  </nav>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 01 TOKENS                                          -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="tokens">
+    <div class="section-head">
+      <div class="section-number">§ 01</div>
+      <div>
+        <h2 class="section-title">Tokens &amp; palette</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          Ролева плитка кольору — сильна сторона. Але семантичний шар (success / warn / danger / info) живе на hard-coded Tailwind-класах. Поки продукт малий — не боляче; скейлиться — болітиме.
+        </p>
+      </div>
+    </div>
+
+    <!-- Issue 1 -->
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Tokens</span>
+        <div class="impact">
+          <b>Impact</b>
+          Consistency ++<br/>
+          Dark-mode fidelity ++
+        </div>
+      </div>
+      <div>
+        <h3 class="issue-title">Семантичні кольори не в токенах</h3>
+        <p>
+          У <code class="inline">tokens.css</code> є <code class="inline">--brand-primary</code>, <code class="inline">--surface-*</code>, <code class="inline">--text-on-surface</code>. Але жодної <code class="inline">--color-success</code> / <code class="inline">--color-warn</code> / <code class="inline">--color-danger</code>. Натомість у шести місцях (<code class="inline">score-display.tsx</code>, <code class="inline">status-badge.tsx</code>, <code class="inline">score-breakdown.tsx</code>, детальна сторінка ідеї) повторюється одне й те саме: <code class="inline">bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300</code>.
+        </p>
+        <p>Це ламається одразу, щойно з'являється спроба зміни бренду або адаптації dark-mode.</p>
+
+        <div class="ba">
+          <div class="ba-cell">
+            <span class="label before">Before — hard-coded Tailwind</span>
+            <div class="body">
+              <div style="font-family: var(--font-mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; color: var(--on-surface);"><span style="color:#8b5cf6">function</span> getScoreColor(score) {
+  <span style="color:#ef4444">if</span> (score &gt;= 76) <span style="color:#ef4444">return</span> <span style="color:#16a34a">'bg-green-100 text-green-700 …'</span>
+  <span style="color:#ef4444">if</span> (score &gt;= 51) <span style="color:#ef4444">return</span> <span style="color:#2563eb">'bg-blue-100 text-blue-700 …'</span>
+  <span style="color:#ef4444">if</span> (score &gt;= 26) <span style="color:#ef4444">return</span> <span style="color:#f59e0b">'bg-amber-100 …'</span>
+  <span style="color:#ef4444">return</span> <span style="color:#dc2626">'bg-red-100 …'</span>
+}</div>
+            </div>
+          </div>
+          <div class="ba-cell">
+            <span class="label after">After — semantic tokens</span>
+            <div class="body">
+              <div style="font-family: var(--font-mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; color: var(--on-surface);"><span style="color:#6b7280">/* tokens.css */</span>
+--score-excellent: <span style="color:#16a34a">oklch(62% .14 155)</span>;
+--score-good:      <span style="color:#2563eb">oklch(58% .16 260)</span>;
+--score-fair:      <span style="color:#b45309">oklch(70% .14 75)</span>;
+--score-poor:      <span style="color:#dc2626">oklch(60% .19 25)</span>;
+
+<span style="color:#6b7280">/* usage */</span>
+<span style="color:#ef4444">const</span> tone = score &gt;= 76
+  ? <span style="color:#16a34a">'excellent'</span> : …
+bg={`bg-score-${tone}/10`}</div>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:14px">
+          Плюс: перенесіть <code class="inline">bg-accent</code> → <code class="inline">bg-[var(--brand-accent)]</code>-like alias. Зараз <code class="inline">ScoreBadge</code> у marketing-сторінці фарбується в <code class="inline">--brand-accent</code> (orange), а на dashboard <code class="inline">AiScoreBadge</code> фарбується Tailwind-зеленим — це <b>різні візуальні системи для однієї сутності</b>.
+        </p>
+
+        <div class="swatches">
+          <div class="swatch" style="background: #4954BD">#4954BD · primary</div>
+          <div class="swatch" style="background: #818CF8">#818CF8 · container</div>
+          <div class="swatch" style="background: #FD933D">#FD933D · accent</div>
+          <div class="swatch light" style="background: #F2F3FA; color:#2E333A">#F2F3FA · low</div>
+          <div class="swatch light" style="background: #DFE2EC; color:#2E333A">#DFE2EC · highest</div>
+          <div class="swatch light" style="background: #F9F9FE; color:#2E333A">#F9F9FE · base</div>
+        </div>
+        <div class="swatch-legend">IdeaForge palette · current</div>
+      </div>
+    </div>
+
+    <!-- Issue 2 -->
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Surfaces</span>
+        <div class="impact">
+          <b>Impact</b>
+          Depth perception<br/>
+          Visual rhythm
+        </div>
+      </div>
+      <div>
+        <h3 class="issue-title">Плитка surface — надто щільна</h3>
+        <p>
+          <code class="inline">base #F9F9FE</code>, <code class="inline">lowest #FFF</code>, <code class="inline">low #F2F3FA</code>, <code class="inline">highest #DFE2EC</code> — чотири дуже близькі значення. На екрані картка на <code class="inline">lowest</code> лежить на <code class="inline">base</code> і візуально злиплі. Звідси й потреба в <code class="inline">shadow-md hover:shadow-lg</code> на <b>кожній</b> картці, щоб компенсувати.
+        </p>
+        <p>Пропозиція: зменшити кількість рівнів до трьох і розвести їх — напр. <code class="inline">base #EFF1F8</code> (трохи темніше), <code class="inline">lowest #FFF</code>, <code class="inline">sunken #E4E7F0</code>. Тоді тінь стає опційною, а не обов'язковою.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 02 TYPOGRAPHY                                      -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="typography">
+    <div class="section-head">
+      <div class="section-number">§ 02</div>
+      <div>
+        <h2 class="section-title">Typography</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">Пара Plus Jakarta Sans × Inter — хороший вибір. Проблема — масштаб.</p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Type scale</span>
+        <div class="impact"><b>Impact</b>Readability<br/>Density</div>
+      </div>
+      <div>
+        <h3 class="issue-title">Дві крайнощі, без середини</h3>
+        <p>
+          На dashboard «Ideas» — <code class="inline">text-4xl md:text-[3.5rem]</code> (~56px). У картці — <code class="inline">text-[15px]</code> для title, <code class="inline">text-sm</code> для pitch. У детальній сторінці — <code class="inline">text-3xl md:text-[2.75rem]</code>. Між 15px і 44px немає нічого.
+        </p>
+        <p>Це робить h1 дашборду надто кричущим для статусної сторінки («Ideas» — це не «Welcome»), а картки — крихкими.</p>
+
+        <div class="ba">
+          <div class="ba-cell plain">
+            <span class="label before">Before — 15/56</span>
+            <div class="body">
+              <div style="font-family: var(--font-display); font-weight: 800; font-size: 56px; line-height: 0.95; letter-spacing:-0.03em; color:#2E333A;">Ideas</div>
+              <div style="margin-top: 16px; background:#fff; border-radius:10px; padding: 12px;">
+                <div style="font-family: var(--font-body); font-weight:600; font-size:15px; color:#2E333A;">DebugFlow — Request tracing middleware for Next.js</div>
+                <div style="font-family: var(--font-body); font-size: 14px; color:#6B7280; margin-top:4px;">Next.js developers spend hours manually logging middleware…</div>
+              </div>
+            </div>
+          </div>
+          <div class="ba-cell plain">
+            <span class="label after">After — 15/28 + eyebrow</span>
+            <div class="body">
+              <div style="font-family: var(--font-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#6B7280;">Feed · 243 ideas</div>
+              <div style="font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.05; letter-spacing:-0.02em; color:#2E333A; margin-top:6px">Latest ideas</div>
+              <div style="margin-top: 16px; background:#fff; border-radius:10px; padding: 12px;">
+                <div style="font-family: var(--font-display); font-weight:700; font-size:17px; letter-spacing:-0.01em; color:#2E333A; line-height:1.3;">DebugFlow — Request tracing middleware for Next.js</div>
+                <div style="font-family: var(--font-body); font-size: 14px; color:#6B7280; margin-top:4px;">Next.js developers spend hours manually logging middleware…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:14px">
+          Рекомендований діапазон для dashboard page header: <b>28–36px</b>. 56px тримайте для marketing hero. І title картки → <b>17px Plus Jakarta Sans 700</b>, а не 15px Inter 600 — це та сутність, заради якої юзер сюди прийшов.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 03 IDEA CARD — the big one                         -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="card">
+    <div class="section-head">
+      <div class="section-number">§ 03</div>
+      <div>
+        <h2 class="section-title">Idea card — центральний об'єкт</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          Це об'єкт, заради якого існує продукт. Зараз він несе занадто багато equal-weight сигналів і не має фокусної точки.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag bad">Critical · Hierarchy</span>
+        <div class="impact">
+          <b>Impact</b>
+          Scanability<br/>
+          Decision speed<br/>
+          Core UX
+        </div>
+      </div>
+      <div>
+        <h3 class="issue-title">Два скори поруч — зайвий когнітивний tax</h3>
+        <p class="q">
+          «Що важливіше — AI score 84, чи community +12?» Юзер не має відповіді, бо дизайн не ранжує. Обидва скори отримують <code class="inline">rounded-full</code> pill, обидва використовують насичений колір, обидва <code class="inline">font-bold</code>.
+        </p>
+
+        <!-- Current card mock -->
+        <div class="ba-cell" style="margin-top:18px">
+          <span class="label before">Current — equal weight</span>
+          <div class="body" style="background: var(--surface-base); padding: 16px; border-radius: 10px;">
+            <!-- replica of current IdeaCard -->
+            <div class="if-card">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span class="if-badge new">New</span>
+                <span class="if-badge hot">Hot</span>
+                <span style="margin-left:auto;" class="ai-pill g">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  84
+                </span>
+              </div>
+              <h3 class="if-title">DebugFlow — Request tracing middleware for Next.js</h3>
+              <p class="if-pitch">Next.js developers spend hours manually logging middleware chains. DebugFlow adds visual request tracing with zero config.</p>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; gap:12px;">
+                <span class="vote-pill">
+                  <span class="ico">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/></svg>
+                  </span>
+                  <span class="score">12</span>
+                  <span class="ico">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/></svg>
+                  </span>
+                </span>
+                <div style="display:flex; align-items:center; gap:10px; font-size:12px; color: var(--on-surface-muted);">
+                  <span class="if-chip-cat">DevTools</span>
+                  <span>👁 421</span>
+                  <span>r/webdev</span>
+                </div>
+              </div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--flag-bad); margin-top: 10px; letter-spacing:0.05em;">
+              ↑ 9 інтерактивних елементів у ряду · title конкурує з бейджами · community score дрейфує поруч із рекламним AI-score
+            </div>
+          </div>
+        </div>
+
+        <!-- Proposed card -->
+        <div class="ba-cell" style="margin-top:16px">
+          <span class="label after">Proposed — lead with the score, title earns focus</span>
+          <div class="body" style="background: var(--surface-base); padding: 16px; border-radius: 10px;">
+            <div class="idea-card-v2">
+              <div class="score-dial" style="--p:84">
+                <div style="text-align:center;">
+                  <span>84</span>
+                  <em>ai · /100</em>
+                </div>
+              </div>
+              <div>
+                <div class="meta-row">
+                  <span class="if-badge hot" style="padding:2px 6px; font-size:10px;">Hot</span>
+                  <span class="dot"></span>
+                  <span>DevTools</span>
+                  <span class="dot"></span>
+                  <span class="sub">r/webdev</span>
+                  <span class="dot"></span>
+                  <span>421 views</span>
+                </div>
+                <h4>DebugFlow — Request tracing middleware for Next.js</h4>
+                <p class="pitch">Next.js developers spend hours manually logging middleware chains. DebugFlow adds visual request tracing with zero config — just install and see every request flow in real time.</p>
+                <div class="tags">
+                  <span class="tag-attr">MVP <b>Low</b></span>
+                  <span class="tag-attr">$$ <b>Subscription</b></span>
+                </div>
+              </div>
+              <div class="side">
+                <div class="votes-v2">
+                  <button aria-label="upvote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/></svg></button>
+                  <span class="s">+12</span>
+                  <button aria-label="downvote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 10.5px; color: var(--flag-ok); margin-top: 10px; letter-spacing:0.05em;">
+              ✓ AI score — primary object · title — secondary · meta-row уніфікована · vote — окрема функціональна зона
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 18px">Що змінилось:</p>
+        <ul>
+          <li><b>AI score — візуально найбільший елемент</b> (56×56 dial). Це основна value-proposition продукту. Не прячемо його в pill одного розміру з бейджами.</li>
+          <li><b>Meta-row уніфікована</b>: бейдж → категорія → сабреддит → перегляди, всі через крапку-роздільник. Less chrome, more density.</li>
+          <li><b>Community vote — праворуч, окремо</b>. Це action, а не attribute.</li>
+          <li><b>MVP complexity + monetization на самій картці</b>, не лише на деталях. Юзер зможе фільтрувати очима, а не кліком.</li>
+          <li><b>Title — 17px Plus Jakarta 700</b>, бо це основна інформація.</li>
+        </ul>
+
+        <p style="margin-top:10px; font-size: 13px; color: var(--on-surface-muted);">
+          Перемкнути режим порівняння і побачити карточку живцем: <button id="openTweaks" style="font-family: var(--font-mono); font-size: 11px; background: var(--ink); color: var(--paper); border: 0; padding: 4px 10px; border-radius: 6px; cursor: pointer;">Open tweaks →</button>
+        </p>
+      </div>
+    </div>
+
+    <!-- Interactive comparison shelf -->
+    <div class="issue" id="interactiveShelf">
+      <div class="issue-meta">
+        <span class="tag ok">Live · Compare</span>
+        <div class="impact"><b>Try</b>Tweak panel →</div>
+      </div>
+      <div>
+        <h3 class="issue-title">Живе порівняння</h3>
+        <p>Натисніть «Tweaks» у правому нижньому куті, щоб перемикати варіанти компоновки, розмір скору, присутність тегів.</p>
+        <div id="liveCard" style="margin-top:16px; padding: 20px; background: var(--surface-base); border-radius: 12px;">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 04 SCORING                                         -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="score">
+    <div class="section-head">
+      <div class="section-number">§ 04</div>
+      <div>
+        <h2 class="section-title">Scoring semantics</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          У CLAUDE.md написано: «green (70+), amber (40-69), gray (&lt;40)». У коді: <b>чотири</b> кольори (green / blue / amber / red) з порогами 76 / 51 / 26. Правило не збігається з реалізацією.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag bad">Critical · Rule mismatch</span>
+        <div class="impact"><b>Impact</b>Trust ++<br/>Docs hygiene</div>
+      </div>
+      <div>
+        <h3 class="issue-title">Red для AI-score — неоднозначний сигнал</h3>
+        <p>
+          «Червоний» = помилка / небезпека на 99% веб-продуктів. Використання червоного для «низький, але валідний» score конфліктує з очікуванням. Окрім того, діапазон 0–25 з червоним створює ефект «я показую вам погані ідеї» — хоча це не правда, це просто сирий сигнал з Reddit.
+        </p>
+
+        <div class="ba">
+          <div class="ba-cell">
+            <span class="label before">Before — 4 кольори, red як «низький»</span>
+            <div class="body">
+              <div class="scale-row" style="margin-top: 8px;">
+                <span class="ai-pill r">12</span>
+                <span class="ai-pill a">38</span>
+                <span class="ai-pill b">62</span>
+                <span class="ai-pill g">88</span>
+              </div>
+              <p style="font-size:12px; color: var(--on-surface-muted); margin-top: 12px;">4 цветових зони · пороги 26/51/76 · red = danger-конотація</p>
+            </div>
+          </div>
+          <div class="ba-cell">
+            <span class="label after">After — 3 зони, monochrome + accent</span>
+            <div class="body">
+              <div class="scale-row" style="margin-top: 8px;">
+                <span class="ai-pill" style="background:#E5E7EB; color:#4B5563">12</span>
+                <span class="ai-pill" style="background:#E5E7EB; color:#4B5563">38</span>
+                <span class="ai-pill" style="background:#DBEAFE; color:#1D4ED8">62</span>
+                <span class="ai-pill" style="background:#4954BD; color:#FBF8FF">88</span>
+              </div>
+              <p style="font-size:12px; color: var(--on-surface-muted); margin-top: 12px;">3 зони · &lt;40 neutral · 40–69 accent · 70+ brand · score це highlight, не warning</p>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:14px">
+          Додаткове: <b>Score breakdown bars</b> (<code class="inline">pain_intensity</code>, <code class="inline">willingness_to_pay</code>, …) повторюють 4-кольорову схему з іншими порогами (20/14/8/0 на шкалу з 25). Це <b>третя</b> кольорова схема для одного концепту «якість». Уніфікуйте.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 05 BADGES & CHIPS                                  -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="badges">
+    <div class="section-head">
+      <div class="section-number">§ 05</div>
+      <div>
+        <h2 class="section-title">Badges, chips, pills</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          Система бейджів живе в трьох файлах (<code class="inline">badge.tsx</code>, <code class="inline">status-badge.tsx</code>, <code class="inline">chip.tsx</code>), але концептуально це одна примітива: кольоровий tag з round-full.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Components</span>
+        <div class="impact"><b>Impact</b>Maintenance<br/>Visual consistency</div>
+      </div>
+      <div>
+        <h3 class="issue-title">Консолідуйте в один <code class="inline">&lt;Tag/&gt;</code></h3>
+        <p>
+          Зараз <code class="inline">Badge</code> приймає <code class="inline">variant: 'info'|'warning'|…</code>, <code class="inline">StatusBadge</code> — <code class="inline">status: 'new'|'hot'|…</code>, <code class="inline">Chip</code> — <code class="inline">selected</code>. Це три різні API для однієї візуальної примітиви. На ідея-картці <code class="inline">StatusBadge</code> і <code class="inline">if-chip-cat</code> (inline-class) співіснують — і вони дивляться по-різному.
+        </p>
+
+        <div class="ba single">
+          <div class="ba-cell">
+            <span class="label before">Before · current</span>
+            <div class="body" style="display:flex; gap:8px; flex-wrap:wrap;">
+              <span class="if-badge new">New</span>
+              <span class="if-badge hot">Hot</span>
+              <span class="if-badge top">Top</span>
+              <span class="if-badge trending">Trending</span>
+              <span class="if-chip-cat">DevTools</span>
+              <span style="display:inline-flex; align-items:center; padding: 2.5px 10px; background: color-mix(in oklab, var(--brand-primary) 10%, transparent); color: var(--brand-primary); border-radius: 999px; font-size:11px; font-weight:500;">🛠️ DevTools</span>
+              <span style="display:inline-flex; align-items:center; padding: 2.5px 10px; background: var(--surface-low); color: var(--on-surface); border-radius: 999px; font-size:11px; font-weight:500;">mvp: Low</span>
+            </div>
+            <p style="font-size:11.5px; color: var(--on-surface-muted); margin: 12px 0 0; font-family: var(--font-mono);">7 візуальних варіантів, 3 компоненти, 0 спільних токенів</p>
+          </div>
+        </div>
+
+        <div class="ba single" style="margin-top: 16px;">
+          <div class="ba-cell">
+            <span class="label after">After · Tag(tone, size, ...)</span>
+            <div class="body" style="display:flex; gap:8px; flex-wrap:wrap; align-items: center;">
+              <!-- hot / new / etc. as tone -->
+              <span style="display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding: 3px 8px; border-radius: 999px; background: var(--surface-low); color: var(--on-surface); font-family: var(--font-body);">
+                <span style="width:6px; height:6px; border-radius:50%; background:#EF4444; margin-right:6px;"></span>
+                Hot
+              </span>
+              <span style="display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding: 3px 8px; border-radius: 999px; background: var(--surface-low); color: var(--on-surface); font-family: var(--font-body);">
+                <span style="width:6px; height:6px; border-radius:50%; background:#3B82F6; margin-right:6px;"></span>
+                New
+              </span>
+              <span style="display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding: 3px 8px; border-radius: 999px; background: var(--surface-low); color: var(--on-surface); font-family: var(--font-body);">
+                <span style="width:6px; height:6px; border-radius:50%; background:#F59E0B; margin-right:6px;"></span>
+                Top
+              </span>
+              <span style="display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding: 3px 8px; border-radius: 999px; background: var(--surface-low); color: var(--on-surface); font-family: var(--font-body);">
+                <span style="width:6px; height:6px; border-radius:50%; background:#10B981; margin-right:6px;"></span>
+                Trending
+              </span>
+              <span style="font-size:11px; font-weight:500; padding: 3px 8px; border-radius: 4px; background: var(--surface-low); color: var(--on-surface-muted); font-family: var(--font-mono); letter-spacing: 0.02em;">DevTools</span>
+              <span style="font-size:11px; font-weight:500; padding: 3px 8px; border-radius: 4px; background: var(--surface-low); color: var(--on-surface-muted); font-family: var(--font-mono);">MVP · <b style="color:var(--on-surface)">Low</b></span>
+            </div>
+            <p style="font-size:11.5px; color: var(--flag-ok); margin: 12px 0 0; font-family: var(--font-mono);">
+              Status tags — pill з dot · attribute tags — square mono · єдина плитка сурфейсу
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emoji issue -->
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag bad">Critical · Brand</span>
+        <div class="impact"><b>Impact</b>Perceived quality<br/>Cross-platform render</div>
+      </div>
+      <div>
+        <h3 class="issue-title">Емодзі як іконки категорій</h3>
+        <p>
+          <code class="inline">🛠️ 🚀 ⚡ 💰 🧘 📚 🛒 🤖</code> — це не частина дизайн-системи. Вони рендеряться по-різному на Mac vs Windows vs Android, мають різну вагу, різний колір. На marketing-сторінці 8 яскравих емодзі в сітці 2×4 виглядають як слайд з LinkedIn, а не SaaS-продукт.
+        </p>
+
+        <div class="ba">
+          <div class="ba-cell">
+            <span class="label before">Before — emoji grid</span>
+            <div class="body" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top:4px;">
+              <div style="background:#fff; border-radius:10px; padding: 14px; text-align:center;">
+                <div style="font-size:32px;">🛠️</div>
+                <div style="font-family: var(--font-display); font-weight:600; font-size:13px; margin-top:6px;">DevTools</div>
+                <div style="font-size:10.5px; color: var(--on-surface-muted); margin-top:2px;">4 subreddits</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; text-align:center;">
+                <div style="font-size:32px;">🚀</div>
+                <div style="font-family: var(--font-display); font-weight:600; font-size:13px; margin-top:6px;">SaaS</div>
+                <div style="font-size:10.5px; color: var(--on-surface-muted); margin-top:2px;">4 subreddits</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; text-align:center;">
+                <div style="font-size:32px;">⚡</div>
+                <div style="font-family: var(--font-display); font-weight:600; font-size:13px; margin-top:6px;">Productivity</div>
+                <div style="font-size:10.5px; color: var(--on-surface-muted); margin-top:2px;">3 subreddits</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; text-align:center;">
+                <div style="font-size:32px;">💰</div>
+                <div style="font-family: var(--font-display); font-weight:600; font-size:13px; margin-top:6px;">Finance</div>
+                <div style="font-size:10.5px; color: var(--on-surface-muted); margin-top:2px;">3 subreddits</div>
+              </div>
+            </div>
+          </div>
+          <div class="ba-cell">
+            <span class="label after">After — monogram + brand accent bar</span>
+            <div class="body" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top:4px;">
+              <div style="background:#fff; border-radius:10px; padding: 14px; border: 1px solid var(--ghost-border); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #4954BD;"></div>
+                <div style="font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.03em; color: #4954BD;">DT</div>
+                <div style="font-family: var(--font-display); font-weight:700; font-size:14px; margin-top:14px;">DevTools</div>
+                <div style="font-family: var(--font-mono); font-size:10px; color: var(--on-surface-muted); margin-top:2px;">04 subs</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; border: 1px solid var(--ghost-border); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #FD933D;"></div>
+                <div style="font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.03em; color: #FD933D;">SA</div>
+                <div style="font-family: var(--font-display); font-weight:700; font-size:14px; margin-top:14px;">SaaS</div>
+                <div style="font-family: var(--font-mono); font-size:10px; color: var(--on-surface-muted); margin-top:2px;">04 subs</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; border: 1px solid var(--ghost-border); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #818CF8;"></div>
+                <div style="font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.03em; color: #818CF8;">PR</div>
+                <div style="font-family: var(--font-display); font-weight:700; font-size:14px; margin-top:14px;">Productivity</div>
+                <div style="font-family: var(--font-mono); font-size:10px; color: var(--on-surface-muted); margin-top:2px;">03 subs</div>
+              </div>
+              <div style="background:#fff; border-radius:10px; padding: 14px; border: 1px solid var(--ghost-border); position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #2E7D4F;"></div>
+                <div style="font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.03em; color: #2E7D4F;">FI</div>
+                <div style="font-family: var(--font-display); font-weight:700; font-size:14px; margin-top:14px;">Finance</div>
+                <div style="font-family: var(--font-mono); font-size:10px; color: var(--on-surface-muted); margin-top:2px;">03 subs</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 14px">
+          Альтернатива 1: намалювати 8 custom SVG-іконок у стилі вашого hex-логотипу (geometric, 2-color, flat).<br/>
+          Альтернатива 2 (запропонована): монограма з двох літер + brand-color accent — безкоштовно, уніфіковано, 100% контроль.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 06 LANDING                                         -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="landing">
+    <div class="section-head">
+      <div class="section-number">§ 06</div>
+      <div>
+        <h2 class="section-title">Landing page</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          Структура правильна: hero → how it works → stats → categories → sample → CTA. Проблема в тоні — виглядає як template, а не як продукт з характером.
+        </p>
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Tone</span>
+        <div class="impact"><b>Impact</b>Differentiation<br/>Conversion</div>
+      </div>
+      <div>
+        <h3 class="issue-title">«Discover your next SaaS idea» — це міг би сказати будь-хто</h3>
+        <ul>
+          <li>Заголовок не містить жодного proof of specificity. Назвіть конкретне: «<i>3200 реальних скарг Reddit → 40 нових ідей на тиждень, проскорованих AI</i>».</li>
+          <li>«500+ ideas · 30+ subreddits · 8 categories» — це пишаєтесь <b>input</b>-ом, а юзера цікавить <b>output</b>. Метрики повинні бути: «Top idea this week: <i>DebugFlow · AI score 94</i>», «Yesterday: +12 new ideas», «Median score: 62».</li>
+          <li>Sample idea card у hero — найсильніший хід у лендингу, але він ховається на 4-му скрол-екрані. Винесіть його в hero.</li>
+          <li>Немає <b>скріншотів дашборду</b>. Продукт на 80% — це дашборд. Продавайте його.</li>
+        </ul>
+
+        <div class="ba single" style="margin-top: 16px">
+          <div class="ba-cell">
+            <span class="label after">Hero re-pitch</span>
+            <div class="body" style="padding: 24px; background:#fff; border-radius:12px;">
+              <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center;">
+                <div>
+                  <div style="font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform:uppercase; color: var(--brand-accent); font-weight:600;">Live feed · updated every 6h</div>
+                  <h3 style="font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 1.05; letter-spacing:-0.025em; margin: 12px 0 12px;">
+                    3,247 Reddit pains.<br/>
+                    <span style="color: var(--brand-primary);">243 scored ideas.</span><br/>
+                    <span style="color: var(--brand-accent);">Yours in 10 minutes.</span>
+                  </h3>
+                  <p style="color: var(--on-surface-muted); font-size: 14px; max-width: 40ch; line-height: 1.5;">
+                    AI читає SaaS / DevTools / Productivity subreddits і кожні 6 годин відбирає ідеї, за які вже хтось готовий платити.
+                  </p>
+                </div>
+                <div class="idea-card-v2" style="cursor: default; box-shadow: 0 10px 30px rgba(73, 84, 189, 0.15); border: 1px solid var(--ghost-border);">
+                  <div class="score-dial" style="--p:94">
+                    <div style="text-align:center;">
+                      <span>94</span>
+                      <em>ai · /100</em>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="meta-row">
+                      <span class="if-badge trending" style="padding:2px 6px; font-size:10px;">Trending</span>
+                      <span class="dot"></span>
+                      <span>DevTools</span>
+                    </div>
+                    <h4 style="font-size:16px">Request tracing for Next.js middleware</h4>
+                    <p class="pitch">Next.js devs spend hours manually logging middleware chains…</p>
+                    <div class="tags">
+                      <span class="tag-attr">MVP <b>Low</b></span>
+                    </div>
+                  </div>
+                  <div class="side">
+                    <div class="votes-v2">
+                      <button aria-label="up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/></svg></button>
+                      <span class="s">+34</span>
+                      <button aria-label="down"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/></svg></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="issue">
+      <div class="issue-meta">
+        <span class="tag warn">Warn · Layout</span>
+        <div class="impact"><b>Impact</b>Modern feel</div>
+      </div>
+      <div>
+        <h3 class="issue-title">«01 02 03» кроки — найстаріший landing tropes</h3>
+        <p>
+          Три однакові картки з помаранчевими «01 02 03» у топ-лівому кутку — це те, що malenький IT-блог писав би в 2016. Якщо хочете зберегти формат:
+        </p>
+        <ul>
+          <li>Або показати живу пайплайн-візуалізацію (Reddit → AI → Feed) з трьома staged іконками,</li>
+          <li>Або замість 3 рівних блоків — одна мейн-картка «зараз відбувається: fetching r/SaaS, 42 posts…», а «how it works» — текстом збоку.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════ -->
+  <!-- 07 RECOMMENDATIONS                                 -->
+  <!-- ═════════════════════════════════════════════════ -->
+  <section class="block" id="recommendations">
+    <div class="section-head">
+      <div class="section-number">§ 07</div>
+      <div>
+        <h2 class="section-title">Recommendations — ranked</h2>
+        <p class="lede" style="font-size:18px; margin-top:8px">
+          Дев чек-ліст за пріоритетом. Перші три — однодневні win-и з великим effect на perception.
+        </p>
+      </div>
+    </div>
+
+    <div class="reco">
+      <div class="reco-row">
+        <span class="n">01</span>
+        <span class="t">Переробити idea card: центральна score-dial, уніфікована meta-row, community vote — праворуч</span>
+        <span class="s high">High</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">02</span>
+        <span class="t">Замінити emoji-іконки категорій на монограму + brand-color accent</span>
+        <span class="s high">High</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">03</span>
+        <span class="t">AI-score: 3 зони (neutral / accent / brand) замість 4 + red</span>
+        <span class="s high">High</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">04</span>
+        <span class="t">Додати токени <code class="inline">--score-*</code>, <code class="inline">--status-*</code> в <code class="inline">tokens.css</code></span>
+        <span class="s med">Medium</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">05</span>
+        <span class="t">Консолідувати <code class="inline">Badge</code> + <code class="inline">StatusBadge</code> + <code class="inline">Chip</code> → єдиний <code class="inline">&lt;Tag/&gt;</code></span>
+        <span class="s med">Medium</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">06</span>
+        <span class="t">Dashboard h1: знизити з 56px → 32px, додати eyebrow з лічильником</span>
+        <span class="s med">Medium</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">07</span>
+        <span class="t">Landing hero: поставити live idea card поряд із заголовком</span>
+        <span class="s med">Medium</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">08</span>
+        <span class="t">Зменшити surface-scale з 4 рівнів до 3, виставити <code class="inline">base</code> трохи темніше</span>
+        <span class="s low">Low</span>
+      </div>
+      <div class="reco-row">
+        <span class="n">09</span>
+        <span class="t">«How it works» на landing — або живий pipeline, або текстом</span>
+        <span class="s low">Low</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <div>ideaforge · design review v1 · 22 Apr 2026</div>
+    <div>next: open tweaks panel (↘) to compare card variants live</div>
+  </footer>
+</div>
+
+<!-- ───────────────── Tweaks panel ───────────────── -->
+<div class="tweaks-panel" id="tweaks" role="dialog" aria-label="Design tweaks">
+  <h5>Compare live</h5>
+
+  <label>Layout</label>
+  <div class="row" data-group="layout">
+    <button class="on" data-v="proposed">proposed</button>
+    <button data-v="current">current</button>
+  </div>
+
+  <label>AI score style</label>
+  <div class="row" data-group="score">
+    <button class="on" data-v="dial">dial</button>
+    <button data-v="pill">pill</button>
+    <button data-v="hidden">hidden</button>
+  </div>
+
+  <label>Attribute tags</label>
+  <div class="row" data-group="tags">
+    <button class="on" data-v="show">show</button>
+    <button data-v="hide">hide</button>
+  </div>
+
+  <label>Meta row</label>
+  <div class="row" data-group="meta">
+    <button class="on" data-v="dense">dense + dot</button>
+    <button data-v="chips">chips</button>
+  </div>
+
+  <div style="font-family: var(--font-mono); font-size: 10px; opacity: 0.55; margin-top: 6px;">esc to close</div>
+</div>
+
+<script>
+(() => {
+  const btn = document.getElementById('openTweaks');
+  const panel = document.getElementById('tweaks');
+  const shelf = document.getElementById('liveCard');
+
+  const state = {
+    layout: 'proposed',
+    score: 'dial',
+    tags: 'show',
+    meta: 'dense',
+  };
+
+  function scoreColor(s) {
+    if (s >= 70) return { bg: '#4954BD', fg: '#FBF8FF' };
+    if (s >= 40) return { bg: '#DBEAFE', fg: '#1D4ED8' };
+    return { bg: '#E5E7EB', fg: '#4B5563' };
+  }
+
+  function scoreEl(score) {
+    if (state.score === 'hidden') return '';
+    if (state.score === 'pill') {
+      const c = scoreColor(score);
+      return `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px;background:${c.bg};color:${c.fg};font-variant-numeric:tabular-nums;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        ${score}
+      </span>`;
+    }
+    // dial
+    return `<div class="score-dial" style="--p:${score}">
+      <div style="text-align:center;">
+        <span>${score}</span>
+        <em>ai · /100</em>
+      </div>
+    </div>`;
+  }
+
+  function metaRow() {
+    if (state.meta === 'chips') {
+      return `<div class="meta-row" style="gap:6px">
+        <span class="if-badge hot" style="padding:2px 6px; font-size:10px;">Hot</span>
+        <span class="if-chip-cat">DevTools</span>
+        <span class="if-chip-cat">r/webdev</span>
+        <span class="if-chip-cat">421 views</span>
+      </div>`;
+    }
+    return `<div class="meta-row">
+      <span class="if-badge hot" style="padding:2px 6px; font-size:10px;">Hot</span>
+      <span class="dot"></span>
+      <span>DevTools</span>
+      <span class="dot"></span>
+      <span class="sub">r/webdev</span>
+      <span class="dot"></span>
+      <span>421 views</span>
+    </div>`;
+  }
+
+  function tagsRow() {
+    if (state.tags === 'hide') return '';
+    return `<div class="tags">
+      <span class="tag-attr">MVP <b>Low</b></span>
+      <span class="tag-attr">$$ <b>Subscription</b></span>
+    </div>`;
+  }
+
+  function render() {
+    if (state.layout === 'current') {
+      shelf.innerHTML = `
+        <div class="if-card">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span class="if-badge new">New</span>
+            <span class="if-badge hot">Hot</span>
+            <span style="margin-left:auto;">${scoreEl(84)}</span>
+          </div>
+          <h3 class="if-title" style="font-size:15px">DebugFlow — Request tracing middleware for Next.js</h3>
+          <p class="if-pitch">Next.js developers spend hours manually logging middleware chains. DebugFlow adds visual request tracing with zero config.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px; gap:12px;">
+            <span class="vote-pill">
+              <span class="ico">▲</span>
+              <span class="score">12</span>
+              <span class="ico">▼</span>
+            </span>
+            <div style="display:flex; align-items:center; gap:10px; font-size:12px; color: var(--on-surface-muted);">
+              <span class="if-chip-cat">DevTools</span>
+              <span>421 views</span>
+              <span>r/webdev</span>
+            </div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    // Proposed
+    const scoreCol = state.score === 'hidden' ? '' : `${scoreEl(84)}`;
+    const scoreColStyle = state.score === 'hidden' ? 'grid-template-columns: 1fr auto;' : 'grid-template-columns: 56px 1fr auto;';
+
+    shelf.innerHTML = `
+      <div class="idea-card-v2" style="${scoreColStyle}">
+        ${scoreCol}
+        <div>
+          ${metaRow()}
+          <h4>DebugFlow — Request tracing middleware for Next.js</h4>
+          <p class="pitch">Next.js developers spend hours manually logging middleware chains. DebugFlow adds visual request tracing with zero config — just install and see every request flow in real time.</p>
+          ${tagsRow()}
+        </div>
+        <div class="side">
+          <div class="votes-v2">
+            <button aria-label="upvote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88z"/></svg></button>
+            <span class="s">+12</span>
+            <button aria-label="downvote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 18.12L10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88z"/></svg></button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Wire buttons
+  panel.querySelectorAll('.row').forEach(row => {
+    const group = row.getAttribute('data-group');
+    row.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        row.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        state[group] = b.getAttribute('data-v');
+        render();
+      });
+    });
+  });
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    panel.classList.add('on');
+    document.getElementById('interactiveShelf').scrollIntoView({behavior: 'smooth', block: 'start'});
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') panel.classList.remove('on');
+  });
+
+  render();
+  // auto open for first-load discoverability on big screens
+  if (window.innerWidth > 900) {
+    setTimeout(() => panel.classList.add('on'), 600);
+  }
+})();
+</script>
+</body>
+</html>

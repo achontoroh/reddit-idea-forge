@@ -53,7 +53,7 @@ export const ThemeToggle: FC = () => {
       onClick={cycleTheme}
       aria-label={labels[theme]}
       title={labels[theme]}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-muted hover:bg-surface-low hover:text-on-surface transition-colors cursor-pointer"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-ink-400 hover:bg-ink-paper-2 hover:text-ink-900 transition-colors cursor-pointer"
     >
       <Icon />
     </button>

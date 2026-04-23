@@ -25,7 +25,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
 
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-full bg-surface-low"
+      className="inline-flex items-center gap-1 rounded-full bg-ink-paper-2"
       onClick={(e) => e.preventDefault()}
     >
       <button
@@ -35,8 +35,8 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
         aria-label="Like"
         className={`${btnPadding} rounded-full transition-colors ${
           userVote === 1
-            ? 'text-green-500'
-            : 'text-on-surface-muted hover:text-green-500'
+            ? 'text-signal-high'
+            : 'text-ink-400 hover:text-signal-high'
         } disabled:opacity-50`}
       >
         <svg
@@ -53,7 +53,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
         </svg>
       </button>
 
-      <span className={`min-w-[2ch] text-center tabular-nums ${scoreText} text-on-surface`}>
+      <span className={`min-w-[2ch] text-center tabular-nums ${scoreText} text-ink-900`}>
         {communityScore}
       </span>
 
@@ -64,8 +64,8 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
         aria-label="Dislike"
         className={`${btnPadding} rounded-full transition-colors ${
           userVote === -1
-            ? 'text-red-500'
-            : 'text-on-surface-muted hover:text-red-500'
+            ? 'text-danger'
+            : 'text-ink-400 hover:text-danger'
         } disabled:opacity-50`}
       >
         <svg

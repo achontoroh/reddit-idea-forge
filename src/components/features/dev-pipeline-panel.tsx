@@ -119,7 +119,7 @@ export const DevPipelinePanel: FC = () => {
     return (
       <button
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-4 right-4 z-50 rounded-full bg-amber-500 p-3 text-white shadow-lg hover:bg-amber-600 transition-colors"
+        className="fixed bottom-4 right-4 z-50 rounded-full bg-amber-500 p-3 text-ink-paper shadow-lg hover:bg-amber-600 transition-colors"
         title="Open Dev Pipeline Panel"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -132,7 +132,7 @@ export const DevPipelinePanel: FC = () => {
   const isRunning = generating || cleaning || resetting
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 rounded-lg border border-amber-500/30 bg-surface-lowest shadow-xl">
+    <div className="fixed bottom-4 right-4 z-50 w-80 rounded-lg border border-amber-500/30 bg-ink-paper shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-amber-500/20 px-4 py-2">
         <span className="text-sm font-semibold text-amber-500">
@@ -140,7 +140,7 @@ export const DevPipelinePanel: FC = () => {
         </span>
         <button
           onClick={() => setCollapsed(true)}
-          className="text-on-surface-muted hover:text-on-surface transition-colors"
+          className="text-ink-400 hover:text-ink-900 transition-colors"
           title="Collapse"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -152,7 +152,7 @@ export const DevPipelinePanel: FC = () => {
       {/* Actions */}
       <div className="flex gap-2 px-4 py-3">
         <Button
-          variant="primary"
+          intent="primary"
           size="sm"
           onClick={runGenerate}
           loading={generating}
@@ -161,7 +161,7 @@ export const DevPipelinePanel: FC = () => {
           Fetch & Generate
         </Button>
         <Button
-          variant="secondary"
+          intent="secondary"
           size="sm"
           onClick={runCleanup}
           loading={cleaning}
@@ -170,7 +170,7 @@ export const DevPipelinePanel: FC = () => {
           Cleanup
         </Button>
         <Button
-          variant="secondary"
+          intent="secondary"
           size="sm"
           onClick={runReset}
           loading={resetting}
@@ -183,7 +183,7 @@ export const DevPipelinePanel: FC = () => {
 
       {/* Model selector — inline radio buttons */}
       <div className="px-4 pb-2">
-        <p className="mb-1.5 text-xs text-on-surface-muted">Model</p>
+        <p className="mb-1.5 text-xs text-ink-400">Model</p>
         <div className="flex flex-col gap-1">
           {[{ value: AUTO_MODEL, label: 'Auto (rotation)' }, ...availableModels.map((m) => ({ value: m, label: m }))].map(
             ({ value, label }) => (
@@ -192,7 +192,7 @@ export const DevPipelinePanel: FC = () => {
                 className={`flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-xs transition-colors ${
                   selectedModel === value
                     ? 'bg-amber-500/15 text-amber-500'
-                    : 'text-on-surface-muted hover:bg-surface-low'
+                    : 'text-ink-400 hover:bg-ink-paper-2'
                 } ${isRunning ? 'pointer-events-none opacity-50' : ''}`}
               >
                 <input
@@ -207,7 +207,7 @@ export const DevPipelinePanel: FC = () => {
                   className={`inline-block h-3 w-3 shrink-0 rounded-full border-2 ${
                     selectedModel === value
                       ? 'border-amber-500 bg-amber-500'
-                      : 'border-on-surface-muted/40 bg-transparent'
+                      : 'border-ink-400/40 bg-transparent'
                   }`}
                 />
                 <span className="truncate">{label}</span>
@@ -218,24 +218,24 @@ export const DevPipelinePanel: FC = () => {
       </div>
 
       {/* Rotation info */}
-      <div className="px-4 pb-2 text-xs text-on-surface-muted">
+      <div className="px-4 pb-2 text-xs text-ink-400">
         Next rotation slot: {rotationIndex}
       </div>
 
       {/* Result */}
       {result && (
-        <div className="border-t border-surface-low px-4 py-3">
+        <div className="border-t border-ink-paper-2 px-4 py-3">
           <div
             className={`mb-1 text-xs font-semibold ${result.success ? 'text-green-500' : 'text-red-500'}`}
           >
             {result.success ? 'Success' : 'Failed'}
             {result.durationMs != null && (
-              <span className="ml-1 font-normal text-on-surface-muted">
+              <span className="ml-1 font-normal text-ink-400">
                 ({(result.durationMs / 1000).toFixed(1)}s)
               </span>
             )}
           </div>
-          <div className="space-y-0.5 text-xs text-on-surface-muted">
+          <div className="space-y-0.5 text-xs text-ink-400">
             {result.categories && (
               <p>Categories: {result.categories.join(', ')}</p>
             )}

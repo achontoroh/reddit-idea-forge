@@ -11,7 +11,7 @@ export const RedditSourceCard: FC<RedditSourceCardProps> = ({ post }) => {
       href={post.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-start gap-4 rounded-lg bg-surface-lowest p-4 transition-all hover:shadow-md hover:bg-surface-low"
+      className="group flex items-start gap-4 rounded-md bg-ink-paper p-4 transition-all hover:shadow-md hover:bg-ink-paper-2"
     >
       {/* Reddit icon */}
       <div className="shrink-0 mt-0.5">
@@ -20,7 +20,7 @@ export const RedditSourceCard: FC<RedditSourceCardProps> = ({ post }) => {
           height="24"
           viewBox="0 0 24 24"
           fill="none"
-          className="text-on-surface-muted group-hover:text-accent transition-colors"
+          className="text-ink-400 group-hover:text-accent transition-colors"
         >
           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
           <circle cx="9" cy="11" r="1.5" fill="currentColor" />
@@ -36,17 +36,17 @@ export const RedditSourceCard: FC<RedditSourceCardProps> = ({ post }) => {
 
       <div className="flex-1 min-w-0">
         {/* Subreddit badge */}
-        <span className="inline-block text-[11px] font-semibold text-primary bg-primary/10 rounded-full px-2 py-0.5 mb-2">
+        <span className="inline-block text-[11px] font-semibold text-accent bg-accent/10 rounded-full px-2 py-0.5 mb-2">
           r/{post.subreddit}
         </span>
 
         {/* Post title */}
-        <p className="text-sm font-medium text-on-surface leading-snug line-clamp-2 mb-2">
+        <p className="text-sm font-medium text-ink-900 leading-snug line-clamp-2 mb-2">
           {post.title}
         </p>
 
         {/* Stats */}
-        <div className="flex items-center gap-4 text-xs text-on-surface-muted">
+        <div className="flex items-center gap-4 text-xs text-ink-400">
           {/* Upvotes */}
           <span className="inline-flex items-center gap-1">
             <svg
@@ -94,7 +94,7 @@ export const RedditSourceCard: FC<RedditSourceCardProps> = ({ post }) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-on-surface-muted opacity-0 group-hover:opacity-100 transition-opacity"
+          className="text-ink-400 opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
           <polyline points="15 3 21 3 21 9" />

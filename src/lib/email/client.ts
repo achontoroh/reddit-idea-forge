@@ -16,10 +16,8 @@ export async function sendIdeaDigest(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, ideas, unsubscribeToken, appUrl } = params
 
-  const subject = `Your IdeaForge digest — ${new Date().toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-  })}`
+  const count = Math.min(ideas.length, 3)
+  const subject = `ideaforge. ${count} ${count === 1 ? 'idea' : 'ideas'} this week.`
 
   const html = buildDigestHtml(ideas, unsubscribeToken, appUrl)
 

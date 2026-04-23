@@ -2,8 +2,7 @@ import { type ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
-import { Navbar } from '@/components/layout/navbar'
-import { DashboardNavActions } from '@/components/layout/dashboard-nav-actions'
+import { Header } from '@/components/features/header'
 import dynamic from 'next/dynamic'
 
 const DevPipelinePanel =
@@ -45,10 +44,8 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <>
-      <Navbar>
-        <DashboardNavActions email={user.email} />
-      </Navbar>
-      <main className="pt-24 pb-20 px-6 md:px-8 mx-auto w-full max-w-4xl">
+      <Header user={user.email ? { email: user.email } : null} />
+      <main className="pt-10 pb-20 px-6 md:px-8 mx-auto w-full max-w-4xl">
         {children}
       </main>
       {DevPipelinePanel && <DevPipelinePanel />}

@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Project Overview
-IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. Currently in v2 development (shared idea feed model).
+IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. v2 architecture (shared idea feed) is operational; editorial design system foundation complete (Phase 10 / IF-125), page-level redesign in progress (Phase 11 / IF-136).
 
 ## Engineering Mindset
 - Think as a strong senior fullstack TypeScript developer
@@ -79,7 +79,7 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 | LLM prompts in `lib/llm/prompts.ts` and `lib/llm/prompts-v2.ts` — NEVER hardcoded in routes | `/kit-llm` |
 | Validate ALL LLM responses with Zod schemas before using | `/kit-llm` |
 | Category list from `config/categories.ts` — single source of truth for UI, API, and LLM | `/kit-create-ui` |
-| Score colors: green (70+), amber (40-69), gray (<40) | `/kit-create-ui` |
+| Score display: DB stores `/100`, UI renders `/10` with one decimal. Wrap `idea.ai_score` with `displayScore()` from `lib/utils/score.ts` at every render site. Colors via `scoreSignalLevel` / `scoreSignalToken`: `signal-high` (≥8.0), `signal-mid` (6.0–7.9), `signal-low` (<6.0). API payloads and `computeBadges()` ranking math stay on `/100` — convert only at the display boundary. | `/kit-create-ui` |
 | Typed responses — ALL API responses conform to interfaces from `lib/types/` | `/kit-create-api` |
 | Error handling — every API route wrapped in try/catch with consistent error format | `/kit-create-api` |
 | Components: kebab-case files, PascalCase named exports, FC with typed props | `/kit-create-ui` |
@@ -143,6 +143,7 @@ Detailed references in `docs/` — point Claude Code to specific doc when needed
 | `docs/DATA_FLOW.md` | How generation, dashboard, email, and unsubscribe work end-to-end |
 | `docs/DEV_ENVIRONMENT.md` | Dev/staging Supabase setup, Vercel preview, branching |
 | `docs/TASK_SPEC.md` | Original task requirements adapted for our implementation |
+| `docs/design/` | Editorial design system source-of-truth: `tokens.md`, `tokens.css`, `components.md`, `screens.md`, `voice.md`, `implementation-plan.md`. Reference these BEFORE editing primitives or token CSS. |
 
 ## Available Skills
 All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
