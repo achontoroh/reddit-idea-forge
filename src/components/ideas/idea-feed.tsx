@@ -69,7 +69,7 @@ export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas: serverIdeas }) => {
 
       {filteredAndSorted.length === 0 ? (
         <p className="py-12 text-center text-ink-400">
-          No ideas in this category yet.
+          No ideas in this category this week.
         </p>
       ) : (
         <div className="flex flex-col gap-3">

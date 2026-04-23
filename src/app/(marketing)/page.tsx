@@ -37,14 +37,14 @@ function AuthCta() {
     <div className="flex items-center justify-center gap-4">
       <Link href="/register">
         <Button size="md" className="rounded-full px-8">
-          Sign up
+          Create account →
         </Button>
       </Link>
       <Link
         href="/login"
         className="text-sm font-medium text-ink-400 hover:text-ink-900 transition-colors"
       >
-        Log in
+        Sign in →
       </Link>
     </div>
   )
@@ -112,7 +112,6 @@ export default function LandingPage() {
               elevated
               className="flex flex-col items-center gap-2 transition-all duration-200 hover:-translate-y-1"
             >
-              <span className="text-4xl">{cat.icon}</span>
               <span className="text-sm font-semibold text-ink-900 font-serif">
                 {cat.name}
               </span>
@@ -137,7 +136,7 @@ export default function LandingPage() {
           </p>
           <Card padding="lg" elevated className="space-y-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <Badge variant="info">🛠️ DevTools</Badge>
+              <Badge variant="info">DevTools</Badge>
               <ScoreBadge score={84} variant="full" />
             </div>
             <h3 className="text-lg font-bold text-ink-900 font-serif leading-snug">
@@ -156,10 +155,10 @@ export default function LandingPage() {
               <span className="text-xs text-ink-400">r/webdev · 342 upvotes</span>
               <div className="flex gap-2">
                 <Button intent="ghost" size="sm" disabled>
-                  ↑ Upvote
+                  Upvote
                 </Button>
                 <Button intent="ghost" size="sm" disabled>
-                  ♡ Save
+                  Save
                 </Button>
               </div>
             </div>

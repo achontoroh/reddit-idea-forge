@@ -76,15 +76,15 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
     ].join(' — ')
 
     navigator.clipboard.writeText(text).then(() => {
-      toast.success('Copied to clipboard!')
+      toast.success('Copied to clipboard.')
     }).catch(() => {
-      toast.error('Failed to copy')
+      toast.error("Something didn't work. Try again in a moment.")
     })
   }, [idea])
 
   const handleFavorite = useCallback(async () => {
     if (!isAuthenticated) {
-      toast.error('Sign in to save ideas')
+      toast.error('Sign in to save ideas.')
       return
     }
     if (isSaving) return
@@ -100,7 +100,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
       if (!res.ok) throw new Error()
     } catch {
       setIsFavorited(prev)
-      toast.error('Failed to update favorite')
+      toast.error("Something didn't work. Try again in a moment.")
     } finally {
       setIsSaving(false)
     }

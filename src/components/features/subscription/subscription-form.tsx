@@ -41,7 +41,7 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
     setSuccess(false)
 
     if (selectedCategories.length === 0) {
-      setError('Select at least one category')
+      setError('Select at least one category.')
       return
     }
 
@@ -59,14 +59,13 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
       })
 
       if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error ?? 'Failed to save settings')
+        throw new Error()
       }
 
       setSuccess(true)
       successTimer.current = setTimeout(() => setSuccess(false), 3000)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } catch {
+      setError("Something didn't work. Try again in a moment.")
     } finally {
       setLoading(false)
     }
@@ -133,12 +132,12 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
           loading={loading}
           className="w-full py-4 rounded-xl"
         >
-          Save preferences
+          Save changes
         </Button>
       </div>
 
       {success && (
-        <p className="text-sm text-signal-high text-center">Settings saved!</p>
+        <p className="text-sm text-signal-high text-center">Settings saved.</p>
       )}
       {error && (
         <p className="text-sm text-danger text-center">{error}</p>

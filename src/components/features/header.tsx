@@ -129,7 +129,7 @@ const Avatar: FC<{ email: string; avatarUrl?: string | null }> = ({
 const SignInButton: FC = () => (
   <Link href="/login" aria-label="Sign in">
     <Button intent="ghost" size="sm">
-      Sign in
+      Sign in →
     </Button>
   </Link>
 )

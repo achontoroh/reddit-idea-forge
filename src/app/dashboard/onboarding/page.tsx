@@ -35,14 +35,13 @@ export default function OnboardingPage() {
       })
 
       if (!res.ok) {
-        const body = await res.json().catch(() => null)
-        throw new Error(body?.error ?? 'Failed to save preferences')
+        throw new Error()
       }
 
       router.push('/dashboard')
       router.refresh()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } catch {
+      setError("Something didn't work. Try again in a moment.")
     } finally {
       setLoading(false)
     }
@@ -112,7 +111,7 @@ export default function OnboardingPage() {
         onClick={handleSubmit}
         className="mt-8 w-full max-w-xs"
       >
-        Start Exploring
+        Start reading →
       </Button>
     </div>
   )

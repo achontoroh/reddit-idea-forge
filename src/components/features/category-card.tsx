@@ -44,10 +44,6 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, selected, onTogg
         </svg>
       </div>
 
-      <span className="text-3xl select-none" role="img" aria-label={category.name}>
-        {category.icon}
-      </span>
-
       <div className="text-center">
         <p className="font-sans font-semibold text-sm text-ink-900">
           {category.name}

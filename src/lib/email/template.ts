@@ -33,19 +33,21 @@ export function buildDigestHtml(
 <head><meta charset="UTF-8" /></head>
 <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <div style="max-width: 560px; margin: 0 auto; padding: 32px 16px;">
-    <p style="margin: 0 0 4px 0; font-size: 20px; font-weight: 700; color: #111;">
-      IdeaForge
-    </p>
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #6b7280;">
-      Your weekly product ideas digest
+    <p style="margin: 0 0 24px 0; font-size: 20px; font-weight: 700; color: #111;">
+      ideaforge.
     </p>
 
     ${ideaCards}
 
+    <p style="margin: 32px 0 4px 0; font-size: 14px; color: #6b7280;">—</p>
+    <p style="margin: 0; font-size: 14px; font-style: italic; color: #111;">
+      ideaforge.
+    </p>
+
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
 
     <p style="margin: 0 0 8px 0; font-size: 12px; color: #9ca3af;">
-      You're receiving this because you subscribed to IdeaForge.
+      You subscribed at ideaforge.
     </p>
     <a href="${unsubscribeUrl}" style="font-size: 12px; color: #6b7280;">
       Unsubscribe

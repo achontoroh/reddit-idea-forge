@@ -17,7 +17,7 @@ export const LoginForm: FC = () => {
 
   function validateEmail(value: string) {
     if (value && !isValidEmail(value)) {
-      setEmailError('Enter a valid email')
+      setEmailError('Email must be valid.')
     } else {
       setEmailError('')
     }
@@ -35,7 +35,7 @@ export const LoginForm: FC = () => {
     })
 
     if (authError) {
-      setFormError(authError.message)
+      setFormError("Email or password didn't match.")
       setLoading(false)
       return
     }
@@ -78,7 +78,7 @@ export const LoginForm: FC = () => {
         />
 
         <Button type="submit" loading={loading} className="w-full">
-          Sign in
+          Sign in →
         </Button>
       </form>
 

@@ -19,7 +19,7 @@ export const RegisterForm: FC = () => {
 
   function validateEmail(value: string) {
     if (value && !isValidEmail(value)) {
-      setEmailError('Enter a valid email')
+      setEmailError('Email must be valid.')
     } else {
       setEmailError('')
     }
@@ -30,7 +30,7 @@ export const RegisterForm: FC = () => {
     setFormError('')
 
     if (!isPasswordValid(password)) {
-      setFormError('Password does not meet all requirements')
+      setFormError('Password must meet all requirements.')
       return
     }
 
@@ -126,7 +126,7 @@ export const RegisterForm: FC = () => {
         </div>
 
         <Button type="submit" loading={loading} className="w-full">
-          Create account
+          Create account →
         </Button>
       </form>
 

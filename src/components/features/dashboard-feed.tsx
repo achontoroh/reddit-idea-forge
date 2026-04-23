@@ -15,16 +15,16 @@ const DEFAULT_LIMIT = 20
 
 const EMPTY_STATES: Record<TabMode, { title: string; description: string }> = {
   latest: {
-    title: 'No ideas yet',
-    description: 'New ideas are generated automatically — check back soon.',
+    title: 'No ideas published yet this week.',
+    description: 'New issue drops Monday.',
   },
   rating: {
-    title: 'No ideas for this period',
-    description: 'Try a different time range.',
+    title: 'No ideas in this range.',
+    description: 'Try a different window.',
   },
   foryou: {
-    title: 'No ideas in your categories yet',
-    description: 'Try adding more categories in Settings.',
+    title: 'No ideas in your categories this week.',
+    description: 'Add more categories in Settings.',
   },
 }
 
