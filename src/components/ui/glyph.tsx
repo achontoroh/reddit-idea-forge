@@ -3,6 +3,7 @@ import type { FC, CSSProperties } from 'react'
 interface GlyphProps {
   size?: number
   accent?: string
+  color?: string
   className?: string
   title?: string
 }
@@ -10,10 +11,12 @@ interface GlyphProps {
 export const Glyph: FC<GlyphProps> = ({
   size = 24,
   accent,
+  color,
   className,
   title = 'ideaforge',
 }) => {
   const accentColor = accent ?? 'var(--accent)'
+  const letterColor = color ?? 'var(--ink-900)'
   const fSize = Math.round(size * 0.72)
   const dotSize = Math.round(size * 0.5)
 
@@ -24,7 +27,7 @@ export const Glyph: FC<GlyphProps> = ({
     alignItems: 'baseline',
     justifyContent: 'center',
     lineHeight: 1,
-    color: 'var(--ink-900)',
+    color: letterColor,
   }
 
   return (
