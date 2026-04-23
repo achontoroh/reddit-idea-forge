@@ -507,6 +507,27 @@ h4 {
   color: var(--ink-400);
 }
 
+/* ─────────────────────────── SCORE DIAL ───────────────────────────
+   SVG ring + centered Fraunces numeral with Instrument Serif italic "/10".
+   The score is typography, not a progress bar — the ring is supporting.
+   Ring color thresholds live in the component (value ≥ 8 → signal-high,
+   6–7.9 → signal-mid, < 6 → signal-low). */
+.score-dial {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-dial-label {
+  display: block;
+}
+
+.score-dial-ring {
+  position: relative;
+  display: inline-block;
+}
+
 /* ─────────────────────────── UTILITIES ─────────────────────────── */
 a,
 button:not(:disabled),
