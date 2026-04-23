@@ -7,6 +7,7 @@ import { type FC } from 'react'
 import Link from 'next/link'
 import { type IdeaWithVote } from '@/lib/types/idea'
 import { CATEGORY_LABELS } from '@/config/categories'
+import { displayScore } from '@/lib/utils/score'
 import { AiScoreBadge, CommunityScore } from './score-display'
 import { StatusBadgeList } from './status-badge'
 
@@ -32,7 +33,7 @@ export const IdeaCardLegacy: FC<IdeaCardLegacyProps> = ({ idea }) => {
         <div className="flex items-center gap-2 mb-2">
           <StatusBadgeList badges={idea.badges} />
           <div className="ml-auto">
-            <AiScoreBadge score={idea.ai_score} />
+            <AiScoreBadge score={displayScore(idea.ai_score)} />
           </div>
         </div>
 

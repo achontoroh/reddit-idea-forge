@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card'
 import { ScoreBadge } from '@/components/ui/score-badge'
 import { VoteButtons } from '@/components/ideas/vote-buttons'
 import { CATEGORY_LABELS } from '@/config/categories'
+import { displayScore } from '@/lib/utils/score'
 
 interface IdeaCardProps {
   idea: IdeaWithVote
@@ -22,7 +23,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
             initialVote={idea.userVote}
             initialScore={idea.community_score}
           />
-          <ScoreBadge score={idea.ai_score} />
+          <ScoreBadge score={displayScore(idea.ai_score)} />
         </div>
       </div>
       <div className="mb-4">

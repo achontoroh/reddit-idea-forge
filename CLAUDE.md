@@ -79,7 +79,7 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 | LLM prompts in `lib/llm/prompts.ts` and `lib/llm/prompts-v2.ts` — NEVER hardcoded in routes | `/kit-llm` |
 | Validate ALL LLM responses with Zod schemas before using | `/kit-llm` |
 | Category list from `config/categories.ts` — single source of truth for UI, API, and LLM | `/kit-create-ui` |
-| Score colors: green (70+), amber (40-69), gray (<40) | `/kit-create-ui` |
+| Score display: DB stores `/100`, UI renders `/10` with one decimal. Wrap `idea.ai_score` with `displayScore()` from `lib/utils/score.ts` at every render site. Colors via `scoreSignalLevel` / `scoreSignalToken`: `signal-high` (≥8.0), `signal-mid` (6.0–7.9), `signal-low` (<6.0). API payloads and `computeBadges()` ranking math stay on `/100` — convert only at the display boundary. | `/kit-create-ui` |
 | Typed responses — ALL API responses conform to interfaces from `lib/types/` | `/kit-create-api` |
 | Error handling — every API route wrapped in try/catch with consistent error format | `/kit-create-api` |
 | Components: kebab-case files, PascalCase named exports, FC with typed props | `/kit-create-ui` |

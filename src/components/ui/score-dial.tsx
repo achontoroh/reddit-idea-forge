@@ -1,6 +1,7 @@
 'use client'
 
 import { type CSSProperties, type FC, useEffect, useState } from 'react'
+import { scoreSignalToken } from '@/lib/utils/score'
 
 export type ScoreDialSize = 'sm' | 'md' | 'lg'
 
@@ -35,12 +36,6 @@ function clampValue(value: number): number {
   return Math.min(10, Math.max(0, value))
 }
 
-function signalVar(value: number): string {
-  if (value >= 8) return 'var(--signal-high)'
-  if (value >= 6) return 'var(--signal-mid)'
-  return 'var(--signal-low)'
-}
-
 export const ScoreDial: FC<ScoreDialProps> = ({
   value,
   size = 'md',
@@ -66,7 +61,7 @@ export const ScoreDial: FC<ScoreDialProps> = ({
 
   const display = clamped.toFixed(1)
   const denomSize = Math.round(numeral * 0.7)
-  const ringColor = signalVar(clamped)
+  const ringColor = scoreSignalToken(clamped)
 
   const centerStyle: CSSProperties = {
     position: 'absolute',

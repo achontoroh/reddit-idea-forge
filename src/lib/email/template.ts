@@ -1,5 +1,6 @@
 import { config } from '@/config/app'
 import type { Idea } from '@/lib/types/idea'
+import { displayScore, scoreSignalLevel } from '@/lib/utils/score'
 
 export function buildDigestHtml(
   ideas: Idea[],
@@ -10,8 +11,9 @@ export function buildDigestHtml(
   const unsubscribeUrl = `${appUrl}/unsubscribe?token=${unsubscribeToken}`
 
   const ideaCards = topIdeas
-    .map(
-      (idea) => `
+    .map((idea) => {
+      const display = displayScore(idea.ai_score).toFixed(1)
+      return `
       <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
         <p style="margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: #111;">
           ${escapeHtml(idea.title)}
@@ -20,10 +22,10 @@ export function buildDigestHtml(
           ${escapeHtml(idea.pitch)}
         </p>
         <p style="margin: 0; font-size: 13px; font-weight: 600; color: ${scoreColor(idea.ai_score)};">
-          Score: ${idea.ai_score}/100
+          Score: ${display}/10
         </p>
       </div>`
-    )
+    })
     .join('')
 
   return `<!DOCTYPE html>
@@ -61,8 +63,14 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;')
 }
 
-function scoreColor(score: number): string {
-  if (score >= 70) return '#16a34a'
-  if (score >= 40) return '#d97706'
-  return '#6b7280'
+// Hex mirrors of --signal-high/--signal-mid/--signal-low from tokens.css.
+// Inlined because email clients don't resolve CSS vars.
+const SIGNAL_HEX: Record<'high' | 'mid' | 'low', string> = {
+  high: '#2d7a3f',
+  mid: '#7a6a2d',
+  low: '#8b8b90',
+}
+
+function scoreColor(db100: number): string {
+  return SIGNAL_HEX[scoreSignalLevel(displayScore(db100))]
 }

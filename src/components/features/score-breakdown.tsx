@@ -2,6 +2,7 @@
 
 import { type FC } from 'react'
 import { type ScoreBreakdown as ScoreBreakdownType } from '@/lib/types/idea'
+import { scoreSignalLevel } from '@/lib/utils/score'
 
 interface ScoreBreakdownProps {
   breakdown: ScoreBreakdownType
@@ -14,11 +15,15 @@ const SCORE_LABELS: Record<keyof ScoreBreakdownType, string> = {
   tam: 'Market Size (TAM)',
 }
 
+const BAR_CLASSES: Record<'high' | 'mid' | 'low', string> = {
+  high: 'bg-signal-high',
+  mid: 'bg-signal-mid',
+  low: 'bg-signal-low',
+}
+
+/** Sub-scores are 0–25; convert to the /10 editorial scale before picking a signal level. */
 function getBarColor(value: number): string {
-  if (value >= 20) return 'bg-signal-high'
-  if (value >= 14) return 'bg-accent'
-  if (value >= 8) return 'bg-signal-mid'
-  return 'bg-signal-low'
+  return BAR_CLASSES[scoreSignalLevel((value / 25) * 10)]
 }
 
 export const ScoreBreakdown: FC<ScoreBreakdownProps> = ({ breakdown }) => {

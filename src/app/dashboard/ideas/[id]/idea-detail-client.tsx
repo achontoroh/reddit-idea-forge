@@ -12,6 +12,7 @@ import { ScoreBreakdown } from '@/components/features/score-breakdown'
 import { RedditSourceCard } from '@/components/features/reddit-source-card'
 import { StatusBadgeList } from '@/components/features/status-badge'
 import { CATEGORY_LABELS } from '@/config/categories'
+import { displayScore } from '@/lib/utils/score'
 
 interface IdeaDetailClientProps {
   idea: Idea
@@ -68,7 +69,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
     const subreddit = idea.source_subreddit
     const text = [
       idea.title,
-      `Score: ${idea.ai_score}/100`,
+      `Score: ${displayScore(idea.ai_score).toFixed(1)}/10`,
       idea.pitch,
       `Source: r/${subreddit}`,
       'Found on IdeaForge',
@@ -117,7 +118,7 @@ export const IdeaDetailClient: FC<IdeaDetailClientProps> = ({
           </span>
           <StatusBadgeList badges={badges} />
           <div className="ml-auto">
-            <ScoreBadge score={idea.ai_score} variant="full" />
+            <ScoreBadge score={displayScore(idea.ai_score)} variant="full" />
           </div>
         </div>
 
