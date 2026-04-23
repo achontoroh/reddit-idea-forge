@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IdeaForge — Site Redesign</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  html, body { margin: 0; padding: 0; background: #e8e5de; height: 100%; }
+  body { font-family: 'Inter', system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="site-redesign-components.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+(() => {
+  const DC = window.DesignCanvas;
+  const Sec = window.DCSection;
+  const Art = window.DCArtboard;
+  const ACCENT = '#D97757';
+
+  function App() {
+    return (
+      <DC title="IdeaForge — Site redesign"
+          subtitle="Editorial wordmark · Burnt Amber accent · 3 screens × 2 variants. Клікни на артборд для fullscreen.">
+
+        <Sec id="landing" title="Landing" subtitle="V1 editorial paper · V2 bold magazine / dark">
+          <Art id="land-v1" label="V1 · Editorial paper" width={1440} height={1520}>
+            <window.LandingV1 accent={ACCENT}/>
+          </Art>
+          <Art id="land-v2" label="V2 · Magazine / dark" width={1440} height={1280}>
+            <window.LandingV2 accent={ACCENT}/>
+          </Art>
+        </Sec>
+
+        <Sec id="dash" title="Dashboard" subtitle="V1 editorial list · V2 dense terminal">
+          <Art id="dash-v1" label="V1 · Editorial list" width={1440} height={900}>
+            <window.DashboardV1 accent={ACCENT}/>
+          </Art>
+          <Art id="dash-v2" label="V2 · Dense terminal" width={1440} height={780}>
+            <window.DashboardV2 accent={ACCENT}/>
+          </Art>
+        </Sec>
+
+        <Sec id="idea" title="Idea detail" subtitle="V1 article · V2 brief / card-stack">
+          <Art id="idea-v1" label="V1 · Editorial article" width={1440} height={1680}>
+            <window.IdeaDetailV1 accent={ACCENT}/>
+          </Art>
+          <Art id="idea-v2" label="V2 · Brief / card-stack" width={1440} height={1280}>
+            <window.IdeaDetailV2 accent={ACCENT}/>
+          </Art>
+        </Sec>
+      </DC>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+})();
+</script>
+</body>
+</html>

@@ -17,11 +17,11 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, selected, onTogg
       className={`
         relative flex flex-col items-center gap-2 rounded-xl p-5 cursor-pointer
         border-2 transition-all duration-200 ease-out
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2
         ${
           selected
-            ? 'border-primary bg-primary/5 scale-[1.02] shadow-md'
-            : 'border-transparent bg-surface-lowest hover:border-surface-highest hover:shadow-sm hover:-translate-y-0.5'
+            ? 'border-accent bg-accent-soft scale-[1.02] shadow-md'
+            : 'border-transparent bg-ink-paper hover:border-ink-200 hover:shadow-sm hover:-translate-y-0.5'
         }
       `}
     >
@@ -30,11 +30,11 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, selected, onTogg
         className={`
           absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full
           transition-all duration-200
-          ${selected ? 'bg-primary scale-100 opacity-100' : 'bg-surface-highest scale-75 opacity-0'}
+          ${selected ? 'bg-accent scale-100 opacity-100' : 'bg-ink-100 scale-75 opacity-0'}
         `}
       >
         <svg
-          className="h-3 w-3 text-on-primary"
+          className="h-3 w-3 text-accent-ink"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={3}
@@ -44,15 +44,11 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, selected, onTogg
         </svg>
       </div>
 
-      <span className="text-3xl select-none" role="img" aria-label={category.name}>
-        {category.icon}
-      </span>
-
       <div className="text-center">
-        <p className="font-heading font-semibold text-sm text-on-surface">
+        <p className="font-sans font-semibold text-sm text-ink-900">
           {category.name}
         </p>
-        <p className="mt-0.5 text-xs text-on-surface-muted leading-snug">
+        <p className="mt-0.5 text-xs text-ink-400 leading-snug">
           {category.subreddits.length} subreddits tracked
         </p>
       </div>

@@ -133,11 +133,17 @@ refactor: extract ScoreBadge component
 ## Tailwind Conventions
 
 ### Color palette
-- **Primary:** indigo (buttons, links, brand accents)
-- **Success / high score:** green
-- **Warning / mid score:** amber
-- **Neutral / low score:** gray
-- **Danger:** red (errors, destructive actions)
+- **Primary:** `--accent` (Ember `#D97757`) — CTAs, focus, brand accents
+- **Score signal — high (≥8.0):** `--signal-high` (`text-signal-high`, `bg-signal-high/10`)
+- **Score signal — mid (6.0–7.9):** `--signal-mid`
+- **Score signal — low (<6.0):** `--signal-low`
+- **Danger:** `--danger` (destructive actions, errors)
+
+### Score display (DB `/100` → UI `/10`)
+- The DB stores `ai_score` / `community_score` on **0–100**; UI always renders **`8.4/10`**-style values with one decimal.
+- Convert at the display boundary via `displayScore(db100)` from `src/lib/utils/score.ts`. Never render a raw `/100` value.
+- Pick the bar/badge/ring color via `scoreSignalLevel(display)` or `scoreSignalToken(display)`.
+- API payload shapes and ranking math (`computeBadges`, sort orders) stay on `/100` — do not pre-convert in fetch layers.
 
 ### Layout defaults
 - Content max-width: `max-w-4xl mx-auto px-4`

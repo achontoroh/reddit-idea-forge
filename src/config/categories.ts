@@ -2,7 +2,6 @@
 export interface Category {
   slug: string
   name: string
-  icon: string
   subreddits: string[]
 }
 
@@ -10,49 +9,41 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'devtools',
     name: 'DevTools',
-    icon: '🛠️',
     subreddits: ['webdev', 'programming', 'SideProject', 'selfhosted'],
   },
   {
     slug: 'saas',
     name: 'SaaS & Startups',
-    icon: '🚀',
     subreddits: ['SaaS', 'startups', 'Entrepreneur', 'microsaas'],
   },
   {
     slug: 'productivity',
     name: 'Productivity',
-    icon: '⚡',
     subreddits: ['productivity', 'getdisciplined', 'Notion'],
   },
   {
     slug: 'finance',
     name: 'Personal Finance',
-    icon: '💰',
     subreddits: ['personalfinance', 'financialindependence', 'Frugal'],
   },
   {
     slug: 'health',
     name: 'Health & Wellness',
-    icon: '🧘',
     subreddits: ['HealthyFood', 'loseit', 'fitness'],
   },
   {
     slug: 'education',
     name: 'Education',
-    icon: '📚',
     subreddits: ['learnprogramming', 'OnlineLearning', 'languagelearning'],
   },
   {
     slug: 'ecommerce',
     name: 'E-commerce',
-    icon: '🛒',
     subreddits: ['ecommerce', 'dropship', 'AmazonSeller'],
   },
   {
     slug: 'ai',
     name: 'AI & Automation',
-    icon: '🤖',
     subreddits: ['MachineLearning', 'ChatGPT', 'artificial'],
   },
 ]

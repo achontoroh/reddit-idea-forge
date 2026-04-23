@@ -15,8 +15,8 @@ export const Chip: FC<ChipProps> = ({ label, selected, onClick }) => {
       onClick={onClick}
       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
         selected
-          ? 'bg-primary text-on-primary'
-          : 'bg-surface-highest text-on-surface hover:opacity-80'
+          ? 'bg-ink-900 text-ink-paper'
+          : 'bg-ink-paper-3 text-ink-900 hover:opacity-80'
       }`}
     >
       {label}

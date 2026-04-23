@@ -3,39 +3,6 @@
 import { type FC } from 'react'
 import { useVote } from '@/hooks/useVote'
 
-/* ── AI Score ── */
-
-interface AiScoreBadgeProps {
-  score: number
-}
-
-function getScoreColor(score: number): string {
-  if (score >= 76) return 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-  if (score >= 51) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-  if (score >= 26) return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-  return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
-}
-
-export const AiScoreBadge: FC<AiScoreBadgeProps> = ({ score }) => {
-  return (
-    <div
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold tabular-nums ${getScoreColor(score)}`}
-      title={`AI Score: ${score}/100`}
-    >
-      <svg
-        width="12"
-        height="12"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-      </svg>
-      {score}
-    </div>
-  )
-}
-
 /* ── Community Score with Like/Dislike ── */
 
 interface CommunityScoreProps {
@@ -54,7 +21,7 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
 
   return (
     <div
-      className="inline-flex items-center gap-0.5 rounded-full bg-surface-low px-1"
+      className="inline-flex items-center gap-0.5 rounded-full bg-ink-paper-2 px-1"
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -71,8 +38,8 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         aria-label="Like"
         className={`p-1 rounded-full transition-colors ${
           userVote === 1
-            ? 'text-green-500'
-            : 'text-on-surface-muted hover:text-green-500'
+            ? 'text-signal-high'
+            : 'text-ink-400 hover:text-signal-high'
         } disabled:opacity-50`}
       >
         <svg
@@ -90,7 +57,7 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         </svg>
       </button>
 
-      <span className="min-w-[2ch] text-center tabular-nums text-xs font-bold text-on-surface">
+      <span className="min-w-[2ch] text-center tabular-nums text-xs font-bold text-ink-900">
         {communityScore}
       </span>
 
@@ -105,8 +72,8 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         aria-label="Dislike"
         className={`p-1 rounded-full transition-colors ${
           userVote === -1
-            ? 'text-red-500'
-            : 'text-on-surface-muted hover:text-red-500'
+            ? 'text-danger'
+            : 'text-ink-400 hover:text-danger'
         } disabled:opacity-50`}
       >
         <svg

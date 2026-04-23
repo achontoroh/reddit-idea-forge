@@ -15,7 +15,7 @@ export const LogoutButton: FC = () => {
   }
 
   return (
-    <Button variant="ghost" size="sm" onClick={handleLogout}>
+    <Button intent="ghost" size="sm" onClick={handleLogout}>
       Log out
     </Button>
   )

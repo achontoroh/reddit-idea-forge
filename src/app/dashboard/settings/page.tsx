@@ -32,10 +32,10 @@ export default async function SettingsPage() {
     <div className="max-w-[560px] mx-auto">
       <BackLink href="/dashboard" />
       <div className="mb-12">
-        <h1 className="text-4xl md:text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em] text-on-surface mb-2 font-heading">
+        <h1 className="text-4xl md:text-[3.5rem] font-bold leading-[1.1] tracking-[-0.02em] text-ink-900 mb-2 font-serif">
           Settings
         </h1>
-        <p className="text-on-surface-muted">
+        <p className="text-ink-400">
           Manage your account preferences and notification rules.
         </p>
       </div>

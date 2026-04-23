@@ -36,15 +36,15 @@ function AuthCta() {
   return (
     <div className="flex items-center justify-center gap-4">
       <Link href="/register">
-        <Button size="lg" className="rounded-full px-8">
-          Sign up
+        <Button size="md" className="rounded-full px-8">
+          Create account →
         </Button>
       </Link>
       <Link
         href="/login"
-        className="text-sm font-medium text-on-surface-muted hover:text-on-surface transition-colors"
+        className="text-sm font-medium text-ink-400 hover:text-ink-900 transition-colors"
       >
-        Log in
+        Sign in →
       </Link>
     </div>
   )
@@ -56,10 +56,10 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="pt-12 pb-32 text-center px-6">
         <div className="mx-auto max-w-4xl">
-          <h1 className="text-4xl md:text-[3.5rem] font-bold font-heading tracking-[-0.02em] leading-tight text-on-surface mb-6">
+          <h1 className="text-4xl md:text-[3.5rem] font-bold font-serif tracking-[-0.02em] leading-tight text-ink-900 mb-6">
             Discover your next SaaS idea
           </h1>
-          <p className="text-lg text-on-surface-muted max-w-xl mx-auto mb-10">
+          <p className="text-lg text-ink-400 max-w-xl mx-auto mb-10">
             Stop guessing what people want. We analyze market gaps and high-intent signals to
             deliver validated opportunities directly to your inbox.
           </p>
@@ -72,25 +72,25 @@ export default function LandingPage() {
         <div className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
           {STEPS.map((step) => (
             <Card key={step.number} padding="lg" elevated className="flex flex-col items-start text-left p-8">
-              <div className="text-4xl font-bold text-accent mb-4 font-heading">
+              <div className="text-4xl font-bold text-accent mb-4 font-serif">
                 {step.number}
               </div>
-              <h3 className="text-xl font-semibold text-on-surface mb-2 font-heading">
+              <h3 className="text-xl font-semibold text-ink-900 mb-2 font-serif">
                 {step.title}
               </h3>
-              <p className="text-on-surface-muted text-sm leading-relaxed">{step.description}</p>
+              <p className="text-ink-400 text-sm leading-relaxed">{step.description}</p>
             </Card>
           ))}
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-surface-low py-12 mb-32">
-        <div className="mx-auto max-w-4xl flex flex-col md:flex-row items-center justify-center md:divide-x md:divide-surface-highest">
+      <section className="bg-ink-paper-2 py-12 mb-32">
+        <div className="mx-auto max-w-4xl flex flex-col md:flex-row items-center justify-center md:divide-x md:divide-ink-200">
           {STATS.map((stat) => (
             <div key={stat.label} className="flex flex-col items-center px-12 py-4 md:py-0">
-              <span className="text-4xl font-bold font-heading text-primary">{stat.value}</span>
-              <span className="text-sm text-on-surface-muted mt-1">{stat.label}</span>
+              <span className="text-4xl font-bold font-serif text-accent">{stat.value}</span>
+              <span className="text-sm text-ink-400 mt-1">{stat.label}</span>
             </div>
           ))}
         </div>
@@ -99,10 +99,10 @@ export default function LandingPage() {
       {/* Category Preview Grid */}
       <section className="px-6 pb-32">
         <div className="mx-auto max-w-4xl text-center mb-12">
-          <h2 className="text-3xl font-bold text-on-surface font-heading mb-3">
+          <h2 className="text-3xl font-bold text-ink-900 font-serif mb-3">
             Browse Ideas By Category
           </h2>
-          <p className="text-on-surface-muted">Choose what matches your interests</p>
+          <p className="text-ink-400">Choose what matches your interests</p>
         </div>
         <div className="mx-auto max-w-4xl grid grid-cols-2 md:grid-cols-4 gap-4">
           {CATEGORIES.map((cat) => (
@@ -112,11 +112,10 @@ export default function LandingPage() {
               elevated
               className="flex flex-col items-center gap-2 transition-all duration-200 hover:-translate-y-1"
             >
-              <span className="text-4xl">{cat.icon}</span>
-              <span className="text-sm font-semibold text-on-surface font-heading">
+              <span className="text-sm font-semibold text-ink-900 font-serif">
                 {cat.name}
               </span>
-              <span className="text-xs text-on-surface-muted">
+              <span className="text-xs text-ink-400">
                 {cat.subreddits.length} subreddits
               </span>
             </Card>
@@ -127,23 +126,23 @@ export default function LandingPage() {
       {/* Sample Idea Card */}
       <section className="px-6 pb-32">
         <div className="mx-auto max-w-2xl text-center mb-8">
-          <h2 className="text-3xl font-bold text-on-surface font-heading mb-3">
+          <h2 className="text-3xl font-bold text-ink-900 font-serif mb-3">
             Here&apos;s what you&apos;ll discover
           </h2>
         </div>
         <div className="mx-auto max-w-2xl">
-          <p className="text-xs text-on-surface-muted uppercase tracking-widest mb-3 font-medium">
+          <p className="text-xs text-ink-400 uppercase tracking-widest mb-3 font-medium">
             Live example from the feed
           </p>
           <Card padding="lg" elevated className="space-y-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <Badge variant="info">🛠️ DevTools</Badge>
+              <Badge variant="info">DevTools</Badge>
               <ScoreBadge score={84} variant="full" />
             </div>
-            <h3 className="text-lg font-bold text-on-surface font-heading leading-snug">
+            <h3 className="text-lg font-bold text-ink-900 font-serif leading-snug">
               DebugFlow — Request tracing middleware for Next.js
             </h3>
-            <p className="text-sm text-on-surface-muted leading-relaxed">
+            <p className="text-sm text-ink-400 leading-relaxed">
               Next.js developers spend hours manually logging middleware chains. DebugFlow adds
               visual request tracing with zero config — just install and see every request flow in
               real time.
@@ -152,14 +151,14 @@ export default function LandingPage() {
               <Badge>mvp_complexity: Low</Badge>
               <Badge>monetization: Subscription</Badge>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-surface-highest/50">
-              <span className="text-xs text-on-surface-muted">r/webdev · 342 upvotes</span>
+            <div className="flex items-center justify-between pt-2 border-t border-ink-200/50">
+              <span className="text-xs text-ink-400">r/webdev · 342 upvotes</span>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" disabled>
-                  ↑ Upvote
+                <Button intent="ghost" size="sm" disabled>
+                  Upvote
                 </Button>
-                <Button variant="ghost" size="sm" disabled>
-                  ♡ Save
+                <Button intent="ghost" size="sm" disabled>
+                  Save
                 </Button>
               </div>
             </div>
@@ -169,8 +168,8 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section className="px-6 pb-32">
-        <div className="mx-auto max-w-4xl py-20 rounded-[2.5rem] bg-surface-highest/30 flex flex-col items-center text-center">
-          <h2 className="text-3xl font-bold text-on-surface mb-10 font-heading">
+        <div className="mx-auto max-w-4xl py-20 rounded-[2.5rem] bg-ink-100/30 flex flex-col items-center text-center">
+          <h2 className="text-3xl font-bold text-ink-900 mb-10 font-serif">
             Ready to build?
           </h2>
           <AuthCta />

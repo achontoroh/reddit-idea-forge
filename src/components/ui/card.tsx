@@ -24,14 +24,14 @@ export const Card: FC<CardProps> = ({
   onClick,
 }) => {
   const shadow = modal
-    ? 'shadow-modal'
+    ? 'shadow-sm'
     : elevated
       ? 'shadow-md hover:shadow-lg'
       : ''
 
   return (
     <div
-      className={`rounded-lg bg-surface-lowest transition-shadow ${shadow} ${paddingClasses[padding]} ${className}`}
+      className={`rounded-md bg-ink-paper transition-shadow ${shadow} ${paddingClasses[padding]} ${className}`}
       onClick={onClick}
     >
       {children}

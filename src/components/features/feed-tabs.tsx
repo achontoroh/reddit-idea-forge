@@ -28,13 +28,13 @@ export const FeedTabs: FC<FeedTabsProps> = ({
           onClick={() => onTabChange(tab.key)}
           className={`pb-3 text-sm font-medium relative transition-colors ${
             activeTab === tab.key
-              ? 'text-primary font-semibold'
-              : 'text-on-surface-muted hover:text-on-surface'
+              ? 'text-ink-900 font-semibold'
+              : 'text-ink-400 hover:text-ink-900'
           }`}
         >
           {tab.label}
           {activeTab === tab.key && (
-            <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
+            <span className="absolute bottom-0 left-0 w-full h-[3px] bg-accent rounded-full" />
           )}
         </button>
       ))}
