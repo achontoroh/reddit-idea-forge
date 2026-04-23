@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## Project Overview
-IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. Currently in v2 development (shared idea feed model).
+IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. v2 architecture (shared idea feed) is operational; editorial design system foundation complete (Phase 10 / IF-125), page-level redesign in progress (Phase 11 / IF-136).
 
 ## Engineering Mindset
 - Think as a strong senior fullstack TypeScript developer
@@ -143,6 +143,7 @@ Detailed references in `docs/` — point Claude Code to specific doc when needed
 | `docs/DATA_FLOW.md` | How generation, dashboard, email, and unsubscribe work end-to-end |
 | `docs/DEV_ENVIRONMENT.md` | Dev/staging Supabase setup, Vercel preview, branching |
 | `docs/TASK_SPEC.md` | Original task requirements adapted for our implementation |
+| `docs/design/` | Editorial design system source-of-truth: `tokens.md`, `tokens.css`, `components.md`, `screens.md`, `voice.md`, `implementation-plan.md`. Reference these BEFORE editing primitives or token CSS. |
 
 ## Available Skills
 All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
