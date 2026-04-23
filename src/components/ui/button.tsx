@@ -13,10 +13,10 @@ interface ButtonProps extends Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'typ
 }
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary: 'bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-active focus-visible:ring-primary',
-  secondary: 'bg-surface-highest text-primary hover:bg-surface-low focus-visible:ring-primary',
-  ghost: 'text-primary hover:bg-surface-low focus-visible:ring-primary',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+  primary: 'bg-ink-900 text-ink-paper hover:bg-ink-800 active:bg-ink-700 focus-visible:ring-ink-900',
+  secondary: 'bg-ink-paper-3 text-ink-900 hover:bg-ink-paper-2 focus-visible:ring-ink-400',
+  ghost: 'text-ink-900 hover:bg-ink-paper-2 focus-visible:ring-ink-400',
+  danger: 'bg-danger text-ink-paper hover:bg-danger/90 focus-visible:ring-danger',
 }
 
 const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
@@ -43,7 +43,7 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}
       disabled={isDisabled}
       className={`
-        inline-flex items-center justify-center gap-2 rounded-md font-semibold font-heading cursor-pointer
+        inline-flex items-center justify-center gap-2 rounded-md font-semibold font-sans cursor-pointer
         transition-colors duration-150
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
         disabled:cursor-not-allowed disabled:opacity-50

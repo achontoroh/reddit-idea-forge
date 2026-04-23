@@ -62,14 +62,14 @@ export const RegisterForm: FC = () => {
   if (success) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-on-surface mb-2">Check your email</h1>
-        <p className="text-sm text-on-surface-muted mb-6">
+        <h1 className="text-2xl font-bold text-ink-900 mb-2">Check your email</h1>
+        <p className="text-sm text-ink-400 mb-6">
           We sent a confirmation link to <strong>{email}</strong>. Click it to
           activate your account.
         </p>
         <Link
           href="/login"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
+          className="text-sm font-medium text-accent hover:text-accent-hover"
         >
           Back to sign in
         </Link>
@@ -79,13 +79,13 @@ export const RegisterForm: FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-on-surface mb-1">Create account</h1>
-      <p className="text-sm text-on-surface-muted mb-6">
+      <h1 className="text-2xl font-bold text-ink-900 mb-1">Create account</h1>
+      <p className="text-sm text-ink-400 mb-6">
         Sign up to start discovering product ideas
       </p>
 
       {formError && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger" role="alert">
           {formError}
         </p>
       )}
@@ -124,7 +124,7 @@ export const RegisterForm: FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="text-on-surface-muted hover:text-on-surface cursor-pointer"
+                className="text-ink-400 hover:text-ink-900 cursor-pointer"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 tabIndex={-1}
               >
@@ -151,9 +151,9 @@ export const RegisterForm: FC = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-on-surface-muted">
+      <p className="mt-4 text-center text-sm text-ink-400">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-primary hover:text-primary-hover">
+        <Link href="/login" className="font-medium text-accent hover:text-accent-hover">
           Sign in
         </Link>
       </p>

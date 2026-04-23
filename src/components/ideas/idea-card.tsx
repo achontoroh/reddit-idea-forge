@@ -15,7 +15,7 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
   return (
     <Card padding="lg" elevated className="[content-visibility:auto] [contain-intrinsic-size:auto_140px]">
       <div className="flex justify-between items-start mb-3">
-        <h3 className="text-on-surface font-semibold text-lg">{idea.title}</h3>
+        <h3 className="text-ink-900 font-semibold text-lg">{idea.title}</h3>
         <div className="flex items-center gap-3 shrink-0">
           <VoteButtons
             ideaId={idea.id}
@@ -26,11 +26,11 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
         </div>
       </div>
       <div className="mb-4">
-        <span className="bg-primary-container/20 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">
+        <span className="bg-accent-soft text-accent px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">
           {categoryLabel}
         </span>
       </div>
-      <p className="text-on-surface-muted text-base leading-relaxed line-clamp-2">
+      <p className="text-ink-500 text-base leading-relaxed line-clamp-2">
         {idea.pitch}
       </p>
     </Card>

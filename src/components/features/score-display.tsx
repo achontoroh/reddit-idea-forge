@@ -10,10 +10,10 @@ interface AiScoreBadgeProps {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 76) return 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-  if (score >= 51) return 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-  if (score >= 26) return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-  return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+  if (score >= 76) return 'bg-signal-high/10 text-signal-high'
+  if (score >= 51) return 'bg-accent/10 text-accent'
+  if (score >= 26) return 'bg-signal-mid/10 text-signal-mid'
+  return 'bg-signal-low/10 text-signal-low'
 }
 
 export const AiScoreBadge: FC<AiScoreBadgeProps> = ({ score }) => {
@@ -54,7 +54,7 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
 
   return (
     <div
-      className="inline-flex items-center gap-0.5 rounded-full bg-surface-low px-1"
+      className="inline-flex items-center gap-0.5 rounded-full bg-ink-paper-2 px-1"
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -71,8 +71,8 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         aria-label="Like"
         className={`p-1 rounded-full transition-colors ${
           userVote === 1
-            ? 'text-green-500'
-            : 'text-on-surface-muted hover:text-green-500'
+            ? 'text-signal-high'
+            : 'text-ink-400 hover:text-signal-high'
         } disabled:opacity-50`}
       >
         <svg
@@ -90,7 +90,7 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         </svg>
       </button>
 
-      <span className="min-w-[2ch] text-center tabular-nums text-xs font-bold text-on-surface">
+      <span className="min-w-[2ch] text-center tabular-nums text-xs font-bold text-ink-900">
         {communityScore}
       </span>
 
@@ -105,8 +105,8 @@ export const CommunityScore: FC<CommunityScoreProps> = ({
         aria-label="Dislike"
         className={`p-1 rounded-full transition-colors ${
           userVote === -1
-            ? 'text-red-500'
-            : 'text-on-surface-muted hover:text-red-500'
+            ? 'text-danger'
+            : 'text-ink-400 hover:text-danger'
         } disabled:opacity-50`}
       >
         <svg

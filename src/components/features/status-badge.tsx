@@ -8,19 +8,19 @@ interface StatusBadgeProps {
 const STATUS_CONFIG: Record<IdeaBadge, { label: string; className: string }> = {
   new: {
     label: 'New',
-    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+    className: 'bg-accent/10 text-accent',
   },
   hot: {
     label: 'Hot',
-    className: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+    className: 'bg-danger/10 text-danger',
   },
   top: {
     label: 'Top',
-    className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+    className: 'bg-signal-mid/10 text-signal-mid',
   },
   trending: {
     label: 'Trending',
-    className: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300',
+    className: 'bg-signal-high/10 text-signal-high',
   },
 }
 

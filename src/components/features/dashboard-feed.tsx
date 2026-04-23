@@ -30,18 +30,18 @@ const EMPTY_STATES: Record<TabMode, { title: string; description: string }> = {
 
 /** Skeleton card matching compact idea card layout */
 const IdeaCardSkeleton: FC = () => (
-  <div className="rounded-lg bg-surface-lowest p-4 animate-pulse shadow-sm">
+  <div className="rounded-lg bg-ink-paper p-4 animate-pulse shadow-sm">
     <div className="flex items-center justify-between gap-2 mb-2">
-      <div className="h-5 w-20 bg-surface-highest rounded-full" />
-      <div className="h-5 w-12 bg-surface-highest rounded-full" />
+      <div className="h-5 w-20 bg-ink-100 rounded-full" />
+      <div className="h-5 w-12 bg-ink-100 rounded-full" />
     </div>
-    <div className="h-5 bg-surface-highest rounded w-4/5 mb-1.5" />
-    <div className="h-4 bg-surface-highest rounded w-full mb-3" />
+    <div className="h-5 bg-ink-100 rounded w-4/5 mb-1.5" />
+    <div className="h-4 bg-ink-100 rounded w-full mb-3" />
     <div className="flex items-center justify-between">
-      <div className="h-6 w-20 bg-surface-highest rounded-full" />
+      <div className="h-6 w-20 bg-ink-100 rounded-full" />
       <div className="flex gap-3">
-        <div className="h-4 w-10 bg-surface-highest rounded" />
-        <div className="h-4 w-16 bg-surface-highest rounded" />
+        <div className="h-4 w-10 bg-ink-100 rounded" />
+        <div className="h-4 w-16 bg-ink-100 rounded" />
       </div>
     </div>
   </div>
@@ -101,7 +101,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
   return (
     <div>
       {/* Feed tabs */}
-      <div className="border-b border-[var(--ghost-border-color)] mb-6">
+      <div className="border-b border-ink-200 mb-6">
         <FeedTabs
           activeTab={tab}
           onTabChange={handleTabChange}
@@ -130,8 +130,8 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
       {/* Empty state */}
       {!showFirstLoad && ideas.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
-          <p className="text-lg text-on-surface font-medium">{emptyState.title}</p>
-          <p className="text-sm text-on-surface-muted">{emptyState.description}</p>
+          <p className="text-lg text-ink-900 font-medium">{emptyState.title}</p>
+          <p className="text-sm text-ink-400">{emptyState.description}</p>
         </div>
       )}
 
@@ -153,7 +153,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
                   onClick={() =>
                     updateParams({ offset: String(Math.max(0, offset - DEFAULT_LIMIT)) })
                   }
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-on-surface-muted hover:text-on-surface bg-surface-low hover:bg-surface-highest transition-colors"
+                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-ink-400 hover:text-ink-900 bg-ink-paper-2 hover:bg-ink-paper-3 transition-colors"
                 >
                   Previous
                 </button>
@@ -164,7 +164,7 @@ export const DashboardFeed: FC<DashboardFeedProps> = ({ userCategories }) => {
                   onClick={() =>
                     updateParams({ offset: String(offset + DEFAULT_LIMIT) })
                   }
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-on-primary bg-primary hover:bg-primary-hover transition-colors"
+                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-ink-paper bg-ink-900 hover:bg-ink-800 transition-colors"
                 >
                   Load more
                 </button>

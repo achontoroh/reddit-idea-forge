@@ -54,17 +54,17 @@ export default function OnboardingPage() {
     <div className="flex flex-col items-center">
       {/* Header */}
       <div className="text-center max-w-lg">
-        <h1 className="text-3xl md:text-4xl font-bold font-heading tracking-[-0.02em] text-on-surface">
+        <h1 className="text-3xl md:text-4xl font-bold font-serif tracking-[-0.02em] text-ink-900">
           Welcome to IdeaForge
         </h1>
-        <p className="mt-3 text-on-surface-muted text-base leading-relaxed">
+        <p className="mt-3 text-ink-400 text-base leading-relaxed">
           Pick the categories you care about most. We&apos;ll surface the best SaaS ideas from those communities.
         </p>
       </div>
 
       {/* Selection count */}
       <div className="mt-8 flex items-center gap-3">
-        <span className="text-sm font-medium text-on-surface-muted">
+        <span className="text-sm font-medium text-ink-400">
           {selected.length} of {MAX_CATEGORIES} selected
         </span>
         <div className="flex gap-1.5">
@@ -73,7 +73,7 @@ export default function OnboardingPage() {
               key={i}
               className={`
                 h-1.5 w-6 rounded-full transition-colors duration-200
-                ${i < selected.length ? 'bg-primary' : 'bg-surface-highest'}
+                ${i < selected.length ? 'bg-ink-900' : 'bg-ink-100'}
               `}
             />
           ))}
@@ -94,14 +94,14 @@ export default function OnboardingPage() {
 
       {/* Minimum hint */}
       {selected.length > 0 && selected.length < MIN_CATEGORIES && (
-        <p className="mt-4 text-xs text-on-surface-muted">
+        <p className="mt-4 text-xs text-ink-400">
           Pick at least {MIN_CATEGORIES} categories to continue
         </p>
       )}
 
       {/* Error */}
       {error && (
-        <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>
+        <p className="mt-4 text-sm text-danger">{error}</p>
       )}
 
       {/* Submit */}

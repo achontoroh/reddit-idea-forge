@@ -6,11 +6,11 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<NonNullable<BadgeProps['variant']>, string> = {
-  default: 'bg-surface-low text-on-surface',
-  success: 'bg-green-100 text-green-700',
-  warning: 'bg-amber-100 text-amber-700',
-  danger: 'bg-red-100 text-red-700',
-  info: 'bg-primary/10 text-primary',
+  default: 'bg-ink-paper-2 text-ink-900',
+  success: 'bg-signal-high/10 text-signal-high',
+  warning: 'bg-signal-mid/10 text-signal-mid',
+  danger: 'bg-danger/10 text-danger',
+  info: 'bg-accent/10 text-accent',
 }
 
 export const Badge: FC<BadgeProps> = ({ children, variant = 'default' }) => {

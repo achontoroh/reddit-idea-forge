@@ -15,10 +15,10 @@ const SCORE_LABELS: Record<keyof ScoreBreakdownType, string> = {
 }
 
 function getBarColor(value: number): string {
-  if (value >= 20) return 'bg-green-500'
-  if (value >= 14) return 'bg-blue-500'
-  if (value >= 8) return 'bg-amber-500'
-  return 'bg-red-400'
+  if (value >= 20) return 'bg-signal-high'
+  if (value >= 14) return 'bg-accent'
+  if (value >= 8) return 'bg-signal-mid'
+  return 'bg-signal-low'
 }
 
 export const ScoreBreakdown: FC<ScoreBreakdownProps> = ({ breakdown }) => {
@@ -33,14 +33,14 @@ export const ScoreBreakdown: FC<ScoreBreakdownProps> = ({ breakdown }) => {
         return (
           <div key={key}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-medium text-on-surface">
+              <span className="text-sm font-medium text-ink-900">
                 {label}
               </span>
-              <span className="text-sm font-bold tabular-nums text-on-surface-muted">
+              <span className="text-sm font-bold tabular-nums text-ink-400">
                 {value}/25
               </span>
             </div>
-            <div className="h-2 rounded-full bg-surface-low overflow-hidden">
+            <div className="h-2 rounded-full bg-ink-paper-2 overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-700 ease-out ${getBarColor(value)}`}
                 style={{ width: `${pct}%` }}

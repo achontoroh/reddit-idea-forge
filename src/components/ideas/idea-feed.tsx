@@ -51,13 +51,13 @@ export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas: serverIdeas }) => {
             onClick={() => setSortMode(tab.key)}
             className={`pb-4 font-medium text-base relative transition-colors ${
               sortMode === tab.key
-                ? 'text-primary font-semibold'
-                : 'text-on-surface-muted hover:text-on-surface'
+                ? 'text-ink-900 font-semibold'
+                : 'text-ink-400 hover:text-ink-900'
             }`}
           >
             {tab.label}
             {sortMode === tab.key && (
-              <span className="absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full" />
+              <span className="absolute bottom-0 left-0 w-full h-[3px] bg-accent rounded-full" />
             )}
           </button>
         ))}
@@ -68,7 +68,7 @@ export const IdeaFeed: FC<IdeaFeedProps> = ({ ideas: serverIdeas }) => {
       </div>
 
       {filteredAndSorted.length === 0 ? (
-        <p className="py-12 text-center text-on-surface-muted">
+        <p className="py-12 text-center text-ink-400">
           No ideas in this category yet.
         </p>
       ) : (

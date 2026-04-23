@@ -15,7 +15,7 @@ export const DashboardNavActions: FC<DashboardNavActionsProps> = ({ email }) => 
     <>
       <ThemeToggle />
       {email && (
-        <span className="hidden md:inline text-on-surface-muted text-sm">
+        <span className="hidden md:inline text-ink-400 text-sm">
           {email}
         </span>
       )}

@@ -21,7 +21,11 @@ function applyTheme(theme: Theme): void {
     theme === 'dark' ||
     (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-  document.documentElement.classList.toggle('dark', isDark)
+  if (isDark) {
+    document.documentElement.setAttribute('data-theme', 'dark')
+  } else {
+    document.documentElement.removeAttribute('data-theme')
+  }
 }
 
 const listeners = new Set<() => void>()

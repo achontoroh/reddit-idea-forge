@@ -34,7 +34,7 @@ const MarketingLayout: FC<MarketingLayoutProps> = ({ children }) => {
           <>
             <Link
               href="/login"
-              className="text-sm font-medium text-on-surface-muted hover:text-on-surface transition-colors"
+              className="text-sm font-medium text-ink-400 hover:text-ink-900 transition-colors"
             >
               Log in
             </Link>

@@ -19,10 +19,10 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
       <Link
         href={`/dashboard/ideas/${idea.id}`}
         prefetch={false}
-        className="block rounded-lg bg-surface-lowest p-4 transition-all duration-200
+        className="block rounded-md bg-ink-paper p-4 transition-all duration-200
           shadow-sm hover:shadow-md hover:-translate-y-0.5
-          border border-transparent hover:border-[var(--ghost-border-color)]
-          focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
+          border border-transparent hover:border-ink-200
+          focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2
           [content-visibility:auto] [contain-intrinsic-size:auto_160px]"
       >
         {/* Top row: status badges + AI score */}
@@ -34,12 +34,12 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
         </div>
 
         {/* Title */}
-        <h3 className="text-on-surface font-semibold text-[15px] leading-snug mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-ink-900 font-semibold text-[15px] leading-snug mb-1.5 line-clamp-2 group-hover:text-accent transition-colors">
           {idea.title}
         </h3>
 
         {/* Pitch */}
-        <p className="text-on-surface-muted text-sm leading-relaxed mb-3">
+        <p className="text-ink-500 text-sm leading-relaxed mb-3">
           {idea.pitch}
         </p>
 
@@ -51,9 +51,9 @@ export const IdeaCard: FC<IdeaCardProps> = ({ idea }) => {
             initialScore={idea.community_score}
           />
 
-          <div className="flex items-center gap-3 text-[12px] text-on-surface-muted">
+          <div className="flex items-center gap-3 text-[12px] text-ink-400">
             {/* Category */}
-            <span className="truncate max-w-[140px] rounded-full bg-surface-highest px-2 py-0.5">
+            <span className="truncate max-w-[140px] rounded-full bg-ink-paper-3 px-2 py-0.5">
               {categoryLabel}
             </span>
 

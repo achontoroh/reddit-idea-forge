@@ -10,7 +10,7 @@ export const BackLink: FC<BackLinkProps> = ({ href, label = 'Back to feed' }) =>
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-2 text-primary hover:bg-primary/5 px-3 py-2 rounded-md transition-colors font-medium mb-8"
+      className="inline-flex items-center gap-2 text-accent hover:bg-accent/5 px-3 py-2 rounded-md transition-colors font-medium mb-8"
     >
       <svg
         width="16"

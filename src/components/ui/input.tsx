@@ -37,7 +37,7 @@ export const Input: FC<InputProps> = ({
     <div className={className}>
       <label
         htmlFor={id}
-        className="block text-sm font-medium text-on-surface mb-1"
+        className="block text-sm font-medium text-ink-900 mb-1"
       >
         {label}
       </label>
@@ -55,13 +55,13 @@ export const Input: FC<InputProps> = ({
           aria-describedby={error ? `${id}-error` : undefined}
           className={`
             block w-full rounded-lg border px-3 py-2 text-base md:text-sm
-            placeholder:text-on-surface-muted
+            placeholder:text-ink-400
             focus:outline-none focus:ring-2 focus:ring-offset-1
-            disabled:cursor-not-allowed disabled:bg-surface-low disabled:text-on-surface-muted
+            disabled:cursor-not-allowed disabled:bg-ink-100 disabled:text-ink-300
             ${suffix ? 'pr-10' : ''}
             ${error
-              ? 'border-red-300 text-red-900 focus:border-red-500 focus:ring-red-500'
-              : 'border-transparent bg-surface-low text-on-surface focus:border-primary/30 focus:ring-primary/30'
+              ? 'border-danger/50 text-danger focus:border-danger focus:ring-danger/30'
+              : 'border-transparent bg-ink-paper-2 text-ink-900 focus:border-accent/30 focus:ring-accent/30'
             }
           `}
         />
@@ -72,12 +72,12 @@ export const Input: FC<InputProps> = ({
         )}
       </div>
       {error && (
-        <p id={`${id}-error`} className="mt-1 text-sm text-red-600" role="alert">
+        <p id={`${id}-error`} className="mt-1 text-sm text-danger" role="alert">
           {error}
         </p>
       )}
       {!error && hint && (
-        <p className="mt-1 text-xs text-on-surface-muted">{hint}</p>
+        <p className="mt-1 text-xs text-ink-400">{hint}</p>
       )}
     </div>
   )

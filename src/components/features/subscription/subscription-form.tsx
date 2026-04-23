@@ -75,12 +75,12 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
   return (
     <form onSubmit={handleSubmit} className="space-y-12">
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-muted mb-6">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-ink-400 mb-6">
           Email notifications
         </h2>
         <div className="space-y-8">
           <div className="flex items-center justify-between">
-            <label className="font-medium text-on-surface" htmlFor="weekly-digest">
+            <label className="font-medium text-ink-900" htmlFor="weekly-digest">
               Weekly digest
             </label>
             <button
@@ -90,11 +90,11 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
               aria-checked={isActive}
               onClick={() => setIsActive(!isActive)}
               className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
-                isActive ? 'bg-primary' : 'bg-surface-highest'
+                isActive ? 'bg-accent' : 'bg-ink-100'
               }`}
             >
               <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-ink-paper shadow transition duration-200 ${
                   isActive ? 'translate-x-5' : 'translate-x-0.5'
                 } mt-0.5`}
               />
@@ -102,18 +102,18 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-medium text-on-surface-muted">Email</span>
-            <span className="text-on-surface font-medium">{email}</span>
+            <span className="text-xs font-medium text-ink-400">Email</span>
+            <span className="text-ink-900 font-medium">{email}</span>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-on-surface-muted mb-6">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.05em] text-ink-400 mb-6">
           Categories
         </h2>
         <div className="flex flex-col gap-4">
-          <label className="text-on-surface font-medium">I&apos;m interested in:</label>
+          <label className="text-ink-900 font-medium">I&apos;m interested in:</label>
           <div className="flex flex-wrap gap-3">
             {CATEGORIES.map((category) => (
               <Chip
@@ -138,10 +138,10 @@ export const SubscriptionForm: FC<SubscriptionFormProps> = ({ email, initialData
       </div>
 
       {success && (
-        <p className="text-sm text-green-600 text-center">Settings saved!</p>
+        <p className="text-sm text-signal-high text-center">Settings saved!</p>
       )}
       {error && (
-        <p className="text-sm text-red-600 text-center">{error}</p>
+        <p className="text-sm text-danger text-center">{error}</p>
       )}
     </form>
   )

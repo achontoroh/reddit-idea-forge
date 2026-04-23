@@ -46,13 +46,13 @@ export const LoginForm: FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-on-surface mb-1">Sign in</h1>
-      <p className="text-sm text-on-surface-muted mb-6">
+      <h1 className="text-2xl font-bold text-ink-900 mb-1">Sign in</h1>
+      <p className="text-sm text-ink-400 mb-6">
         Enter your credentials to access your account
       </p>
 
       {formError && (
-        <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600" role="alert">
+        <p className="mb-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger" role="alert">
           {formError}
         </p>
       )}
@@ -80,7 +80,7 @@ export const LoginForm: FC = () => {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="text-on-surface-muted hover:text-on-surface cursor-pointer"
+              className="text-ink-400 hover:text-ink-900 cursor-pointer"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               tabIndex={-1}
             >
@@ -103,9 +103,9 @@ export const LoginForm: FC = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-on-surface-muted">
+      <p className="mt-4 text-center text-sm text-ink-400">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="font-medium text-primary hover:text-primary-hover">
+        <Link href="/register" className="font-medium text-accent hover:text-accent-hover">
           Create one
         </Link>
       </p>
