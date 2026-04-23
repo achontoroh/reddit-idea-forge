@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IdeaForge — Logo concepts</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif&family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap" rel="stylesheet" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #e8e5de; }
+  body { font-family: "Inter", system-ui, sans-serif; }
+  .board {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px;
+    background: #fff;
+    border-radius: 10px;
+  }
+  .board-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 14px;
+    margin-bottom: 32px;
+  }
+  .board-num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6b6b6b;
+  }
+  .board-name {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+  .board-sub {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px;
+    color: #6b6b6b;
+    letter-spacing: 0.04em;
+  }
+
+  .stage {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .stage-mark { display: flex; align-items: center; justify-content: center; }
+  .stage-notes {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .stage-notes h4 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 0 8px;
+    letter-spacing: -0.005em;
+  }
+  .stage-notes .label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .lockup-row {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 14px;
+    background: #f5f2ec;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .lockup-row.dark { background: #1a1a1a; }
+
+  .meta-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .meta-chips span {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    padding: 3px 7px;
+    background: #1a1a1a;
+    color: #fafafa;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .meta-chips span.alt { background: transparent; color: #1a1a1a; border: 1px solid #1a1a1a; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+(() => {
+const LogoDC = window.DesignCanvas;
+const LogoSec = window.DCSection;
+const LogoArt = window.DCArtboard;
+
+/* ═════════ Logo concepts ═════════ */
+
+/** Concept 1 — Anvil spark (literal forge metaphor, refined) */
+function ConceptAnvil({ size = 280 }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 200" aria-hidden="true">
+      <defs>
+        <linearGradient id="anvilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#2b2d3a"/>
+          <stop offset="1" stopColor="#0f1017"/>
+        </linearGradient>
+      </defs>
+      {/* anvil silhouette */}
+      <path d="M40 120 L40 108 L62 108 L62 96 Q62 88 72 88 L128 88 Q138 88 138 96 L138 108 L160 108 L160 120 L146 120 L146 138 Q146 148 136 148 L64 148 Q54 148 54 138 L54 120 Z" fill="url(#anvilGrad)"/>
+      {/* spark — 4-point star */}
+      <g transform="translate(100 58)">
+        <path d="M0 -32 L7 -7 L32 0 L7 7 L0 32 L-7 7 L-32 0 L-7 -7 Z" fill="#FF6B35"/>
+        <circle cx="0" cy="0" r="5" fill="#FFF4A3"/>
+      </g>
+      {/* arc */}
+      <path d="M70 64 Q100 40 130 64" stroke="#FF6B35" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.5"/>
+    </svg>
+  );
+}
+
+function ConceptAnvilWordmark({ color = "#0f1017", accent = "#FF6B35" }) {
+  return (
+    <div style={{display:'flex', alignItems:'center', gap:14}}>
+      <svg width="44" height="44" viewBox="0 0 200 200">
+        <path d="M40 120 L40 108 L62 108 L62 96 Q62 88 72 88 L128 88 Q138 88 138 96 L138 108 L160 108 L160 120 L146 120 L146 138 Q146 148 136 148 L64 148 Q54 148 54 138 L54 120 Z" fill={color}/>
+        <g transform="translate(100 58)">
+          <path d="M0 -32 L7 -7 L32 0 L7 7 L0 32 L-7 7 L-32 0 L-7 -7 Z" fill={accent}/>
+        </g>
+      </svg>
+      <span style={{fontFamily:"'Space Grotesk', sans-serif", fontWeight:700, fontSize:28, letterSpacing:'-0.02em', color}}>
+        IdeaForge
+      </span>
+    </div>
+  );
+}
+
+/** Concept 2 — Prism / refraction (idea = light split into useful spectrum) */
+function ConceptPrism({ size = 280 }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 200" aria-hidden="true">
+      {/* incoming ray */}
+      <line x1="10" y1="100" x2="74" y2="100" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"/>
+      {/* prism triangle */}
+      <path d="M75 60 L140 100 L75 140 Z" fill="#1a1a1a"/>
+      {/* refracted rays */}
+      <line x1="140" y1="100" x2="196" y2="72" stroke="#EF4444" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="140" y1="100" x2="196" y2="86" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="140" y1="100" x2="196" y2="100" stroke="#10B981" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="140" y1="100" x2="196" y2="114" stroke="#3B82F6" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="140" y1="100" x2="196" y2="128" stroke="#8B5CF6" strokeWidth="3" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function ConceptPrismWordmark() {
+  return (
+    <div style={{display:'flex', alignItems:'center', gap:14}}>
+      <svg width="42" height="42" viewBox="0 0 200 200">
+        <line x1="10" y1="100" x2="74" y2="100" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round"/>
+        <path d="M75 60 L140 100 L75 140 Z" fill="#1a1a1a"/>
+        <line x1="140" y1="100" x2="200" y2="76" stroke="#EF4444" strokeWidth="8" strokeLinecap="round"/>
+        <line x1="140" y1="100" x2="200" y2="100" stroke="#10B981" strokeWidth="8" strokeLinecap="round"/>
+        <line x1="140" y1="100" x2="200" y2="124" stroke="#3B82F6" strokeWidth="8" strokeLinecap="round"/>
+      </svg>
+      <span style={{fontFamily:"'Space Grotesk', sans-serif", fontWeight:600, fontSize:28, letterSpacing:'-0.02em', color:'#0f1017'}}>
+        ideaforge
+      </span>
+    </div>
+  );
+}
+
+/** Concept 3 — Signal (abstract: Reddit noise → clean signal) */
+function ConceptSignal({ size = 280 }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 200" aria-hidden="true">
+      {/* noisy dots on left */}
+      {[
+        [30,60],[50,80],[40,100],[55,120],[35,140],[25,85],[45,55],[60,110],[22,115],[18,70]
+      ].map(([x,y], i) => (
+        <circle key={i} cx={x} cy={y} r={2 + (i%3)} fill="#9ca3af"/>
+      ))}
+      {/* funnel arrow */}
+      <path d="M75 80 L130 100 L75 120" stroke="#1a1a1a" strokeWidth="4" fill="none" strokeLinejoin="round" strokeLinecap="round"/>
+      {/* clean signal bars on right (like sparkline) */}
+      <rect x="138" y="108" width="8" height="18" rx="2" fill="#3B82F6"/>
+      <rect x="150" y="94" width="8" height="32" rx="2" fill="#3B82F6"/>
+      <rect x="162" y="78" width="8" height="48" rx="2" fill="#10B981"/>
+      <rect x="174" y="62" width="8" height="64" rx="2" fill="#10B981"/>
+    </svg>
+  );
+}
+
+function ConceptSignalWordmark() {
+  return (
+    <div style={{display:'flex', alignItems:'center', gap:12}}>
+      <svg width="40" height="40" viewBox="0 0 200 200">
+        <path d="M60 80 L120 100 L60 120" stroke="#0f1017" strokeWidth="14" fill="none" strokeLinejoin="round" strokeLinecap="round"/>
+        <rect x="138" y="70" width="12" height="60" rx="3" fill="#10B981"/>
+      </svg>
+      <span style={{fontFamily:"'Inter', sans-serif", fontWeight:800, fontSize:30, letterSpacing:'-0.03em', color:'#0f1017'}}>
+        IdeaForge
+      </span>
+    </div>
+  );
+}
+
+/** Concept 4 — Wordmark-only · editorial */
+function ConceptWordmarkEditorial({ large = true }) {
+  return (
+    <div style={{
+      fontFamily: "'Fraunces', serif",
+      fontWeight: 700,
+      fontSize: large ? 88 : 36,
+      letterSpacing: '-0.04em',
+      color: '#0f1017',
+      lineHeight: 0.95,
+      display: 'flex',
+      alignItems: 'baseline',
+      gap: 0,
+    }}>
+      idea<span style={{fontStyle:'italic', fontFamily:"'Instrument Serif', serif", fontWeight:400, color:'#0f1017'}}>forge</span>
+      <span style={{
+        display: 'inline-block',
+        width: large ? 10 : 6,
+        height: large ? 10 : 6,
+        borderRadius: '50%',
+        background: '#FF6B35',
+        marginLeft: 4,
+        alignSelf: large ? 'center' : 'baseline',
+        transform: large ? 'translateY(26px)' : 'translateY(2px)',
+      }}/>
+    </div>
+  );
+}
+
+/** Concept 5 — Bracket / terminal (indie hacker, dev-first) */
+function ConceptBracket({ size = 280 }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 200" aria-hidden="true">
+      {/* Left bracket */}
+      <path d="M60 50 L40 50 L40 150 L60 150" stroke="#0f1017" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Right bracket */}
+      <path d="M140 50 L160 50 L160 150 L140 150" stroke="#0f1017" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* inner content: spark */}
+      <g transform="translate(100 100)">
+        <path d="M0 -28 L6 -6 L28 0 L6 6 L0 28 L-6 6 L-28 0 L-6 -6 Z" fill="#FF6B35"/>
+      </g>
+      {/* blinking cursor */}
+      <rect x="68" y="96" width="3" height="14" fill="#0f1017"/>
+    </svg>
+  );
+}
+
+function ConceptBracketWordmark() {
+  return (
+    <div style={{fontFamily:"'JetBrains Mono', monospace", fontSize:24, fontWeight:600, color:'#0f1017', display:'flex', alignItems:'center', gap:2}}>
+      <span style={{color:'#9ca3af'}}>[</span>
+      <span>ideaforge</span>
+      <span style={{display:'inline-block', width:8, height:20, background:'#FF6B35', marginLeft:4, marginRight:4, animation:'blink 1s step-start infinite'}}/>
+      <span style={{color:'#9ca3af'}}>]</span>
+      <style>{`@keyframes blink { 50% { opacity: 0 } }`}</style>
+    </div>
+  );
+}
+
+/** Concept 6 — Sparkline "idea curve" (data-first, minimalist) */
+function ConceptSparkline({ size = 280 }) {
+  const s = size;
+  return (
+    <svg width={s} height={s} viewBox="0 0 200 200" aria-hidden="true">
+      {/* baseline */}
+      <line x1="30" y1="140" x2="170" y2="140" stroke="#d4d4d8" strokeWidth="1.5"/>
+      {/* path — jagged rising line */}
+      <path
+        d="M30 130 L50 126 L65 120 L78 112 L90 98 L102 88 L118 68 L132 56 L150 42"
+        stroke="#0f1017"
+        strokeWidth="5"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* endpoint dot */}
+      <circle cx="150" cy="42" r="9" fill="#FF6B35"/>
+      <circle cx="150" cy="42" r="4" fill="#fff"/>
+    </svg>
+  );
+}
+
+function ConceptSparklineWordmark() {
+  return (
+    <div style={{display:'flex', alignItems:'center', gap:10}}>
+      <svg width="44" height="32" viewBox="0 0 120 60">
+        <path d="M5 50 L25 42 L45 30 L65 22 L90 8" stroke="#0f1017" strokeWidth="5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="90" cy="8" r="6" fill="#FF6B35"/>
+      </svg>
+      <span style={{fontFamily:"'Space Grotesk', sans-serif", fontWeight:500, fontSize:28, letterSpacing:'-0.02em', color:'#0f1017'}}>
+        ideaforge
+      </span>
+    </div>
+  );
+}
+
+/* ═════════ Concept board wrapper ═════════ */
+
+function ConceptBoard({ num, name, sub, meta, pros, cons, tone, Mark, Word, darkWord }) {
+  return (
+    <div className="board">
+      <div className="board-head">
+        <div>
+          <div className="board-num">Concept · {num}</div>
+          <div className="board-name">{name}</div>
+        </div>
+        <div className="board-sub">{sub}</div>
+      </div>
+      <div className="stage">
+        <div className="stage-mark">{Mark}</div>
+        <div className="stage-notes">
+          <h4>Idea</h4>
+          <div style={{color:'#555'}}>{tone}</div>
+
+          <span className="label">Wordmark lockup</span>
+          <div className="lockup-row">
+            {Word}
+          </div>
+          {darkWord && (
+            <div className="lockup-row dark" style={{marginTop:6}}>
+              {darkWord}
+            </div>
+          )}
+
+          <span className="label">Why</span>
+          <ul style={{margin:0, paddingLeft:16, color:'#2a7a4a'}}>
+            {pros.map((p,i) => <li key={i} style={{marginBottom:2}}>{p}</li>)}
+          </ul>
+
+          <span className="label">Watch out</span>
+          <ul style={{margin:0, paddingLeft:16, color:'#a84a1c'}}>
+            {cons.map((c,i) => <li key={i} style={{marginBottom:2}}>{c}</li>)}
+          </ul>
+
+          <div className="meta-chips">
+            {meta.map((m,i) => (
+              <span key={i} className={m.alt ? 'alt' : ''}>{m.t}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═════════ Canvas ═════════ */
+
+function App() {
+  return (
+    <LogoDC
+      title="IdeaForge — logo concepts"
+      subtitle="6 напрямків. Обери 1–2, розгорнемо в повну brand-систему."
+    >
+      <LogoSec id="forge" title="Forge metaphors" subtitle="Буквальна або натяк на кузню / викарбовування ідей">
+
+        <LogoArt id="c1" label="01 · Anvil + spark" width={760} height={500}>
+          <ConceptBoard
+            num="01"
+            name="Anvil + spark"
+            sub="literal · bold · founder-friendly"
+            tone="Наковальня + 4-променева іскра. Пряма метафора «викувати ідею». Темна, контрастна, впізнавана в favicon 16×16."
+            Mark={<ConceptAnvil size={280}/>}
+            Word={<ConceptAnvilWordmark color="#0f1017" accent="#FF6B35"/>}
+            darkWord={<ConceptAnvilWordmark color="#fafafa" accent="#FF8A5C"/>}
+            pros={[
+              "Читається одразу — 'forge' = кузня",
+              "Добре працює в малому розмірі",
+              "Accent колір як 'іскра' — природно"
+            ]}
+            cons={[
+              "Може виглядати 'олд-скул'",
+              "Багато SaaS використовують молот/ковадло",
+              "Важко виділитись від конкурентів"
+            ]}
+            meta={[
+              {t:'Serious', alt:true},
+              {t:'Literal', alt:true},
+              {t:'Founder-vibe'}
+            ]}
+          />
+        </LogoArt>
+
+        <LogoArt id="c5" label="05 · Bracket + spark" width={760} height={500}>
+          <ConceptBoard
+            num="05"
+            name="Bracket · terminal spark"
+            sub="indie hacker · dev-first · terminal"
+            tone="Квадратні дужки з іскрою-курсором всередині. Говорить 'for devs, from devs'. Монопрінт wordmark підсилює."
+            Mark={<ConceptBracket size={260}/>}
+            Word={<ConceptBracketWordmark/>}
+            pros={[
+              "Ідеально для DevTools-аудиторії (основна категорія)",
+              "Добре співіснує з Reddit-vibe",
+              "Блимаючий курсор — анімація 'free'"
+            ]}
+            cons={[
+              "Може оттолкнути non-dev юзерів (SaaS, Finance)",
+              "Занадто нішево для B2B"
+            ]}
+            meta={[
+              {t:'Indie hacker'},
+              {t:'Dev-first', alt:true},
+              {t:'Edgy', alt:true}
+            ]}
+          />
+        </LogoArt>
+
+      </LogoSec>
+
+      <LogoSec id="abstract" title="Abstract marks" subtitle="Концептуальні — не буквальна кузня">
+
+        <LogoArt id="c2" label="02 · Prism" width={760} height={500}>
+          <ConceptBoard
+            num="02"
+            name="Prism · refraction"
+            sub="idea = noise split into useful spectrum"
+            tone="Reddit-шум входить, призма розкладає на 5 кольорових 'категорій'. Каже: 'ми фільтруємо та класифікуємо'."
+            Mark={<ConceptPrism size={280}/>}
+            Word={<ConceptPrismWordmark/>}
+            pros={[
+              "Прямо метафора продукту: noise → categorized ideas",
+              "5 кольорів = 8 категорій натяк",
+              "Чистий геометричний mark"
+            ]}
+            cons={[
+              "Потребує пояснення",
+              "Кольоровий accent конфліктує з дефолтним брендом"
+            ]}
+            meta={[
+              {t:'Abstract'},
+              {t:'Conceptual', alt:true},
+              {t:'Tech-lean', alt:true}
+            ]}
+          />
+        </LogoArt>
+
+        <LogoArt id="c3" label="03 · Signal" width={760} height={500}>
+          <ConceptBoard
+            num="03"
+            name="Signal · noise-to-sparkline"
+            sub="data-first · analytical"
+            tone="Точковий шум зліва → стрілка-воронка → висхідні бари праворуч. Графічно описує pipeline продукту."
+            Mark={<ConceptSignal size={280}/>}
+            Word={<ConceptSignalWordmark/>}
+            pros={[
+              "Data-first posture — підсилює AI scoring proposition",
+              "Баром-stack легко анімувати в лендингу",
+              "Працює в mono"
+            ]}
+            cons={[
+              "Потребує пояснення у favicon",
+              "Може виглядати як analytics tool, не 'ideas' tool"
+            ]}
+            meta={[
+              {t:'Data', alt:true},
+              {t:'Analytical'},
+              {t:'Modern'}
+            ]}
+          />
+        </LogoArt>
+
+        <LogoArt id="c6" label="06 · Sparkline curve" width={760} height={500}>
+          <ConceptBoard
+            num="06"
+            name="Rising curve · dot"
+            sub="minimal · editorial · premium"
+            tone="Ламана висхідна лінія з акцентною крапкою в кінці. Метафора: ідея зростає, досягає піку. Максимально спокійний mark."
+            Mark={<ConceptSparkline size={280}/>}
+            Word={<ConceptSparklineWordmark/>}
+            pros={[
+              "Найбільш 'premium' / editorial з усіх",
+              "Чудово працює в малих розмірах",
+              "Універсально для будь-якої категорії",
+              "Легко анімується"
+            ]}
+            cons={[
+              "Не дуже унікально (багато fintech так виглядає)",
+              "Слабкий 'forge' звʼязок"
+            ]}
+            meta={[
+              {t:'Premium'},
+              {t:'Minimal', alt:true},
+              {t:'Editorial', alt:true}
+            ]}
+          />
+        </LogoArt>
+
+      </LogoSec>
+
+      <LogoSec id="wordmark" title="Wordmark-first" subtitle="Для тих, хто готовий інвестувати в тип">
+
+        <LogoArt id="c4" label="04 · Editorial wordmark" width={760} height={500}>
+          <ConceptBoard
+            num="04"
+            name="Editorial wordmark"
+            sub="serif + italic · mature · distinctive"
+            tone="Без icon-mark. Fraunces для 'idea' + Instrument Serif italic для 'forge' + акцентна крапка. Виглядає як видання The Atlantic, не як SaaS-template."
+            Mark={<ConceptWordmarkEditorial/>}
+            Word={<ConceptWordmarkEditorial large={false}/>}
+            pros={[
+              "Миттєво виглядає premium",
+              "Відрізняється від 99% SaaS-лого",
+              "Italic 'forge' — шепче про крафт"
+            ]}
+            cons={[
+              "Немає icon-mark → гірше для favicon / social avatar",
+              "Потребує pair-mark (напр. проста крапка)",
+              "Складніше для партнерських лого-gridів"
+            ]}
+            meta={[
+              {t:'Premium'},
+              {t:'Editorial'},
+              {t:'Distinctive', alt:true}
+            ]}
+          />
+        </LogoArt>
+
+      </LogoSec>
+    </LogoDC>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+})();
+</script>
+</body>
+</html>

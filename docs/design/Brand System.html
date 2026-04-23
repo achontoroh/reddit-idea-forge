@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IdeaForge — Brand System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #faf8f3;
+    --ink: #0f0f10;
+    --ink-2: #2a2a2c;
+    --ink-3: #555558;
+    --ink-4: #8b8b90;
+    --line: rgba(15,15,16,0.12);
+    --panel: #ffffff;
+    --accent: #FF6B35; /* changeable */
+  }
+  html,body { margin:0; padding:0; background: var(--bg); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+
+  /* ——— Page scaffold ——— */
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 64px 72px 120px; }
+
+  .tophead {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 56px;
+  }
+  .tophead .kicker { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-3); margin-bottom: 14px; }
+  .tophead h1 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 72px; letter-spacing: -0.03em; margin: 0; line-height: 0.95; }
+  .tophead h1 em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+  .tophead .meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); text-align: right; line-height: 1.7; letter-spacing: 0.04em; }
+
+  /* Section */
+  section.chunk { margin-bottom: 96px; }
+  .chunk-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .chunk-head h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; letter-spacing: -0.02em; margin: 0; }
+  .chunk-head .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-4); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ——— Wordmark renders ——— */
+  .wm {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .wm em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .wm .dot {
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--accent);
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  /* ——— Glyph (favicon mark) ——— */
+  .glyph {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+    position: relative;
+  }
+  .glyph .dot {
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ——— Stage tiles ——— */
+  .stage-hero {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 96px 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 340px;
+    position: relative;
+  }
+  .stage-hero::before {
+    content: attr(data-label);
+    position: absolute; top: 16px; left: 16px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-4);
+  }
+  .stage-hero.dark { background: #0f0f10; color: #fafafa; }
+  .stage-hero.dark .wm { color: #fafafa; }
+  .stage-hero.dark::before { color: rgba(255,255,255,0.4); }
+  .stage-hero.dark .glyph { color: #fafafa; }
+
+  .stage-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .stage-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  .mini-tile {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 32px 20px;
+    text-align: center;
+    display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center;
+    min-height: 180px;
+    position: relative;
+  }
+  .mini-tile .mt-cap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .mini-tile.dark { background: #0f0f10; color: #fafafa; }
+  .mini-tile.dark .mt-cap { color: rgba(255,255,255,0.4); }
+  .mini-tile.dark .wm, .mini-tile.dark .glyph { color: #fafafa; }
+
+  /* ——— Color picker bar ——— */
+  .picker {
+    display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap;
+    padding: 14px;
+    background: #f0ebe0;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .picker-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    align-self: center;
+    padding: 0 8px 0 4px;
+  }
+  .swatch-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px 8px 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-2);
+    transition: border 0.15s, transform 0.15s;
+  }
+  .swatch-btn:hover { transform: translateY(-1px); }
+  .swatch-btn[data-active="true"] { border: 1px solid var(--ink); background: var(--ink); color: #fff; }
+  .swatch-btn .sw-chip {
+    width: 22px; height: 22px; border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+  }
+
+  /* ——— Palette grid ——— */
+  .palette-row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; background: var(--ink); border: 1px solid var(--ink); border-radius: 4px; overflow: hidden; }
+  .palette-row .swatch { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.02em; }
+  .palette-row .swatch .nm { font-weight: 600; }
+  .palette-row .swatch .hex { opacity: 0.7; }
+
+  /* ——— Type scale ——— */
+  .type-row { display: grid; grid-template-columns: 110px 1fr 180px; gap: 28px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .type-row .role { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); letter-spacing: 0.12em; text-transform: uppercase; }
+  .type-row .spec { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-3); text-align: right; letter-spacing: 0.04em; }
+
+  /* ——— Usage / dont rules ——— */
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rule-tile { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 28px 24px; display: flex; flex-direction: column; gap: 14px; min-height: 220px; position: relative; }
+  .rule-tile .rule-head { display: flex; justify-content: space-between; align-items: center; }
+  .rule-tile .rule-lbl { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .rule-tile .rule-body { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .rule-tile .rule-desc { font-size: 12px; color: var(--ink-3); line-height: 1.5; font-family: 'Inter', sans-serif; }
+  .rule-tile.do .rule-lbl { color: #2a7a4a; }
+  .rule-tile.dont .rule-lbl { color: #a84a1c; }
+  .rule-tile.do::after, .rule-tile.dont::after {
+    content: ''; position: absolute; top: 18px; right: 20px;
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .rule-tile.do::after { background: #2a7a4a; }
+  .rule-tile.dont::after { background: #a84a1c; }
+
+  /* ——— Voice ——— */
+  .voice-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .voice-col h4 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.01em; margin: 0 0 14px; }
+  .voice-col .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .voice-col .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 8px; background: var(--ink); color: #fff; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .voice-col .tag.neg { background: #fff; color: var(--ink); border: 1px solid var(--ink); text-decoration: line-through; opacity: 0.5; }
+  .voice-col .ex {
+    font-family: 'Fraunces', serif; font-size: 20px; line-height: 1.35; font-weight: 500; color: var(--ink); letter-spacing: -0.01em;
+    padding: 16px 0; border-top: 1px solid var(--line);
+    margin-top: 8px;
+  }
+  .voice-col .ex em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+
+  /* ——— Buttons preview ——— */
+  .button-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 3px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13.5px;
+    letter-spacing: -0.005em;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.primary { background: var(--ink); color: #fff; }
+  .btn.accent { background: var(--accent); color: #fff; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+  /* Card preview */
+  .card-demo {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    max-width: 440px;
+  }
+  .card-demo .catline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-demo .catline::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  }
+  .card-demo h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.015em; margin: 0; line-height: 1.2; }
+  .card-demo p { margin: 0; color: var(--ink-3); line-height: 1.5; font-size: 13.5px; }
+  .card-demo .foot { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-4); letter-spacing: 0.04em; padding-top: 10px; border-top: 1px solid var(--line); }
+  .card-demo .score { font-family: 'Fraunces', serif; font-weight: 700; font-size: 28px; color: var(--ink); letter-spacing: -0.02em; }
+  .card-demo .score em { font-family: 'Instrument Serif', serif; font-size: 14px; font-style: italic; color: var(--ink-4); font-weight: 400; margin-left: 2px; }
+
+  .dot-select-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 20px 24px;
+    background: #f0ebe0;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* Showcase tile grid */
+  .accent-showcase {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .ac-cell {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 24px 18px;
+    display: flex; flex-direction: column; gap: 14px; align-items: flex-start;
+    cursor: pointer;
+    transition: transform 0.15s, border 0.15s;
+    min-height: 260px;
+  }
+  .ac-cell:hover { transform: translateY(-2px); }
+  .ac-cell[data-active="true"] { border: 1.5px solid var(--ink); }
+  .ac-cell .ac-hex { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .ac-cell .ac-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; letter-spacing: -0.01em; }
+  .ac-cell .ac-chip { width: 100%; aspect-ratio: 2.6; border-radius: 3px; }
+  .ac-cell .ac-wm { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; letter-spacing: -0.03em; color: var(--ink); display: flex; align-items: baseline; line-height: 1; }
+  .ac-cell .ac-wm em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+  .ac-cell .ac-wm .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; align-self: center; margin-left: 3px; }
+  .ac-cell .ac-notes { font-size: 11.5px; color: var(--ink-3); line-height: 1.45; }
+
+  /* Download / handoff links list */
+  .next-steps {
+    margin-top: 48px;
+    padding: 28px 32px;
+    background: #f0ebe0;
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+  }
+  .next-steps h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 26px; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .next-steps p { margin: 0; color: var(--ink-3); font-size: 13px; line-height: 1.5; }
+  .next-steps .cta { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 14px 22px; background: var(--ink); color: #fff; border-radius: 3px; white-space: nowrap; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═════════ Header ═════════ -->
+  <div class="tophead">
+    <div>
+      <div class="kicker">Brand system · v0.1 · internal review</div>
+      <h1>idea<em>forge</em>.</h1>
+    </div>
+    <div class="meta">
+      Direction · Editorial wordmark<br/>
+      Picked from · 6 logo concepts<br/>
+      Status · open for feedback
+    </div>
+  </div>
+
+  <!-- ═════════ 01 · Accent picker ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Accent color · choose one</h2>
+      <div class="sec-num">01 / 07</div>
+    </div>
+
+    <p style="font-size: 13.5px; color: var(--ink-3); margin: 0 0 24px; max-width: 780px; line-height: 1.6;">
+      Акцент — єдиний кольоровий елемент у системі (крапка в wordmark, category-dot у картках ідей, CTA-highlights).
+      Решта системи чорна/крема. Клікай, щоб побачити кожен варіант живим у wordmark і компонентах нижче.
+    </p>
+
+    <div class="accent-showcase">
+      <div class="ac-cell" data-ac="ember" data-active="true" style="--local: #FF6B35">
+        <div class="ac-chip" style="background:#FF6B35"></div>
+        <div>
+          <div class="ac-name">Ember</div>
+          <div class="ac-hex">#FF6B35</div>
+        </div>
+        <div class="ac-wm">idea<em>f</em><span class="dot" style="background:#FF6B35"></span></div>
+        <div class="ac-notes">Поточний. Енергійний, forge-friendly, знайомий юзерам. Найпростіший шлях.</div>
+      </div>
+
+      <div class="ac-cell" data-ac="amber" style="--local: #D97757">
+        <div class="ac-chip" style="background:#D97757"></div>
+        <div>
+          <div class="ac-name">Burnt Amber</div>
+          <div class="ac-hex">#D97757</div>
+        </div>
+        <div class="ac-wm">idea<em>f</em><span class="dot" style="background:#D97757"></span></div>
+        <div class="ac-notes">Приглушений, premium-editorial. Менш «SaaS», більше «видання».</div>
+      </div>
+
+      <div class="ac-cell" data-ac="signal" style="--local: #C73E1D">
+        <div class="ac-chip" style="background:#C73E1D"></div>
+        <div>
+          <div class="ac-name">Signal Red</div>
+          <div class="ac-hex">#C73E1D</div>
+        </div>
+        <div class="ac-wm">idea<em>f</em><span class="dot" style="background:#C73E1D"></span></div>
+        <div class="ac-notes">Серйозний, політично-editorial. Вагомий, дорослий — як NYT.</div>
+      </div>
+
+      <div class="ac-cell" data-ac="lime" style="--local: #C4F24B">
+        <div class="ac-chip" style="background:#C4F24B"></div>
+        <div>
+          <div class="ac-name">Kinetic Lime</div>
+          <div class="ac-hex">#C4F24B</div>
+        </div>
+        <div class="ac-wm">idea<em>f</em><span class="dot" style="background:#C4F24B"></span></div>
+        <div class="ac-notes">Bold, edgy, максимальний розрив з SaaS-pack. Вимагає відваги.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 02 · Wordmark ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Wordmark</h2>
+      <div class="sec-num">02 / 07</div>
+    </div>
+
+    <div class="stage-hero" data-label="PRIMARY · LIGHT">
+      <span class="wm" style="font-size: 160px;">
+        idea<em>forge</em><span class="dot" style="width:16px; height:16px; margin-left:6px; transform: translateY(52px);"></span>
+      </span>
+    </div>
+
+    <div style="height: 18px"></div>
+
+    <div class="stage-hero dark" data-label="PRIMARY · DARK">
+      <span class="wm" style="font-size: 160px;">
+        idea<em>forge</em><span class="dot" style="width:16px; height:16px; margin-left:6px; transform: translateY(52px);"></span>
+      </span>
+    </div>
+
+    <div style="height: 28px"></div>
+
+    <div class="stage-grid-3">
+      <div class="mini-tile">
+        <div class="mt-cap">Compact · 40px</div>
+        <span class="wm" style="font-size: 40px;">
+          idea<em>forge</em><span class="dot" style="width:6px; height:6px; margin-left:3px; transform: translateY(14px);"></span>
+        </span>
+      </div>
+      <div class="mini-tile">
+        <div class="mt-cap">Nav · 22px</div>
+        <span class="wm" style="font-size: 22px;">
+          idea<em>forge</em><span class="dot" style="width:4px; height:4px; margin-left:2px; transform: translateY(8px);"></span>
+        </span>
+      </div>
+      <div class="mini-tile dark">
+        <div class="mt-cap">Footer · 18px</div>
+        <span class="wm" style="font-size: 18px;">
+          idea<em>forge</em><span class="dot" style="width:3px; height:3px; margin-left:2px; transform: translateY(6px);"></span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 03 · Glyph (icon fallback) ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Glyph · italic <em style="font-family:'Instrument Serif'; font-style:italic; font-weight:400">f</em> with dot</h2>
+      <div class="sec-num">03 / 07</div>
+    </div>
+
+    <p style="font-size: 13.5px; color: var(--ink-3); margin: 0 0 28px; max-width: 780px; line-height: 1.6;">
+      Коли wordmark не влазить (favicon, app icon, social avatar, 16×16) — використовуємо italic <em>f</em> з акцентною крапкою.
+      Один символ. Живе в квадратному контейнері з радіусом 20%.
+    </p>
+
+    <div class="stage-grid-3">
+      <!-- Large tile: ink bg, cream f, accent dot -->
+      <div class="mini-tile dark" style="min-height: 260px;">
+        <div class="mt-cap">App icon · 1024px</div>
+        <span class="glyph" style="font-size: 180px;">
+          f<span class="dot" style="width:14px; height:14px; margin-left:4px; transform: translateY(-42px);"></span>
+        </span>
+      </div>
+      <!-- Medium: cream bg, ink f -->
+      <div class="mini-tile" style="min-height: 260px;">
+        <div class="mt-cap">Favicon · 128px</div>
+        <span class="glyph" style="font-size: 140px;">
+          f<span class="dot" style="width:12px; height:12px; margin-left:3px; transform: translateY(-32px);"></span>
+        </span>
+      </div>
+      <!-- Small grid: multiple sizes -->
+      <div class="mini-tile" style="min-height: 260px; gap: 20px; flex-direction: row; justify-content: center;">
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+          <div style="width: 64px; height: 64px; background: #0f0f10; color: #fafafa; border-radius: 13px; display: flex; align-items: center; justify-content: center;">
+            <span class="glyph" style="font-size: 48px; color: #fafafa;">
+              f<span class="dot" style="width:5px; height:5px; margin-left:1px; transform: translateY(-12px);"></span>
+            </span>
+          </div>
+          <div class="mt-cap" style="font-size: 9px;">64</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+          <div style="width: 32px; height: 32px; background: #0f0f10; color: #fafafa; border-radius: 7px; display: flex; align-items: center; justify-content: center;">
+            <span class="glyph" style="font-size: 24px; color: #fafafa;">
+              f<span class="dot" style="width:3px; height:3px; margin-left:1px; transform: translateY(-6px);"></span>
+            </span>
+          </div>
+          <div class="mt-cap" style="font-size: 9px;">32</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+          <div style="width: 16px; height: 16px; background: #0f0f10; color: #fafafa; border-radius: 3px; display: flex; align-items: center; justify-content: center;">
+            <span class="glyph" style="font-size: 13px; color: #fafafa; line-height: 1;">
+              f<span class="dot" style="width:2px; height:2px; margin-left:0px; transform: translateY(-3px);"></span>
+            </span>
+          </div>
+          <div class="mt-cap" style="font-size: 9px;">16</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 04 · Palette ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Palette</h2>
+      <div class="sec-num">04 / 07</div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 8px;">Neutrals · ink scale</div>
+      <div class="palette-row">
+        <div class="swatch" style="background:#0f0f10; color:#fff;"><span class="nm">ink-950</span><span class="hex">0f0f10</span></div>
+        <div class="swatch" style="background:#1a1a1c; color:#fff;"><span class="nm">ink-900</span><span class="hex">1a1a1c</span></div>
+        <div class="swatch" style="background:#2a2a2c; color:#fff;"><span class="nm">ink-800</span><span class="hex">2a2a2c</span></div>
+        <div class="swatch" style="background:#3d3d40; color:#fff;"><span class="nm">ink-700</span><span class="hex">3d3d40</span></div>
+        <div class="swatch" style="background:#555558; color:#fff;"><span class="nm">ink-600</span><span class="hex">555558</span></div>
+        <div class="swatch" style="background:#71717a; color:#fff;"><span class="nm">ink-500</span><span class="hex">71717a</span></div>
+        <div class="swatch" style="background:#9ca3af; color:#fff;"><span class="nm">ink-400</span><span class="hex">9ca3af</span></div>
+        <div class="swatch" style="background:#c7c8cc; color:#000;"><span class="nm">ink-300</span><span class="hex">c7c8cc</span></div>
+        <div class="swatch" style="background:#dcdce0; color:#000;"><span class="nm">ink-200</span><span class="hex">dcdce0</span></div>
+        <div class="swatch" style="background:#e8e6e0; color:#000;"><span class="nm">paper-3</span><span class="hex">e8e6e0</span></div>
+        <div class="swatch" style="background:#f3efe7; color:#000;"><span class="nm">paper-2</span><span class="hex">f3efe7</span></div>
+        <div class="swatch" style="background:#faf8f3; color:#000;"><span class="nm">paper-1</span><span class="hex">faf8f3</span></div>
+      </div>
+    </div>
+
+    <div class="stage-grid-2">
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 8px;">Accent · active</div>
+        <div class="palette-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="swatch" id="acc-ramp-1" style="background: var(--accent); color: #fff;"><span class="nm">accent-500</span><span class="hex" id="acc-hex-500">—</span></div>
+          <div class="swatch" id="acc-ramp-2" style="background: var(--accent); color: #fff; opacity: 0.85;"><span class="nm">accent-400</span><span class="hex">hover</span></div>
+          <div class="swatch" id="acc-ramp-3" style="background: var(--accent); color: #fff; opacity: 0.15;"><span class="nm" style="color:var(--ink)">accent-100</span><span class="hex" style="color:var(--ink-3)">bg</span></div>
+          <div class="swatch" id="acc-ramp-4" style="background: var(--accent); color: #fff; filter: brightness(0.7);"><span class="nm">accent-700</span><span class="hex">pressed</span></div>
+          <div class="swatch" id="acc-ramp-5" style="background: var(--accent); color: #fff; filter: brightness(0.5);"><span class="nm">accent-900</span><span class="hex">text</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 8px;">Category · 16 stable hues (extensible)</div>
+        <div class="palette-row" style="grid-template-columns: repeat(8, 1fr); grid-auto-rows: 1fr;">
+          <div class="swatch" style="background:#E8998D; color:#2a1a15;"><span class="nm">saas</span><span class="hex">E8998D</span></div>
+          <div class="swatch" style="background:#E8C994; color:#2a1f0a;"><span class="nm">devt</span><span class="hex">E8C994</span></div>
+          <div class="swatch" style="background:#B8D9A8; color:#1a2a10;"><span class="nm">fin</span><span class="hex">B8D9A8</span></div>
+          <div class="swatch" style="background:#98C9D9; color:#0a2028;"><span class="nm">health</span><span class="hex">98C9D9</span></div>
+          <div class="swatch" style="background:#B8B8E8; color:#151525;"><span class="nm">edu</span><span class="hex">B8B8E8</span></div>
+          <div class="swatch" style="background:#D9A8C9; color:#251020;"><span class="nm">ecomm</span><span class="hex">D9A8C9</span></div>
+          <div class="swatch" style="background:#D4D4B8; color:#202010;"><span class="nm">mkting</span><span class="hex">D4D4B8</span></div>
+          <div class="swatch" style="background:#A8D4C9; color:#102520;"><span class="nm">other</span><span class="hex">A8D4C9</span></div>
+          <div class="swatch" style="background:#F0B89C; color:#2a1508;"><span class="nm">prod</span><span class="hex">F0B89C</span></div>
+          <div class="swatch" style="background:#C9B89C; color:#251a0a;"><span class="nm">ops</span><span class="hex">C9B89C</span></div>
+          <div class="swatch" style="background:#A8C4E8; color:#0a1828;"><span class="nm">ai</span><span class="hex">A8C4E8</span></div>
+          <div class="swatch" style="background:#C8A8D9; color:#200f28;"><span class="nm">creator</span><span class="hex">C8A8D9</span></div>
+          <div class="swatch" style="background:#E8D4A8; color:#281f08;"><span class="nm">legal</span><span class="hex">E8D4A8</span></div>
+          <div class="swatch" style="background:#A8E8C4; color:#08281a;"><span class="nm">climate</span><span class="hex">A8E8C4</span></div>
+          <div class="swatch" style="background:#E8A8B8; color:#281018;"><span class="nm">social</span><span class="hex">E8A8B8</span></div>
+          <div class="swatch" style="background:#B8C8A8; color:#151f08;"><span class="nm">reserve</span><span class="hex">B8C8A8</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 05 · Typography ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Typography</h2>
+      <div class="sec-num">05 / 07</div>
+    </div>
+
+    <p style="font-size: 13.5px; color: var(--ink-3); margin: 0 0 8px; max-width: 780px; line-height: 1.6;">
+      Трійця: <strong style="color:var(--ink)">Fraunces</strong> для display/editorial titles,
+      <strong style="color:var(--ink)">Instrument Serif italic</strong> для emphasis / inline accents,
+      <strong style="color:var(--ink)">Inter</strong> для UI & body,
+      <strong style="color:var(--ink)">JetBrains Mono</strong> для metadata, captions, code.
+    </p>
+
+    <div class="type-row">
+      <div class="role">Display / H1</div>
+      <div style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 64px; letter-spacing: -0.03em; line-height: 1;">
+        Ideas that earn <em style="font-family:'Instrument Serif'; font-style:italic; font-weight:400;">your time.</em>
+      </div>
+      <div class="spec">Fraunces · 700 · 64/64 · -3%</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Section / H2</div>
+      <div style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; letter-spacing: -0.02em;">
+        Today's best ideas
+      </div>
+      <div class="spec">Fraunces · 500 · 36/42 · -2%</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Card / H3</div>
+      <div style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 22px; letter-spacing: -0.015em;">
+        AI-native Postgres branching for feature environments
+      </div>
+      <div class="spec">Fraunces · 500 · 22/28 · -1.5%</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Editorial pull</div>
+      <div style="font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; font-size: 28px; letter-spacing: -0.01em; color: var(--ink-2);">
+        "The score isn't a grade — it's a bet."
+      </div>
+      <div class="spec">Instrument Serif · italic · 28/36</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Body</div>
+      <div style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 15px; line-height: 1.55; max-width: 600px;">
+        Кожна ідея має score, обґрунтування з трьох факторів, і виправдання чому саме зараз. Ми не показуємо трендінг — ми показуємо те, що годиться на шип.
+      </div>
+      <div class="spec">Inter · 400 · 15/24</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Caption</div>
+      <div style="font-family: 'Inter', sans-serif; font-weight: 500; font-size: 12px; color: var(--ink-3);">
+        From 3 Reddit discussions · 240 signals · Updated 12 min ago
+      </div>
+      <div class="spec">Inter · 500 · 12/18</div>
+    </div>
+    <div class="type-row">
+      <div class="role">Meta / code</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3);">
+        CATEGORY · DEVTOOLS · SCORE 8.4/10
+      </div>
+      <div class="spec">JetBrains Mono · 500 · 11 · 10%</div>
+    </div>
+  </section>
+
+  <!-- ═════════ 06 · Components preview ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Components · live accent preview</h2>
+      <div class="sec-num">06 / 07</div>
+    </div>
+
+    <div class="stage-grid-2">
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="button-row">
+          <button class="btn primary">Primary action</button>
+          <button class="btn accent">Accent CTA</button>
+          <button class="btn ghost">Ghost</button>
+        </div>
+
+        <div class="card-demo">
+          <div class="catline">DevTools · Score 8.4</div>
+          <h3>AI-native Postgres branching for feature environments</h3>
+          <p>З 24 Reddit-гілок за тиждень — стабільна скарга на довге preview-environment setup. Видно сильний pull.</p>
+          <div class="foot">
+            <span>r/programming · +3 more</span>
+            <span class="score">8.4<em>/10</em></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mini-tile" style="flex-direction: column; align-items: flex-start; padding: 28px; min-height: 280px; justify-content: flex-start;">
+        <div class="mt-cap" style="position: static; align-self: flex-start;">Accent in context · inline dots, category meta</div>
+        <div style="margin-top: 22px; display: flex; flex-direction: column; gap: 16px; width: 100%;">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;">
+            <span style="width:8px; height:8px; background: var(--accent); border-radius:50%;"></span>
+            <span>Live · 12 new ideas</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px; font-family: 'Fraunces', serif;">
+            <span style="font-size: 56px; font-weight: 700; letter-spacing: -0.03em;">8.4</span>
+            <span style="font-family: 'Instrument Serif', serif; font-style: italic; font-size: 22px; color: var(--ink-4);">/10</span>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 8px; background: var(--ink); color: #fff; border-radius: 2px; letter-spacing: 0.04em;">high pull</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 8px; background: transparent; border: 1px solid var(--ink); border-radius: 2px; letter-spacing: 0.04em;">solo-doable</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 8px; background: var(--accent); color: #fff; border-radius: 2px; letter-spacing: 0.04em;">new</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ 07 · Voice ═════════ -->
+  <section class="chunk">
+    <div class="chunk-head">
+      <h2>Voice &amp; tone</h2>
+      <div class="sec-num">07 / 07</div>
+    </div>
+
+    <div class="voice-cols">
+      <div class="voice-col">
+        <h4>We sound like</h4>
+        <div class="tag-row">
+          <span class="tag">Editorial</span>
+          <span class="tag">Blunt</span>
+          <span class="tag">Specific</span>
+          <span class="tag">Dry-witty</span>
+        </div>
+        <div class="ex">
+          "240 devs are hitting the same wall. <em>Here's what they'd pay to fix.</em>"
+        </div>
+        <div class="ex">
+          "A score isn't approval. It's <em>our bet</em> on whether this is worth a weekend."
+        </div>
+      </div>
+
+      <div class="voice-col">
+        <h4>We don't sound like</h4>
+        <div class="tag-row">
+          <span class="tag neg">Hyped</span>
+          <span class="tag neg">Generic SaaS</span>
+          <span class="tag neg">Emoji-heavy</span>
+          <span class="tag neg">Buzzwordy</span>
+        </div>
+        <div class="ex" style="color: var(--ink-4); text-decoration: line-through; text-decoration-thickness: 1px;">
+          "🚀 Unlock AI-powered insights and supercharge your startup journey!"
+        </div>
+        <div class="ex" style="color: var(--ink-4); text-decoration: line-through; text-decoration-thickness: 1px;">
+          "Discover trending opportunities in today's hottest markets."
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ Next ═════════ -->
+  <div class="next-steps">
+    <div>
+      <h3>Обери акцент → перейдемо до редизайну сайту</h3>
+      <p>Коли обереш один з 4 кольорів вище (клік), зафіксую його в системі. Далі — 2 варіанти redesign для landing + dashboard + idea detail, потім handoff-пакет в docs/design/.</p>
+    </div>
+    <div class="cta">Step 3 · Site redesign →</div>
+  </div>
+
+</div>
+
+<script>
+  // Accent picker
+  const picks = {
+    ember:  { hex: '#FF6B35', name: 'Ember' },
+    amber:  { hex: '#D97757', name: 'Burnt Amber' },
+    signal: { hex: '#C73E1D', name: 'Signal Red' },
+    lime:   { hex: '#C4F24B', name: 'Kinetic Lime' },
+  };
+  const cells = document.querySelectorAll('.ac-cell');
+  const hex500 = document.getElementById('acc-hex-500');
+
+  function setAccent(key) {
+    const p = picks[key]; if (!p) return;
+    document.documentElement.style.setProperty('--accent', p.hex);
+    if (hex500) hex500.textContent = p.hex.slice(1).toLowerCase();
+    cells.forEach(c => c.setAttribute('data-active', c.dataset.ac === key ? 'true' : 'false'));
+  }
+  cells.forEach(c => c.addEventListener('click', () => setAccent(c.dataset.ac)));
+  setAccent('amber'); // locked in: Burnt Amber
+</script>
+
+</body>
+</html>
