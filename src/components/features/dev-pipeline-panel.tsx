@@ -152,7 +152,7 @@ export const DevPipelinePanel: FC = () => {
       {/* Actions */}
       <div className="flex gap-2 px-4 py-3">
         <Button
-          variant="primary"
+          intent="primary"
           size="sm"
           onClick={runGenerate}
           loading={generating}
@@ -161,7 +161,7 @@ export const DevPipelinePanel: FC = () => {
           Fetch & Generate
         </Button>
         <Button
-          variant="secondary"
+          intent="secondary"
           size="sm"
           onClick={runCleanup}
           loading={cleaning}
@@ -170,7 +170,7 @@ export const DevPipelinePanel: FC = () => {
           Cleanup
         </Button>
         <Button
-          variant="secondary"
+          intent="secondary"
           size="sm"
           onClick={runReset}
           loading={resetting}

@@ -106,7 +106,7 @@ export default function OnboardingPage() {
 
       {/* Submit */}
       <Button
-        size="lg"
+        size="md"
         disabled={!canSubmit}
         loading={loading}
         onClick={handleSubmit}

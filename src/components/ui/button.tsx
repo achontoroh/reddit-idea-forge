@@ -1,40 +1,52 @@
 'use client'
 
-import { type FC, type ButtonHTMLAttributes } from 'react'
+import { type FC, type ButtonHTMLAttributes, type ReactNode, useEffect } from 'react'
 import { Spinner } from './spinner'
 
-interface ButtonProps extends Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick'> {
-  children: React.ReactNode
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
+type ButtonIntent = 'primary' | 'secondary' | 'ghost' | 'danger'
+type ButtonSize = 'sm' | 'md'
+
+interface ButtonProps
+  extends Pick<ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onClick' | 'aria-label'> {
+  children: ReactNode
+  intent?: ButtonIntent
+  size?: ButtonSize
+  trailingIcon?: boolean
+  accent?: boolean
   disabled?: boolean
   loading?: boolean
   className?: string
 }
 
-const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary: 'bg-ink-900 text-ink-paper hover:bg-ink-800 active:bg-ink-700 focus-visible:ring-ink-900',
-  secondary: 'bg-ink-paper-3 text-ink-900 hover:bg-ink-paper-2 focus-visible:ring-ink-400',
-  ghost: 'text-ink-900 hover:bg-ink-paper-2 focus-visible:ring-ink-400',
-  danger: 'bg-danger text-ink-paper hover:bg-danger/90 focus-visible:ring-danger',
-}
-
-const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
-}
+let accentMountedCount = 0
 
 export const Button: FC<ButtonProps> = ({
   children,
-  variant = 'primary',
+  intent = 'primary',
   size = 'md',
+  trailingIcon = false,
+  accent = false,
   disabled = false,
   loading = false,
   onClick,
   type = 'button',
-  className = '',
+  className,
+  'aria-label': ariaLabel,
 }) => {
+  useEffect(() => {
+    if (!accent) return
+    accentMountedCount += 1
+    if (process.env.NODE_ENV !== 'production' && accentMountedCount > 1) {
+      // Single-accent rule: only one accent button per viewport (see docs/design/components.md §Button).
+      console.warn(
+        `[ideaforge] ${accentMountedCount} accent buttons mounted simultaneously — only one is allowed per viewport.`,
+      )
+    }
+    return () => {
+      accentMountedCount -= 1
+    }
+  }, [accent])
+
   const isDisabled = disabled || loading
 
   return (
@@ -42,18 +54,17 @@ export const Button: FC<ButtonProps> = ({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
-      className={`
-        inline-flex items-center justify-center gap-2 rounded-md font-semibold font-sans cursor-pointer
-        transition-colors duration-150
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-        disabled:cursor-not-allowed disabled:opacity-50
-        ${variantClasses[variant]}
-        ${sizeClasses[size]}
-        ${className}
-      `}
+      aria-label={ariaLabel}
+      data-intent={intent}
+      data-size={size}
+      data-accent={accent ? 'true' : undefined}
+      className={className ? `btn ${className}` : 'btn'}
     >
       {loading && <Spinner size="sm" />}
-      {children}
+      <span className="btn-label">
+        {children}
+        {trailingIcon && <span aria-hidden="true">{' →'}</span>}
+      </span>
     </button>
   )
 }

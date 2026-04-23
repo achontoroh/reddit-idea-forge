@@ -20,7 +20,7 @@ export const DashboardNavActions: FC<DashboardNavActionsProps> = ({ email }) => 
         </span>
       )}
       <Link href="/dashboard/settings">
-        <Button variant="ghost" size="sm">
+        <Button intent="ghost" size="sm">
           Settings
         </Button>
       </Link>

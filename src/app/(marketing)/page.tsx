@@ -36,7 +36,7 @@ function AuthCta() {
   return (
     <div className="flex items-center justify-center gap-4">
       <Link href="/register">
-        <Button size="lg" className="rounded-full px-8">
+        <Button size="md" className="rounded-full px-8">
           Sign up
         </Button>
       </Link>
@@ -155,10 +155,10 @@ export default function LandingPage() {
             <div className="flex items-center justify-between pt-2 border-t border-ink-200/50">
               <span className="text-xs text-ink-400">r/webdev · 342 upvotes</span>
               <div className="flex gap-2">
-                <Button variant="ghost" size="sm" disabled>
+                <Button intent="ghost" size="sm" disabled>
                   ↑ Upvote
                 </Button>
-                <Button variant="ghost" size="sm" disabled>
+                <Button intent="ghost" size="sm" disabled>
                   ♡ Save
                 </Button>
               </div>
