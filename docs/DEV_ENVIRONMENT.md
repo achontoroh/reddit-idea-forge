@@ -124,15 +124,15 @@ This way, every Vercel preview deployment (from PRs) automatically uses the dev 
 ## Branching Strategy
 
 ```
-feature/IF-XX-title  →  commit (IF-YY), commit (IF-ZZ), ...
+feature/<epic-NN>-title  →  commit Implements/Fixes/Refs #NN, ...
                               ↓
                          PR → develop  →  Vercel Preview (dev Supabase)
                                               ↓
                                          PR → main  →  Vercel Production (prod Supabase)
 ```
 
-1. **Epic branch** (`feature/IF-XX-feature-title`) — created per epic, contains commits for all related tickets (stories, tasks)
-2. **Commits** — each commit references its Linear ticket: `[IF-YY] Ticket title — description`
+1. **Epic branch** (`feature/<epic-NN>-<slug>`) — created per epic, contains commits for all related sub-issues
+2. **Commits** — each commit links to its GitHub issue via magic words: `Implements #NN`, `Fixes #NN`, `Refs #NN`
 3. **PR to `develop`** — feature branch merges into `develop` for validation on Vercel Preview with dev Supabase
 4. **PR to `main`** — after validation on develop, a PR from `develop` to `main` deploys to production
 

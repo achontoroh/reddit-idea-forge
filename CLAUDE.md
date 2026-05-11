@@ -1,7 +1,22 @@
 # CLAUDE.md
 
+> ## ⚠️ ACTION REQUIRED — NEXT SESSION
+>
+> This file needs an end-to-end review and rewrite **before any other work in the next session**.
+>
+> Linear was removed from the project (May 2026) and the codebase migrated to GitHub Issues. Many sections below still describe Linear-era workflow, the `IF-XX` ticket prefix, Linear MCP usage, and `/linear-*` skills. The targeted clean-up pass on May 11 2026 caught the obvious mentions; a careful section-by-section audit is still needed.
+>
+> Audit scope:
+> - Every section of this file — confirm it describes the current GitHub-Issues workflow
+> - References to `IF-XX`, "Linear", "Linear MCP", "Linear ticket"
+> - Any `/linear-*` skill that no longer makes sense without Linear
+> - Magic-word commit conventions (now `Implements #NN` / `Fixes #NN` / `Refs #NN`)
+> - Branching conventions tied to Linear epics
+>
+> After completing the audit and fixing what remains, **delete this notice block**.
+
 ## Project Overview
-IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. v2 architecture (shared idea feed) is operational; editorial design system foundation complete (Phase 10 / ), page-level redesign in progress (Phase 11 / ).
+IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. v2 architecture (shared idea feed) is operational; editorial design system foundation complete (Phase 10), page-level redesign in progress (Phase 11).
 
 ## Engineering Mindset
 - Think as a strong senior fullstack TypeScript developer
@@ -87,21 +102,21 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 | Mobile-first Tailwind: start mobile, add `md:` and `lg:` breakpoints | `/kit-create-ui` |
 | DB schema changes → update `supabase/setup.sql` AND `docs/DATABASE_SCHEMA.md` | `/kit-create-api` |
 
-## Linear Workflow
-- **Before starting a ticket:** read the Linear ticket (via MCP) to understand full context and acceptance criteria — don't rely only on the user's prompt
-- **After completing a ticket:** if the implementation diverged from the original ticket description, update the ticket with what was actually done
-- Linear project: IdeaForge (IF)
+## Issue Workflow
+- **Before starting an issue:** read it on GitHub (`gh issue view <NN>`) to understand full context and acceptance criteria — don't rely only on the user's prompt
+- **After completing an issue:** if the implementation diverged from the original description, update the issue with what was actually done
+- GitHub repo: `emberworks-lab/reddit-idea-forge`
 
 ## Commit Convention
 - **NEVER commit without asking the user first** — always ask "can I commit?" and wait for confirmation
 - Commit messages must be in English
-- Use `/linear-commit` skill for all commits — it handles Linear magic words, ticket linking, and format
-- Linear project prefix: **IF**
+- Link commits to GitHub issues with magic words: `Implements #NN` (auto-closes on merge to default), `Fixes #NN` (auto-closes), `Refs #NN` (links without status change)
+- One concise subject line, English
 
 ## Branching Strategy
 - `main` — production, protected
 - `develop` — integration branch, day-to-day work
-- Branches are named after **epics** (not individual tickets) to link to Linear epics
+- Branches are named after **epics** (not individual tickets); use `feature/<epic-NN>-<slug>` where `<epic-NN>` is the GitHub epic-issue number
 - Feature branches merge into `develop` via PR, `develop` merges into `main` for releases
 
 ## Stack
@@ -153,6 +168,4 @@ All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
 | `/kit-create-api` | API routes, Supabase queries, auth checks, error handling |
 | `/kit-create-ui` | Pages, components, Tailwind patterns, score visualization |
 | `/kit-llm` | LLM pipeline, prompt design, Zod schemas, Anthropic SDK |
-| `/linear-commit` | Git commits linked to Linear tickets via magic words |
-| `/linear-epic-close` | Close an epic: analyze commits, update Linear (epic + project + status update), update docs |
 | `/simplify-branch` | Run full code simplification across all changes in the current branch vs base branch |

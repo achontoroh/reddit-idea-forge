@@ -114,19 +114,19 @@ No prefix = server-only, never import in client components.
 
 ## Git Conventions
 
-### Commit messages (Conventional Commits)
+### Commit messages (magic-word + Conventional Commits style)
 ```
-feat: add category filter to dashboard
-fix: handle empty LLM response gracefully
+Implements #92: add category filter to dashboard
+Fixes #91: handle empty LLM response gracefully
 chore: update dependencies
-docs: add setup instructions to README
+Refs #64: docs — add setup instructions to README
 style: fix dashboard layout on mobile
 refactor: extract ScoreBadge component
 ```
 
 ### Rules
 - One logical change per commit
-- Reference Linear ticket in parentheses
+- Reference the GitHub issue with magic words (`Implements #NN`, `Fixes #NN`, `Refs #NN`) in the subject
 - Never commit `.env.local` or secrets
 - Meaningful commit messages — not "fix stuff"
 
