@@ -1,19 +1,6 @@
 # CLAUDE.md
 
-> ## ⚠️ ACTION REQUIRED — NEXT SESSION
->
-> This file needs an end-to-end review and rewrite **before any other work in the next session**.
->
-> Linear was removed from the project (May 2026) and the codebase migrated to GitHub Issues. Many sections below still describe Linear-era workflow, the `IF-XX` ticket prefix, Linear MCP usage, and `/linear-*` skills. The targeted clean-up pass on May 11 2026 caught the obvious mentions; a careful section-by-section audit is still needed.
->
-> Audit scope:
-> - Every section of this file — confirm it describes the current GitHub-Issues workflow
-> - References to `IF-XX`, "Linear", "Linear MCP", "Linear ticket"
-> - Any `/linear-*` skill that no longer makes sense without Linear
-> - Magic-word commit conventions (now `Implements #NN` / `Fixes #NN` / `Refs #NN`)
-> - Branching conventions tied to Linear epics
->
-> After completing the audit and fixing what remains, **delete this notice block**.
+> Tracker: **GitHub Issues + Projects v2** (`emberworks-lab/reddit-idea-forge`, project #1). Workflow skills come from the **forge** plugin (`forge:*`); IdeaForge-specific patterns from the project `kit-*` skills in `.claude/skills/`.
 
 ## Project Overview
 IdeaForge — AI-powered platform that scans Reddit for user pain points and generates scored SaaS product ideas with community scoring. v2 architecture (shared idea feed) is operational; editorial design system foundation complete (Phase 10), page-level redesign in progress (Phase 11).
@@ -110,7 +97,8 @@ Full file tree with explanations → `docs/PROJECT_STRUCTURE.md`
 ## Commit Convention
 - **NEVER commit without asking the user first** — always ask "can I commit?" and wait for confirmation
 - Commit messages must be in English
-- Link commits to GitHub issues with magic words: `Implements #NN` (auto-closes on merge to default), `Fixes #NN` (auto-closes), `Refs #NN` (links without status change)
+- Link commits to GitHub issues with magic words: `Closes #NN` (auto-closes on merge to default), `Fixes #NN` (auto-closes), `Refs #NN` (links without status change). GitHub only recognises `Closes`/`Fixes`/`Resolves` for auto-close — do NOT use `Implements`.
+- `/forge:commit` builds the linked commit message from `tracker.json`
 - One concise subject line, English
 
 ## Branching Strategy
@@ -152,6 +140,8 @@ Detailed references in `docs/` — point Claude Code to specific doc when needed
 
 | Doc | Contents |
 |-----|----------|
+| `docs/owner-overview.md` | One-page project snapshot: features, phases, stack, conventions (auto-maintained by `/forge:update-docs`) |
+| `docs/00_meta/` | Project meta: `roadmap.md`, `decisions-log.md`, `glossary.md`, `docs-workflow.md` |
 | `docs/PROJECT_STRUCTURE.md` | Full file tree, route groups, "what goes where" guide |
 | `docs/DATABASE_SCHEMA.md` | SQL tables, RLS policies, TypeScript types, migration |
 | `docs/CONVENTIONS.md` | Naming, component patterns, API patterns, env vars, git, Tailwind |
@@ -161,11 +151,28 @@ Detailed references in `docs/` — point Claude Code to specific doc when needed
 | `docs/design/` | Editorial design system source-of-truth: `tokens.md`, `tokens.css`, `components.md`, `screens.md`, `voice.md`, `implementation-plan.md`. Reference these BEFORE editing primitives or token CSS. |
 
 ## Available Skills
-All skills use `kit-` prefix. Read the relevant skill BEFORE starting a task.
+
+### Project skills (`.claude/skills/`) — IdeaForge-specific
+Read the relevant skill BEFORE starting a task.
 
 | Skill | When to use |
 |-------|-------------|
 | `/kit-create-api` | API routes, Supabase queries, auth checks, error handling |
 | `/kit-create-ui` | Pages, components, Tailwind patterns, score visualization |
-| `/kit-llm` | LLM pipeline, prompt design, Zod schemas, Anthropic SDK |
-| `/simplify-branch` | Run full code simplification across all changes in the current branch vs base branch |
+| `/kit-llm` | LLM pipeline, prompt design, Zod schemas, multi-provider client |
+
+### Workflow skills — from the `forge` plugin (`forge:*`)
+Generic engineering workflow. The `forge:execute-*` skills automatically invoke the project `kit-*` skills above when writing IdeaForge code.
+
+| Skill | When to use |
+|-------|-------------|
+| `/forge:create-epic`, `/forge:create-ticket` | Draft a GitHub epic + sub-issues, or a single ticket |
+| `/forge:execute-epic`, `/forge:execute-ticket` | Implement an epic / ticket (branch, code, lint, test, commit) |
+| `/forge:commit` | Build a GitHub-linked commit message from `tracker.json` |
+| `/forge:simplify-branch` | Code simplification across the whole branch vs base |
+| `/forge:review`, `/forge:epic-close` | Local pre-PR review · close an epic (review → PR/merge) |
+| `/forge:pr-create` | Open a draft PR for an epic |
+| `/forge:log-decision` | Append a decision to `docs/00_meta/decisions-log.md` |
+| `/forge:update-docs` | Sync docs (owner-overview, 00_meta, design) after an epic |
+
+Full forge skill list: `~/.claude/INDEX.md`. Conventions: `plugins/forge/docs/conventions/`.
