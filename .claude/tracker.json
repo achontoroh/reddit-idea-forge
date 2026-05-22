@@ -1,0 +1,11 @@
+{
+  "backend": "github",
+  "github": {
+    "org": "emberworks-lab",
+    "repo": "reddit-idea-forge",
+    "project_number": 1
+  },
+  "platforms": [
+    { "name": "web-nextjs", "path": "." }
+  ]
+}
